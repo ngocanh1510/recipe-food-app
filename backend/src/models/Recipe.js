@@ -3,7 +3,7 @@ const userModel=require('./User')
 const categoriesModel = require('./Categories')
 
 const RecipeSchema = new mongoose.Schema({
-    user:{type: mongoose.Types.ObjectId, ref: userModel},
+    userOwner: {type: mongoose.Types.ObjectId, ref: userModel},
     title:{type:String,required:true},
     description:{type:String,required:true},
     categogiesId:{type:mongoose.Types.ObjectId,ref:categoriesModel,required:true},
@@ -15,7 +15,7 @@ const RecipeSchema = new mongoose.Schema({
     timestamps:true
 })
 
-export const RecipeModel=mongoose.model("recipesses", RecipeSchema)
+const RecipeModel=mongoose.model("recipesses", RecipeSchema)
 
 
 

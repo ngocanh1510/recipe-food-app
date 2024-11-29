@@ -1,17 +1,10 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
-import { AccountModel } from '../models/Account';
+import { register, login } from "../controllers/auth.js";
 
-const router = express.Router();
+const AccountRouter = express.Router();
 
-router.post("/register", async(req, res) => {
-    const { username, password } = req.body;
+AccountRouter.post("/register", register);
 
-    const account = await AccountModel.findOne({ username });
+AccountRouter.post("/login", login);
 
-    res.json(account);
-});
-
-
-export {router as AccountRouter}
+export default AccountRouter;
