@@ -1,11 +1,11 @@
 import mongoose from "mongoose"
-import UserModel from "./User.js"
+import User from "./User.js"
 
 const AccountSchema = new mongoose.Schema({
-    username: {type: mongoose.Schema.Types.ObjectId, required: true, ref: UserModel},
+    username: {type: mongoose.Schema.Types.ObjectId, required: true, ref: User},
     password: {type: String, require: true},
 });
 
-const AccountModel = mongoose.model("accounts", AccountSchema);
+const Account = mongoose.model("accounts", AccountSchema);
 
-export default AccountModel;
+export default Account;
