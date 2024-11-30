@@ -1,10 +1,8 @@
 import mongoose from "mongoose"
 
-const UserSchema=new mongoose.Schema({
+const CategorySchema=new mongoose.Schema({
     name:{type:String,required:true},
-    email:{type:String,required:true,unique:true},
-    avatar:{type:String,required:false},
-    gender:{type:String,required:true}
 })
 
-const UserModel=mongoose.model("users", UserSchema);
+const Category=mongoose.model("users", CategorySchema);
+export default Category

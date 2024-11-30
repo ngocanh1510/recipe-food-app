@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import UserModel from "./User.js"
+import User from "./User.js"
 
 const AccountSchema = new mongoose.Schema({
     username: {
@@ -16,6 +16,6 @@ const AccountSchema = new mongoose.Schema({
     },
 });
 
-const AccountModel = mongoose.model("accounts", AccountSchema);
+const Account = mongoose.model("accounts", AccountSchema);
 
-export default AccountModel;
+export default Account;
