@@ -4,5 +4,5 @@ const CategorySchema=new mongoose.Schema({
     name:{type:String,required:true},
 })
 
-const Category=mongoose.model("users", CategorySchema);
-export default Category
+const CategoryModel=mongoose.model("users", CategorySchema);
+export default CategoryModel

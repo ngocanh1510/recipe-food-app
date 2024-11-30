@@ -6,6 +6,6 @@ const AccountSchema = new mongoose.Schema({
     password: {type: String, require: true},
 });
 
-const Account = mongoose.model("accounts", AccountSchema);
+const AccountModel = mongoose.model("accounts", AccountSchema);
 
-export default Account;
+export default AccountModel;
