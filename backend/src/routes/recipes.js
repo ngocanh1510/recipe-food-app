@@ -1,10 +1,6 @@
-import express from 'express'
-import { register, login } from "../controllers/auth.js";
-
-const AccountRouter = express.Router();
-
-AccountRouter.post("/register", register);
-
-AccountRouter.post("/login", login);
-
-export default AccountRouter;
+import express from "express"
+import { getAllRecipes, getRecipesInHomepage} from '../controllers/recipe.js'
+const RecipeRouter = express.Router();
+    RecipeRouter.get("/",getRecipesInHomepage);
+    RecipeRouter.get("/all",getAllRecipes);
+export default RecipeRouter;
