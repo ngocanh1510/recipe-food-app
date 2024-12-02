@@ -1,4 +1,3 @@
-// 22520073-Phan Thị Ngọc Ánh
 import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,46 +7,63 @@ import NotificationsScreen from './screens/NotificationScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
+import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
 import FavoriteScreen from './screens/Book.js';
 import ProfileScreen from './screens/ProfileScreen.js';
-import { SimpleLineIcons, MaterialIcons, FontAwesome,Fontisto, AntDesign } from '@expo/vector-icons';
-import { View } from 'react-native';
 import CategoryScreen from './screens/CategoryScreen.js';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
+import WelcomeScreen from './screens/WelcomeScreen.js';
+import { SimpleLineIcons, Fontisto, AntDesign } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// 22520073-Phan Thị Ngọc Ánh
+// **AuthStack: Định nghĩa các màn hình liên quan đến xác thực**
 const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Welcome" component={WelcomeScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
   </Stack.Navigator>
 );
-const NotifiStack=()=>(
+
+// **HomeStack: Điều hướng trong HomeScreen**
+const HomeStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="home" component={HomeScreen} options={{headerShown:false}}/>
-    <Stack.Screen name="THÔNG BÁO" component={NotificationsScreen} options={{headerBackTitle:''}}/>
+    <Stack.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="FoodDetail"
+      component={FoodDetail}
+      options={{
+        headerBackTitle: '',
+        title: 'Chi tiết món ăn',
+      }}
+    />
   </Stack.Navigator>
-)
+);
+
+// **MainBottom: Điều hướng Tab chính của ứng dụng**
 const MainBottom = () => {
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: '#881415',
         tabBarInactiveTintColor: 'black',
-        
       }}
     >
       <Tab.Screen
-  name="Home"
-  component={NotifiStack}
-  options={() => ({
-    headerShown: false,
-    tabBarIcon: ({ color }) => <SimpleLineIcons name="home" size={30} color={color} />,
-  })}
-/>
-
+        name="Trang chủ"
+        component={HomeStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => <SimpleLineIcons name="home" size={30} color={color} />,
+        }}
+      />
       <Tab.Screen
         name="TÌM KIẾM"
         component={CategoryScreen}
@@ -59,12 +75,7 @@ const MainBottom = () => {
         name="SỔ TAY"
         component={FavoriteScreen}
         options={{
-          tabBarIcon: ({ color }) => (
-            <View>
-              <AntDesign name="book" size={30} color={color} />
-              )
-            </View>
-          ),
+          tabBarIcon: ({ color }) => <AntDesign name="book" size={30} color={color} />,
         }}
       />
       <Tab.Screen
@@ -78,6 +89,7 @@ const MainBottom = () => {
   );
 };
 
+// **AppNavigator: Điều hướng chính dựa trên trạng thái xác thực**
 const AppNavigator = () => {
   const { isAuthenticated } = useContext(AuthContext);
   return (
@@ -87,6 +99,7 @@ const AppNavigator = () => {
   );
 };
 
+// **Ứng dụng chính**
 export default function App() {
   return (
     <AuthProvider>
