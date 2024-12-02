@@ -3,7 +3,7 @@ import cors from "cors"
 import mongoose from "mongoose"
 import dotenv from "dotenv";
 import AccountRouter from "./routes/accounts.js";
-import RecipeRouter from "./routes/recipes.js";
+import RecipeRouter from "./routes/recipe-router.js";
 
 dotenv.config();
 
