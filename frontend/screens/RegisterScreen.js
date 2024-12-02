@@ -12,31 +12,31 @@ export default function RegisterScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.containerheader}>
         <Image source={require('../assets/snapedit_1729764442315.png')} style={styles.imageStyle}/>
-        <Text style={styles.header}>Create New Account</Text>
+        <Text style={styles.header}>Tạo tài khoản</Text>
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='account-outline' style={styles.icon}/>
-        <TextInput placeholder="Enter username" value={name} onChangeText={setName} />
+        <TextInput placeholder="Nhập tên đăng nhập" value={name} onChangeText={setName} />
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='email-outline' style={styles.icon}/>
-        <TextInput placeholder="Enter email" value={email} onChangeText={setEmail} />
+        <TextInput placeholder="Nhập email" value={email} onChangeText={setEmail} />
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='lock-outline' style={styles.icon} />
-        <TextInput placeholder="Enter password" value={password} onChangeText={setPassword} secureTextEntry />
+        <TextInput placeholder="Nhập mật khẩu" value={password} onChangeText={setPassword} secureTextEntry />
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='lock-outline' style={styles.icon} />
-        <TextInput placeholder="Confirm password" value={cfpassword} onChangeText={setCfpassword} secureTextEntry/>
+        <TextInput placeholder="Xác nhận mật khẩu" value={cfpassword} onChangeText={setCfpassword} secureTextEntry/>
       </View>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
-        <Text style={styles.creatText}>CREATE</Text>
+        <Text style={styles.creatText}>Đăng ký</Text>
       </TouchableOpacity>
       <View style={styles.registerContainer}>
-        <Text style={styles.question}>Already have an account?</Text>
+        <Text style={styles.question}>Đã có tài khoản?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.loginText} > Login now!</Text>
+          <Text style={styles.loginText} > Đăng nhập</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -45,14 +45,16 @@ export default function RegisterScreen({ navigation }) {
 const styles=StyleSheet.create({
   container:{
     flex:1,
-    justifyContent:'center'
+    justifyContent:'center',
+    backgroundColor: '#f8f1f1',
   },
   containerheader:{
     alignItems:'center',
   },
   header:{
     fontSize:25,
-    fontWeight:'600'
+    fontWeight:'600',
+    color:'#a62626',
   },
   imageStyle: {
     marginTop:50,
@@ -82,16 +84,17 @@ const styles=StyleSheet.create({
     paddingHorizontal:5
   },
   button:{
-    backgroundColor:'#EC9B4D',
+    backgroundColor:'#a62626',
     padding:18,
     borderRadius:10,
     marginTop:30,
     marginHorizontal:20,
   },
   creatText:{
-    color:'white',
-    fontSize:16,
-    textAlign:'center'
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: '700',
   },
   question:{
     fontSize:16,
@@ -99,7 +102,7 @@ const styles=StyleSheet.create({
   },
   loginText:{
     fontSize:16,
-    color:'blue',
+    color:'#a62626',
     fontWeight:'800'
   },
 })
