@@ -1,19 +1,20 @@
 import { AntDesign, Fontisto, SimpleLineIcons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useContext } from 'react';
-import { AuthContext, AuthProvider } from './screens/AuthContext.js';
-import FavoriteScreen from './screens/Book.js';
-import CategoryScreen from './screens/CategoryScreen.js';
-import FoodDetail from './screens/FoodDetail.js';
-import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
-import HomeScreen from './screens/HomeScreen.js';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { AuthProvider, AuthContext } from './screens/AuthContext.js';
+import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
 import LoginScreen from './screens/LoginScreen.js';
-import EditProfileScreen from './screens/EditProfileScreen.js';
-import ProfileScreen from './screens/ProfileScreen.js';
 import RegisterScreen from './screens/RegisterScreen.js';
+import HomeScreen from './screens/HomeScreen.js';
+import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
+import NoteScreen from './screens/NoteScreen.js';
+import ProfileScreen from './screens/ProfileScreen.js';
+import SearchScreen from './screens/SearchScreen.js';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
+import EditProfileScreen from './screens/EditProfileScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
+import { useContext } from 'react';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -42,6 +43,14 @@ const HomeStack = () => (
       options={{
         headerBackTitle: '',
         title: 'Chi tiết món ăn',
+      }}
+    />
+    <Stack.Screen
+      name="Notifications" // Thêm màn hình Notifications
+      component={NotificationsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Thông báo',
       }}
     />
   </Stack.Navigator>
@@ -81,14 +90,15 @@ const MainBottom = () => {
       />
       <Tab.Screen
         name="TÌM KIẾM"
-        component={CategoryScreen}
+        component={SearchScreen}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => <Fontisto name="world-o" size={28} color={color} />,
         }}
       />
       <Tab.Screen
         name="SỔ TAY"
-        component={FavoriteScreen}
+        component={NoteScreen}
         options={{
           tabBarIcon: ({ color }) => <AntDesign name="book" size={30} color={color} />,
         }}

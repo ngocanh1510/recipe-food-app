@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = ({ navigation }) => {
 
@@ -27,6 +28,11 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
 
+  // Danh sách thể loại món ăn
+  const categories = [
+    'Cơm', 'Cháo/Súp', 'Bún/Bánh canh', 'Bánh/Tráng miệng'
+  ];
+
   // Hàm render item cho FlatList
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
@@ -41,20 +47,20 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Đang tải dữ liệu...</Text>
-      </View>
-    );
-  }
+  // Hàm render item cho danh sách thể loại món ăn
+  const renderCategoryItem = ({ item }) => (
+    <TouchableOpacity style={styles.foodCategory}>
+      <Text style={styles.foodCategoryText}>{item}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.user}>
           <Image
-            source={require('../assets/325471648_3435328433353012_6625490091817151127_n.jpg')}
+            source={require('../assets/325471648_3435328433353012_6625490091817151127_n.jpg')} // Thay bằng avatar của bạn
             style={styles.profileImage}
           />
           <View>
@@ -71,15 +77,15 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.dishItem}>
         <View>
           <Text style={styles.dishName}>Cơm tấm</Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('FoodDetail', { food: foods[3] })}
+          >
             <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
             <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
           </TouchableOpacity>
         </View>
-        <Image
-          source={require('../assets/comtam.jpeg')}
-          style={styles.dishImage}
-        />
+        <Image source={require('../assets/comtam.jpeg')} style={styles.dishImage} />
       </View>
 
       {/* Food List Section */}
@@ -103,19 +109,17 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.seemore}>Xem thêm</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.foodCategories}>
-          <TouchableOpacity style={styles.foodCategory}>
-            <Text style={styles.foodCategoryText}>Cơm</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.foodCategory}>
-            <Text style={styles.foodCategoryText}>Cháo/Súp</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.foodCategory}>
-            <Text style={styles.foodCategoryText}>Bún/Bánh canh</Text>
-          </TouchableOpacity>
-        </View>
+
+        <FlatList
+          data={categories}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderCategoryItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.foodCategories}
+        />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5edea',
   },
   header: {
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 20,
     alignItems: 'center',
     flexDirection: 'row',
@@ -168,6 +172,7 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 20,
     marginLeft: 5,
+    color: '#881415',
   },
   buttonText: {
     color: '#881415',
@@ -208,12 +213,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   foodItem: {
-    marginRight: 15,
+    marginRight: 15, // Khoảng cách giữa các món ăn
   },
   foodImage: {
-    width: 160,
-    height: 120,
-    borderRadius: 15,
+    width: 160,  // Cố định kích thước ảnh
+    height: 120, // Cố định kích thước ảnh
+    borderRadius: 15,  // Bo tròn ảnh
   },
   foodName: {
     marginTop: 5,
@@ -237,9 +242,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
+  categoryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center', // Căn giữa theo chiều dọc
+    marginBottom: 10,
+  },
   seemore: {
     color: '#881415',
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
