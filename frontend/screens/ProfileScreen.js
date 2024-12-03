@@ -1,35 +1,173 @@
-//22520073-Phan Thị Ngọc Ánh
-import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { AuthContext } from './AuthContext.js';
+import {
+    MaterialCommunityIcons,
+    MaterialIcons
+} from '@expo/vector-icons';
+import React from 'react';
+import {
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function ProfilrScreen() {
-  const { logout } = useContext(AuthContext);
+const MenuItem = ({ icon, title, onPress }) => (
+    <TouchableOpacity
+        style={styles.menuItem}
+        onPress={onPress}
+        activeOpacity={0.7}
+    >
+        {icon}
+        <Text style={styles.menuText}>{title}</Text>
+        <MaterialIcons name="chevron-right" size={24} color="#5C3A29" />
+    </TouchableOpacity>
+);
 
-  return (
-    <View style={styles.container}>
-      <Text>Profile Screen</Text>
-      <TouchableOpacity onPress={logout} style={styles.button}>
-        <Text style={styles.text}>LOG OUT</Text>
-      </TouchableOpacity> 
-    </View>
-  );
-}
+const ProfileScreen = ({navigation}) => {
+    
 
-const styles=StyleSheet.create({
-  button:{
-    backgroundColor:'#1E90FF',
-    padding:13,
-    marginTop:10
-  },
-  container:{
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center'
-  },
-  text:{
-    color:'white',
-    fontSize:16,
-    textAlign:'center'
-  }
-})
+    const menuItems1 = [
+        { icon: <MaterialIcons name="favorite" size={24} color="#5C3A29" />, title: "Yêu thích" },
+        { icon: <MaterialIcons name="history" size={24} color="#5C3A29" />, title: "Lịch sử" },
+        { icon: <MaterialIcons name="notifications" size={24} color="#5C3A29" />, title: "Thông báo" },
+        { icon: <MaterialCommunityIcons name="trophy" size={24} color="#5C3A29" />, title: "Thành tựu" },
+        { icon: <MaterialIcons name="share" size={24} color="#5C3A29" />, title: "Chia sẻ" },
+    ];
+
+    const menuItems2 = [
+        { icon: <MaterialIcons name="settings" size={24} color="#5C3A29" />, title: "Cài đặt" },
+        { icon: <MaterialIcons name="security" size={24} color="#5C3A29" />, title: "Chính sách bảo mật" },
+        { icon: <MaterialIcons name="help" size={24} color="#5C3A29" />, title: "Hỗ trợ" },
+        { icon: <MaterialIcons name="info" size={24} color="#5C3A29" />, title: "Về chúng tôi" },
+    ];
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.header}>Tài Khoản</Text>
+
+            <ScrollView style={styles.scrollView}>
+                <View style={styles.profileSection}>
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: 'https://via.placeholder.com/100' }}
+                    />
+                    <View style={styles.profileInfo}>
+                        <Text style={styles.name}>Nguyễn Văn A</Text>
+                        <Text style={styles.description}>Yêu thích nấu ăn</Text>
+                    </View>
+                    <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
+                    <MaterialIcons name="edit" size={24} color="#5C3A29" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.menuSection}>
+                    {menuItems1.map((item, index) => (
+                        <MenuItem key={index} {...item} />
+                    ))}
+                </View>
+
+                <View style={styles.menuSection}>
+                    {menuItems2.map((item, index) => (
+                        <MenuItem key={index} {...item} />
+                    ))}
+                </View>
+            </ScrollView>
+
+            <TouchableOpacity style={styles.logoutButton}>
+                <Text style={styles.logoutText}>Đăng xuất</Text>
+                <MaterialIcons name="logout" size={24} color="#5C3A29" />
+            </TouchableOpacity>
+        </SafeAreaView>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FAF3E0',
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#5C3A29',
+        textAlign: 'center',
+        padding: 16,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    profileSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        backgroundColor: 'white',
+        marginHorizontal: 16,
+        marginVertical: 8,
+        borderRadius: 12,
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+    },
+    avatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+    },
+    profileInfo: {
+        flex: 1,
+        marginLeft: 16,
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#5C3A29',
+    },
+    description: {
+        fontSize: 14,
+        color: '#5C3A29',
+        opacity: 0.8,
+    },
+    editButton: {
+        padding: 8,
+    },
+    menuSection: {
+        marginHorizontal: 16,
+        marginVertical: 8,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+        overflow: 'hidden',
+    },
+    menuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    menuText: {
+        flex: 1,
+        marginLeft: 16,
+        fontSize: 16,
+        color: '#5C3A29',
+    },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F5CAC3',
+        margin: 16,
+        padding: 16,
+        borderRadius: 12,
+    },
+    logoutText: {
+        color: '#5C3A29',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 8,
+    },
+});
+
+export default ProfileScreen;

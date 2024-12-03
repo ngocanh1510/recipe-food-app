@@ -39,7 +39,7 @@ const EditProfileScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="#5C3A29" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Chỉnh sửa hồ sơ</Text>
+                {/* <Text style={styles.headerTitle}>Chỉnh sửa hồ sơ</Text> */}
                 <TouchableOpacity onPress={handleSave}>
                     <Text style={styles.saveButtonText}>Lưu</Text>
                 </TouchableOpacity>
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 16,
-        borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
     },
     headerTitle: {
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     },
     avatarContainer: {
         alignItems: 'center',
-        padding: 20,
+        padding: 16,
     },
     avatar: {
         width: 100,

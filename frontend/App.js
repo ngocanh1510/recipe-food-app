@@ -1,19 +1,19 @@
-import React, { useContext } from 'react';
+import { AntDesign, Fontisto, SimpleLineIcons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AuthProvider, AuthContext } from './screens/AuthContext.js';
-import NotificationsScreen from './screens/NotificationScreen.js';
-import LoginScreen from './screens/LoginScreen.js';
-import RegisterScreen from './screens/RegisterScreen.js';
-import HomeScreen from './screens/HomeScreen.js';
-import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
+import React, { useContext } from 'react';
+import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import FavoriteScreen from './screens/Book.js';
-import ProfileScreen from './screens/ProfileScreen.js';
 import CategoryScreen from './screens/CategoryScreen.js';
+import FoodDetail from './screens/FoodDetail.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
+import HomeScreen from './screens/HomeScreen.js';
+import LoginScreen from './screens/LoginScreen.js';
+import EditProfileScreen from './screens/EditProfileScreen.js';
+import ProfileScreen from './screens/ProfileScreen.js';
+import RegisterScreen from './screens/RegisterScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
-import { SimpleLineIcons, Fontisto, AntDesign } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -45,6 +45,21 @@ const HomeStack = () => (
       }}
     />
   </Stack.Navigator>
+);
+const ProfileStack = createStackNavigator();
+const ProfileNavigator = () => (
+  <ProfileStack.Navigator screenOptions={{headerShown:false}}>
+    <ProfileStack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{ headerShown: false }}
+    />
+    <ProfileStack.Screen
+      name="EditProfile"
+      component={EditProfileScreen}
+      options={{ title: 'Chinh sua ho so' }}
+    />
+  </ProfileStack.Navigator>
 );
 
 // **MainBottom: Điều hướng Tab chính của ứng dụng**
@@ -80,8 +95,9 @@ const MainBottom = () => {
       />
       <Tab.Screen
         name="HỒ SƠ"
-        component={ProfileScreen}
+        component={ProfileNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => <AntDesign name="user" size={30} color={color} />,
         }}
       />
@@ -94,7 +110,8 @@ const AppNavigator = () => {
   const { isAuthenticated } = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainBottom /> : <AuthStack />}
+      {/* {isAuthenticated ? <MainBottom /> : <AuthStack />} */}
+      <MainBottom />
     </NavigationContainer>
   );
 };
