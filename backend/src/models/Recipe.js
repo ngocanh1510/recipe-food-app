@@ -12,8 +12,14 @@ const RecipeSchema = new mongoose.Schema({
         quantity: { type: String, required: true },
       }],
     steps:{type:[String],required:true},
-    image:{type:String,required:true}
-    
+    image:{type:String,required:true},
+    likes: [{ type: mongoose.Types.ObjectId, ref: 'users' }], // Danh sách người dùng đã like
+    comments: [{
+        user: { type: mongoose.Types.ObjectId, ref: 'users' },
+        content: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+    }],
+    saves: [{ type: mongoose.Types.ObjectId, ref: 'users' }], // Danh sách người dùng đã save
 },
 {
     timestamps:true
