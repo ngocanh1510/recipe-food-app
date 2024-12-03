@@ -2,46 +2,46 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 const FoodDetail = ({ route, navigation }) => {
-  const { food } = route.params;
+  const { recipe } = route.params;
 
   return (
     <ScrollView style={styles.container}>
       {/* Hình ảnh món ăn */}
-      <Image source={food.image} style={styles.image} />
+      <Image source={recipe.image} style={styles.image} />
 
       {/* Tiêu đề món ăn */}
       <View style={styles.header}>
-        <Text style={styles.foodName}>{food.name}</Text>
-        <Text style={styles.time}>⏱ {food.time || '60 phút'}</Text>
+        <Text style={styles.foodName}>{recipe.title}</Text>
+        <Text style={styles.time}>⏱ {recipe.time || '60 phút'}</Text>
       </View>
 
       {/* Dòng mô tả */}
-      <Text style={styles.description}>{food.description || 'Món ăn đậm đà hương vị truyền thống.'}</Text>
+      <Text style={styles.description}>{recipe.description || 'Món ăn đậm đà hương vị truyền thống.'}</Text>
 
       {/* Thông tin dinh dưỡng */}
       <View style={styles.nutritionContainer}>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Tính bột</Text>
-          <Text style={styles.nutritionValue}>{food.carbs || '65g'}</Text>
+          <Text style={styles.nutritionValue}>{recipe.carbs || '65g'}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Chất đạm</Text>
-          <Text style={styles.nutritionValue}>{food.protein || '27g'}</Text>
+          <Text style={styles.nutritionValue}>{recipe.protein || '27g'}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Năng lượng</Text>
-          <Text style={styles.nutritionValue}>{food.calories || '120 calo'}</Text>
+          <Text style={styles.nutritionValue}>{recipe.calories || '120 calo'}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Chất béo</Text>
-          <Text style={styles.nutritionValue}>{food.fat || '9g'}</Text>
+          <Text style={styles.nutritionValue}>{recipe.fat || '9g'}</Text>
         </View>
       </View>
 
       {/* Nguyên liệu */}
       <Text style={styles.sectionTitle}>Nguyên liệu</Text>
       <View style={styles.ingredients}>
-        {food.ingredients?.map((ingredient, index) => (
+        {recipe.ingredients?.map((ingredient, index) => (
           <View key={index} style={styles.ingredientItem}>
             <Text style={styles.ingredientText}>{ingredient}</Text>
           </View>

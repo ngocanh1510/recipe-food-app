@@ -1,11 +1,12 @@
 import axios from 'axios';
-import dotenv from "dotenv";
+import Config from 'react-native-config';
 
-dotenv.config();
+// Sử dụng các biến môi trường từ .env để cấu hình URL API
+const apiUrl = Config.API_URL;
 
 export const getRecipesInHomepage = async () => {
   try {
-    const res = await axios.get(`http://${API_BASE_URL}:3001/recipe`);
+    const res = await axios.get(`http://${apiUrl}:3001/recipe`);
     
     if (res.status === 200) {
       return res.data.recipes; 
