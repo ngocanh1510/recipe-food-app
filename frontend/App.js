@@ -1,4 +1,5 @@
-import { AntDesign, Fontisto, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,12 +8,13 @@ import NotificationsScreen from './screens/NotificationScreen.js'; // Import Not
 import LoginScreen from './screens/LoginScreen.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
+import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
+import EditProfileScreen from './screens/EditProfileScreen.js';
 import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
 import NoteScreen from './screens/NoteScreen.js';
 import ProfileScreen from './screens/ProfileScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
-import EditProfileScreen from './screens/EditProfileScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
 import { useContext } from 'react';
 
@@ -71,13 +73,40 @@ const ProfileNavigator = () => (
   </ProfileStack.Navigator>
 );
 
+const CreateRecipeStack = createStackNavigator();
+const CreateRecipeNavigator = () => (
+  <CreateRecipeStack.Navigator screenOptions={{ headerShown: false }}>
+    <CreateRecipeStack.Screen
+      name="CreateRecipe"
+      component={CreateRecipeScreen}
+      options={{ title: 'Tạo công thức' }}
+    />
+  </CreateRecipeStack.Navigator>
+);
+
 // **MainBottom: Điều hướng Tab chính của ứng dụng**
 const MainBottom = () => {
   return (
     <Tab.Navigator
       screenOptions={{
+        tabBarShowLabel: true,
         tabBarActiveTintColor: '#881415',
         tabBarInactiveTintColor: 'black',
+
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopColor: 'transparent',
+          bottom: 30,
+          position: 'absolute',
+          marginHorizontal: 20,
+          borderRadius: 15,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.1,
+          height: 65,
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
       }}
     >
       <Tab.Screen
@@ -85,30 +114,38 @@ const MainBottom = () => {
         component={HomeStack}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color }) => <SimpleLineIcons name="home" size={30} color={color} />,
+          tabBarIcon: ({color}) => <AntDesign name="home" size={28} color={color} />,
         }}
       />
       <Tab.Screen
-        name="TÌM KIẾM"
+        name="Tìm kiếm"
         component={SearchScreen}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ color }) => <Fontisto name="world-o" size={28} color={color} />,
+          tabBarIcon: ({ color }) => <AntDesign name="search1" size={28} color={color} />,
         }}
       />
       <Tab.Screen
-        name="SỔ TAY"
-        component={NoteScreen}
+        name="Tạo công thức"
+        component={CreateRecipeNavigator}
         options={{
-          tabBarIcon: ({ color }) => <AntDesign name="book" size={30} color={color} />,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <AntDesign name="pluscircleo" size={28} color={color} />,
+        }}
+      />
+
+      <Tab.Screen
+        name="Sổ tay"
+        component={FavoriteScreen}
+        options={{
+          tabBarIcon: ({ color }) => <AntDesign name="book" size={28} color={color} />,
         }}
       />
       <Tab.Screen
-        name="HỒ SƠ"
+        name="Hồ sơ"
         component={ProfileNavigator}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color }) => <AntDesign name="user" size={30} color={color} />,
+          tabBarIcon: ({ color }) => <AntDesign name="user" size={28} color={color} />,
         }}
       />
     </Tab.Navigator>
@@ -126,7 +163,6 @@ const AppNavigator = () => {
   );
 };
 
-// **Ứng dụng chính**
 export default function App() {
   return (
     <AuthProvider>
