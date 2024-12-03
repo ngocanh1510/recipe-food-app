@@ -5,6 +5,6 @@ const RecipeRouter = express.Router();
     RecipeRouter.get("/all",getAllRecipes);
     // RecipeRouter.get("/search",getSearchRecipes);
     RecipeRouter.post("/", addRecipe);
-    // RecipeRouter.put("/:id", editRecipe);
-    // RecipeRouter.delete("/:id", deleteRecipe);
+    RecipeRouter.put("/:id", editRecipe);
+    RecipeRouter.delete("/:id", deleteRecipe);
 export default RecipeRouter;
