@@ -13,16 +13,15 @@ import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = ({ navigation }) => {
 
-  const [recipes, setRecipes] = useState([]); // State để lưu dữ liệu từ API
-  const [isLoading, setIsLoading] = useState(true); // State để kiểm soát loading
+  const [recipes, setRecipes] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Gọi API để lấy dữ liệu công thức khi màn hình được render
   useEffect(() => {
     const fetchRecipes = async () => {
-      setIsLoading(true); // Bắt đầu loading
-      const data = await getRecipesInHomepage(); // Gọi API
-      if (data) setRecipes(data); // Lưu dữ liệu vào state
-      setIsLoading(false); // Kết thúc loading
+      setIsLoading(true); 
+      const data = await getRecipesInHomepage(); 
+      if (data) setRecipes(data); 
+      setIsLoading(false);
     };
     fetchRecipes();
   }, []);
@@ -34,7 +33,10 @@ const HomeScreen = ({ navigation }) => {
       style={styles.foodItem}
       onPress={() => navigation.navigate('FoodDetail', { recipe: item })}
     >
-      <Image source={item.image} style={styles.foodImage} />
+      <Image
+      source={{ uri: item.image }}  
+      style={styles.foodImage}
+    />
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
   );
