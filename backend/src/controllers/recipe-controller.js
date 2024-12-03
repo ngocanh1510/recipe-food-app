@@ -23,9 +23,9 @@ export const getAllRecipes = async (req, res, next) => {
     let recipes;
   
     try {
-      recipes = await RecipeModel.find().limit(4);
+      recipes = await RecipeModel.find().limit(3);
     } catch (err) {
-      return console.log(err);
+      return console.log('err');
     }
   
     if (!recipes || recipes.length === 0) {
