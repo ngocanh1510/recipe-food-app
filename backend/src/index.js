@@ -11,6 +11,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(cors({ origin: 'http://localhost:8081' }));  // Cho phép FE từ localhost:3000
+app.use(cors({ origin: 'http://localhost:3000' }));  // Cho phép FE từ localhost:3000
+
 
 mongoose.connect(
     `mongodb+srv://22520073:15102004@cluster0.jlyvr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
@@ -25,4 +28,4 @@ mongoose.connect(
 app.listen(3001, () => console.log("SERVER STARTED!"));
 
 app.use("/auth", AccountRouter);
-app.use("/", RecipeRouter);
+app.use("/recipe", RecipeRouter);

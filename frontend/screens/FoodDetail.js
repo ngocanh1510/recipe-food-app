@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 
 const FoodDetail = ({ route, navigation }) => {
   const { recipe } = route.params;
@@ -11,30 +11,38 @@ const FoodDetail = ({ route, navigation }) => {
 
       {/* Tiêu đề món ăn */}
       <View style={styles.header}>
-        <Text style={styles.foodName}>{recipe.title}</Text>
-        <Text style={styles.time}>⏱ {recipe.time || '60 phút'}</Text>
+        <Text style={styles.foodName}>{food.name}</Text>
+        <View style={styles.actionContainer}>
+          <Text style={styles.time}>⏱ {food.time}</Text>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => alert('Đã lưu công thức!')}
+          >
+            <Text style={styles.saveButtonText}>Lưu</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Dòng mô tả */}
-      <Text style={styles.description}>{recipe.description || 'Món ăn đậm đà hương vị truyền thống.'}</Text>
+      <Text style={styles.description}>{food.description}</Text>
 
       {/* Thông tin dinh dưỡng */}
       <View style={styles.nutritionContainer}>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Tính bột</Text>
-          <Text style={styles.nutritionValue}>{recipe.carbs || '65g'}</Text>
+          <Text style={styles.nutritionValue}>{food.carbs}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Chất đạm</Text>
-          <Text style={styles.nutritionValue}>{recipe.protein || '27g'}</Text>
+          <Text style={styles.nutritionValue}>{food.protein}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Năng lượng</Text>
-          <Text style={styles.nutritionValue}>{recipe.calories || '120 calo'}</Text>
+          <Text style={styles.nutritionValue}>{food.calories}</Text>
         </View>
         <View style={styles.nutritionItem}>
           <Text style={styles.nutritionTitle}>Chất béo</Text>
-          <Text style={styles.nutritionValue}>{recipe.fat || '9g'}</Text>
+          <Text style={styles.nutritionValue}>{food.fat}</Text>
         </View>
       </View>
 
@@ -47,8 +55,8 @@ const FoodDetail = ({ route, navigation }) => {
           </View>
         )) || (
           <View style={styles.ingredientItem}>
-            <Text style={styles.ingredientText}>Phở: 1 gói</Text>
-            <Text style={styles.ingredientText}>Thịt bò: 500g</Text>
+            <Text style={styles.ingredientText}></Text>
+            <Text style={styles.ingredientText}></Text>
           </View>
         )}
       </View>
@@ -75,14 +83,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 15,
+    alignItems: 'center',
   },
   foodName: {
     fontSize: 24,
     fontWeight: 'bold',
   },
+  actionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   time: {
     fontSize: 16,
     color: 'gray',
+    marginRight: 10,
+  },
+  saveButton: {
+    backgroundColor: '#881415',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   description: {
     fontSize: 16,
