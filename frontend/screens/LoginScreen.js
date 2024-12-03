@@ -1,8 +1,8 @@
 // 22520073-Phan Thị Ngọc Ánh
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { AuthContext } from './AuthContext.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useContext, useState } from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AuthContext } from './AuthContext.js';
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
