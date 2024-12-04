@@ -8,8 +8,9 @@ import { post } from '../src/api/api.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
 export default function LoginScreen({ navigation }) {
-  // const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,11 +28,11 @@ export default function LoginScreen({ navigation }) {
         const { token } = response.data; // Lấy token từ response (giả sử token trả về từ API)
         
         // Lưu token vào AsyncStorage
-        await AsyncStorage.setItem('token', token);
+        login(token);
 
         // Hiển thị thông báo thành công và chuyển hướng đến màn hình chính
         Alert.alert('Thành công', 'Đăng nhập thành công!');
-        // navigation.navigate('HomeStack'); // Chuyển hướng đến màn hình chính
+        
       }
     } catch (error) {
       // Nếu có lỗi, hiển thị thông báo lỗi
