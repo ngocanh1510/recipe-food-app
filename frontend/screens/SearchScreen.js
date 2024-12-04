@@ -1,14 +1,14 @@
-import React, { useState,useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
   FlatList,
   Image,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllRecipes } from '../src/api/api';
 
@@ -20,7 +20,7 @@ export default function SearchScreen({ navigation }) {
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      setIsLoading(true); 
+      setIsLoading(true);
       const data = await getAllRecipes(); 
       if (data) 
         {
