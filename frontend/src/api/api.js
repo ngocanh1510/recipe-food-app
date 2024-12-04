@@ -17,3 +17,13 @@ export const getRecipesInHomepage = async () => {
     return null;
   }
 };
+
+export const post = async (endpoint, data) => {
+  try {
+    const response = await axios.post(`http://${API_URL}:3001${endpoint}`, data);
+    return response; // Trả về response của API (ví dụ: { status, data })
+  } catch (error) {
+    console.error("Error during API call:", error);
+    throw error; // Ném lỗi để catch ở nơi gọi API
+  }
+};
