@@ -1,10 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEvent } from 'expo';
 import * as ImagePicker from 'expo-image-picker';
-import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useState } from 'react';
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import VideoPlayer from '../components/VideoPlayer';
 
 const RecipeForm = ({ navigation }) => {
     const [ingredients, setIngredients] = useState([{ name: '', quantity: '' }]);
@@ -12,6 +10,7 @@ const RecipeForm = ({ navigation }) => {
     const addIngredient = () => {
         setIngredients([...ingredients, { name: '', quantity: '' }]);
     };
+
     const [image, setImage] = useState(null);
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -21,21 +20,13 @@ const RecipeForm = ({ navigation }) => {
             aspect: [4, 3],
             quality: 1,
         });
-
-        console.log(result);
-
-        const player = useVideoPlayer(videoSource, player => {
-            player.loop = true;
-            player.play();
-        });
-        const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
+        console.log(result);
     };
-    const videoSource =
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
+    const videoSource = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
     return (
         <View style={styles.container}>
@@ -54,25 +45,7 @@ const RecipeForm = ({ navigation }) => {
                 </TouchableOpacity>
             )}
 
-            <VideoView style={styles.video} player={
-                useVideoPlayer(videoSource, player => {
-                    player.loop = true;
-                    player.play();
-                })
-            } allowsFullscreen allowsPictureInPicture/>
             
-            {/* <View style={styles.controlsContainer}> */}
-                {/* <Button
-                    title={isPlaying ? 'Pause' : 'Play'}
-                    onPress={() => {
-                        if (isPlaying) {
-                            player.pause();
-                        } else {
-                            player.play();
-                        }
-                    }}
-                />
-            </View> */}
             <ScrollView contentContainerStyle={styles.scrollView}>
                 <TextInput style={styles.input} placeholder="Tên món ăn" />
                 <TextInput style={styles.input} placeholder="Nhập thời gian nấu" />
@@ -89,10 +62,12 @@ const RecipeForm = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={styles.sectionTitle}>Hướng dẫn</Text>
                 <TextInput style={[styles.input, styles.textArea]} placeholder="Nhập hướng dẫn nấu" multiline />
+                
+                <TouchableOpacity style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>Lưu</Text>
+                </TouchableOpacity>
             </ScrollView>
-            <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu</Text>
-            </TouchableOpacity>
+
         </View>
     );
 };
@@ -129,6 +104,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 8,
         padding: 8,
+        marginBottom : 10,
         marginVertical: 8,
     },
     textArea: {

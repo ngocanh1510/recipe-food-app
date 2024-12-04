@@ -10,7 +10,7 @@ const CreateRecipeScreen = () => {
             <View style={styles.container}>
                 <Text style={styles.title}>CHIA SẺ CÔNG THỨC CỦA BẠN</Text>
                 <Image
-                    source={require('C:/Users/Admin/Documents/new_app_git/recipe-food-app/frontend/screens/CreateRecipeScreen.js')}
+                    source={require('../assets/PeopleCookingConcept.png')}
                     style={styles.illustration}
                     resizeMode="contain"
                 />
