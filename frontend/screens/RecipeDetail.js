@@ -52,17 +52,9 @@ const RecipeDetail = ({ navigation }) => {
             });
         };
     }, []);
-
-    const [servings, setServings] = useState(4);
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
     const [showSpiceModal, setShowSpiceModal] = useState(false);
-    const [nutritionValues, setNutritionValues] = useState({
-        // carbs: '650g',
-        // protein: '45g',
-        // calories: '890kcal',
-        // fat: '12g'
-    });
     const [selectedSpice, setSelectedSpice] = useState(null);
     const [customSpice, setCustomSpice] = useState('');
     const [spiceAmount, setSpiceAmount] = useState('');
@@ -72,9 +64,6 @@ const RecipeDetail = ({ navigation }) => {
         // { name: 'Hành lá', amount: '50g' },
         // { name: 'Gia vị', amount: '1 gói' }
     ]);
-
-    const increaseServings = () => setServings(prev => prev + 1);
-    const decreaseServings = () => setServings(prev => prev > 1 ? prev - 1 : 1);
 
     const spiceList = [
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'

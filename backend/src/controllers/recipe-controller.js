@@ -27,7 +27,7 @@ export const getAllRecipes = async (req, res, next) => {
     let recipes;
   
     try {
-      recipes = await RecipeModel.find().limit(3);
+      recipes = await RecipeModel.find().limit(8);
     } catch (err) {
       return console.log('err');
     }
@@ -45,6 +45,11 @@ export const getAllRecipes = async (req, res, next) => {
       const {
         userOwner,
         title,
+        time,
+        carbs,
+        protein,
+        calories,
+        fat,
         description,
         categogiesId,
         ingredients,
@@ -83,6 +88,11 @@ export const getAllRecipes = async (req, res, next) => {
   
       if (
         !title || title.trim() === "" ||
+        !time || time.trim() === "" ||
+        !carbs || carbs.trim() === "" ||
+        !protein || protein.trim() === "" ||
+        !calories || calories.trim() === "" ||
+        !fat || fat.trim() === "" ||
         !description || description.trim() === ""||
         !Array.isArray(ingredients) || ingredients.length === 0 ||
         !Array.isArray(steps) || steps.length === 0
@@ -113,6 +123,11 @@ export const getAllRecipes = async (req, res, next) => {
         recipe = new RecipeModel({
           userOwner,
           title,
+          time,
+          carbs,
+          protein,
+          calories,
+          fat,
           description,
           categogiesId,
           ingredients,
@@ -133,7 +148,7 @@ export const getAllRecipes = async (req, res, next) => {
 export const editRecipe = async (req, res) => {
   try {
     const { id } = req.params; 
-    const { title, description, categoriesId, ingredients, steps, image } = req.body;
+    const { title,time,carbs,protein,calories,fat, description, categoriesId, ingredients, steps, image } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -162,6 +177,11 @@ export const editRecipe = async (req, res) => {
 
     const updateFields = {};
     if (title) updateFields.title = title;
+    if (time) updateFields.time = time;
+    if (carbs) updateFields.carbs = carbs;
+    if (protein) updateFields.protein = protein;
+    if (calories) updateFields.calories = calories;
+    if (fat) updateFields.fat = fat;
     if (description) updateFields.description = description;
     if (categoriesId) updateFields.categoriesId = categoriesId;
     if (ingredients) updateFields.ingredients = ingredients;

@@ -4,7 +4,7 @@ import { API_URL} from '../config';
 export const getRecipesInHomepage = async () => {
   try {
     const res = await axios.get(`http://${API_URL}:3001/recipe`);
-    
+    console.log(res)
     if (res.status === 200) {
       return res.data.recipes; 
     } else {
