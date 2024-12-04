@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5edea',
+    paddingBottom:80,
   },
   header: {
     paddingVertical: 20,
