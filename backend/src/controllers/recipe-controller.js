@@ -1,9 +1,12 @@
 import jwt from "jsonwebtoken";
+import AccountModel from "../models/Account.js";
 import UserModel from "../models/User.js";
 import RecipeModel from "../models/Recipe.js";
 import mongoose from "mongoose";
 import CategoryModel from "../models/Categories.js";
 import sendNotification from "../utils/sendNotification.js";
+import NotificationModel from "../models/Notification.js";
+
 
 export const getAllRecipes = async (req, res, next) => {
     let recipes;
@@ -224,13 +227,21 @@ export const deleteRecipe = async (req, res) => {
 // Like/Unlike Recipe
 export const toggleLikeRecipe = async (req, res) => {
   const { id } = req.params; // Recipe ID
-  const { userId } = req.body; // ID của người thực hiện hành động
+  const accountId = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc User ID" });
+  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(accountId)) {
+      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc Account ID" });
   }
 
   try {
+      const account = await AccountModel.findById(accountId).populate("user");
+      if (!account || !account.user) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy User từ Account ID" });
+      }
+
+      const userId = account.user._id; // ID thực của User
+      const userName = account.user.name; // Tên của User
+
       const recipe = await RecipeModel.findById(id);
       if (!recipe) {
           return res.status(404).json({ status: false, message: "Không tìm thấy Recipe" });
@@ -239,21 +250,40 @@ export const toggleLikeRecipe = async (req, res) => {
       // Kiểm tra trạng thái hiện tại: đã like hay chưa
       const hasLiked = recipe.likes.includes(userId);
 
-      if (hasLiked) {
-          // Nếu đã like -> unlike
-          recipe.likes = recipe.likes.filter((like) => like.toString() !== userId);
-      } else {
-          // Nếu chưa like -> like
-          recipe.likes.push(userId);
+      // if (hasLiked) {
+      //     // Nếu đã like -> unlike
+      //     recipe.likes = recipe.likes.filter((like) => like.toString() !== userId);
+      // } else {
+      //     // Nếu chưa like -> like
+      //     recipe.likes.push(userId);
 
-          // Gửi thông báo đến người tạo recipe nếu chưa like
-          const message = `${userId} đã thích công thức "${recipe.title} của bạn".`;
+      //     // Gửi thông báo đến người tạo recipe nếu chưa like
+      //     const message = `${userName} đã thích công thức "${recipe.title} của bạn".`;
+      //     sendNotification({
+      //         recipient: recipe.userOwner,
+      //         sender: userId,
+      //         type: "like",
+      //         recipeId: id,
+      //         message
+      //     });
+      // }
+      const updatedRecipe = await RecipeModel.findByIdAndUpdate(
+          id,
+          hasLiked
+              ? { $pull: { likes: userId } } // Unlike: Xóa userId khỏi danh sách likes
+              : { $addToSet: { likes: userId } }, // Like: Thêm userId vào danh sách likes
+          { new: true } // Trả về tài liệu đã cập nhật
+      );
+
+      if (!hasLiked) {
+          // Gửi thông báo chỉ khi người dùng nhấn like
+          const message = `${userName} đã thích công thức "${recipe.title} của bạn".`;
           sendNotification({
               recipient: recipe.userOwner,
               sender: userId,
               type: "like",
               recipeId: id,
-              message
+              message,
           });
       }
 
@@ -262,7 +292,7 @@ export const toggleLikeRecipe = async (req, res) => {
       res.status(200).json({
           status: true,
           message: hasLiked ? "Recipe unliked" : "Recipe liked",
-          recipe
+          updatedRecipe
       });
   } catch (err) {
       console.error(err);
@@ -273,16 +303,27 @@ export const toggleLikeRecipe = async (req, res) => {
 // Save/Unsave Recipe
 export const toggleSaveRecipe = async (req, res) => {
   const { id } = req.params; // Recipe ID
-  const { userId } = req.body; // ID của người thực hiện hành động
+  const accountId = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc User ID" });
+  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(accountId)) {
+      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc Account ID" });
   }
 
   try {
+      const account = await AccountModel.findById(accountId).populate("user");
+      if (!account || !account.user) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy User từ Account ID" });
+      }
+
+      const userId = account.user._id; // ID thực của User
       const user = await UserModel.findById(userId);
       if (!user) {
-          return res.status(404).json({ status: false, message: "User not found" });
+          return res.status(404).json({ status: false, message: "Không tìm thấy User" });
+      }
+      
+      const recipe = await RecipeModel.findById(id);
+      if (!recipe) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy Recipe" });
       }
 
       // Kiểm tra trạng thái hiện tại: đã save hay chưa
@@ -298,7 +339,7 @@ export const toggleSaveRecipe = async (req, res) => {
           // Gửi thông báo đến người tạo recipe nếu chưa save
           const recipe = await RecipeModel.findById(id);
           if (recipe) {
-              const message = `${userId} đã lưu công thức "${recipe.title} của bạn".`;
+              const message = `${user.name} đã lưu công thức "${recipe.title} của bạn".`;
               sendNotification({
                   recipient: recipe.userOwner,
                   sender: userId,
@@ -324,11 +365,16 @@ export const toggleSaveRecipe = async (req, res) => {
 
 // Comment 
 export const commentOnRecipe = async (req, res) => {
-  const { id } = req.params; // Recipe ID
-  const { userId, comment } = req.body; // User ID và nội dung comment
+  const { comment } = req.body; // User ID và nội dung comment
+  const accountId = req.user.id;
+  const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc User ID" });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ status: false, message: "Recipe ID không hợp lệ" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(accountId)) {
+      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc Account ID" });
   }
 
   if (!comment || comment.trim() === "") {
@@ -336,15 +382,26 @@ export const commentOnRecipe = async (req, res) => {
   }
 
   try {
+      const account = await AccountModel.findById(accountId).populate("user");
+      if (!account || !account.user) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy User từ Account ID" });
+      }
+
+      const userId = account.user._id; // ID thực của User
+      const user = await UserModel.findById(userId);
+      if (!user) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy User" });
+      }
+      
       const recipe = await RecipeModel.findById(id);
       if (!recipe) {
-          return res.status(404).json({ status: false, message: "Recipe not found" });
+          return res.status(404).json({ status: false, message: "Không tìm thấy recipe" });
       }
 
       // Thêm comment vào công thức
       const newComment = {
           user: userId,
-          text: comment,
+          content: comment,
           createdAt: new Date()
       };
       recipe.comments.push(newComment);
@@ -352,18 +409,20 @@ export const commentOnRecipe = async (req, res) => {
       await recipe.save();
 
       // Gửi thông báo đến người tạo công thức
-      const message = `${userId} đã bình luận công thức "${recipe.title} của bạn": "${comment}".`;
-      sendNotification({
+      if (recipe.userOwner.toString() !== userId.toString()) {
+        const message = `${account.user.name} đã bình luận về công thức "${recipe.title}" của bạn.`;
+        sendNotification({
           recipient: recipe.userOwner,
-          sender: userId,
+          sender: account.user._id,
           type: "comment",
           recipeId: id,
-          message
-      });
+          message,
+        });
+      }  
 
       res.status(201).json({
           status: true,
-          message: "Comment added successfully",
+          message: "Thêm bình luận thành công",
           comments: recipe.comments
       });
   } catch (err) {
@@ -375,40 +434,48 @@ export const commentOnRecipe = async (req, res) => {
 // Delete Comment
 export const deleteCommentFromRecipe = async (req, res) => {
   const { id, commentId } = req.params; // Recipe ID và Comment ID
-  const { userId } = req.body; // User ID của người thực hiện xóa
+  const accountId = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(commentId)) {
-      return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc User ID" });
+  if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Không tồn tại Recipe ID hoặc Account ID" });
   }
 
+
   try {
+      const account = await AccountModel.findById(accountId).populate("user");
+      if (!account || !account.user) {
+        return res.status(404).json({ status: false, message: "Không tìm thấy người dùng" });
+      }
+
       const recipe = await RecipeModel.findById(id);
       if (!recipe) {
-          return res.status(404).json({ status: false, message: "Recipe not found" });
+          return res.status(404).json({ status: false, message: "Không tìm thấy Recipe" });
       }
 
       // Kiểm tra comment có tồn tại không
-      const commentIndex = recipe.comments.findIndex(
-          (comment) => comment._id.toString() === commentId
-      );
-      if (commentIndex === -1) {
-          return res.status(404).json({ status: false, message: "Không tìm thấy bình luận" });
+      const comment = recipe.comments.find((c) => c._id.toString() === commentId);
+      if (!comment) {
+        return res.status(404).json({ status: false, message: "Không tìm thấy bình luận" });
       }
 
-      // Kiểm tra quyền xóa: Chỉ người tạo comment hoặc người tạo recipe mới được xóa
-      const comment = recipe.comments[commentIndex];
-      if (comment.user.toString() !== userId && recipe.userOwner.toString() !== userId) {
-          return res.status(403).json({ status: false, message: "Bạn không được phép xóa bình luận này" });
+      // Chỉ cho phép xóa nếu là chủ sở hữu recipe hoặc là người đã tạo comment
+      if (
+        comment.user.toString() !== account.user._id.toString() &&
+        recipe.userOwner.toString() !== account.user._id.toString()
+      ) {
+        return res.status(403).json({ status: false, message: "Bạn không có quyền xóa bình luận này" });
       }
 
       // Xóa comment
-      recipe.comments.splice(commentIndex, 1);
+      recipe.comments = recipe.comments.filter(
+      (c) => c._id.toString() !== commentId
+    );
 
       await recipe.save();
 
       res.status(200).json({
           status: true,
-          message: "Comment deleted successfully",
+          message: "Xóa bình luận thành công",
           comments: recipe.comments
       });
   } catch (err) {
@@ -419,19 +486,26 @@ export const deleteCommentFromRecipe = async (req, res) => {
 
 // get Notifications
 export const getNotifications = async (req, res) => {
-  const { userId } = req.params;
+  const accountId = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ status: false, message: "Invalid User ID" });
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Không tồn tại Account" });
   }
 
   try {
-      const notifications = await NotificationModel.find({ recipient: userId })
+    const account = await AccountModel.findById(accountId).populate("user");
+    if (!account || !account.user) {
+      return res.status(404).json({ status: false, message: "Không tìm thấy người dùng" });
+    }
+    
+    const userId = account.user._id;
+
+    const notifications = await NotificationModel.find({ recipient: userId })
           .sort({ createdAt: -1 })
           .populate("sender", "username") // Lấy thông tin người gửi
           .populate("recipe", "title"); // Lấy thông tin recipe
 
-      res.status(200).json({ status: true, notifications });
+    res.status(200).json({ status: true, notifications });
   } catch (err) {
       console.error(err);
       res.status(500).json({ status: false, message: "Failed to get notifications" });
@@ -441,15 +515,28 @@ export const getNotifications = async (req, res) => {
 // Đánh dấu đã đọc
 export const markNotificationAsRead = async (req, res) => {
   const { id } = req.params; // Notification ID
+  const accountId = req.user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Không tồn tại Account" });
+  }
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ status: false, message: "Invalid Notification ID" });
   }
 
   try {
-      const notification = await NotificationModel.findById(id);
-      if (!notification) {
-          return res.status(404).json({ status: false, message: "Notification not found" });
+      const account = await AccountModel.findById(accountId).populate("user");
+      if (!account || !account.user) {
+        return res.status(404).json({ status: false, message: "Không tìm thấy người dùng" });
+      }
+      
+      const userId = account.user._id;
+
+      const notification = await NotificationModel.findOne({ _id: id, recipient: userId });
+      
+        if (!notification) {
+          return res.status(404).json({ status: false, message: "Không tìm thấy thông báo" });
       }
 
       notification.isRead = true;
