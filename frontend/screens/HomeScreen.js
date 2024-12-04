@@ -110,9 +110,11 @@ const HomeScreen = ({ navigation }) => {
       if (selectedCategory) {
         setIsLoading(true);
         const data = await getRecipesByCategory(selectedCategory._id);
-        setCategoryRecipes(data || []);
+        setCategoryRecipes(data.recipes);
         setIsLoading(false);
       }
+      console.log(categoryRecipes);
+
     };
     fetchCategoryRecipes();
   }, [selectedCategory]);
@@ -206,6 +208,7 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        nestedScrollEnabled
       >
         <View style={styles.header}>
           <View style={styles.user}>
@@ -284,7 +287,7 @@ const HomeScreen = ({ navigation }) => {
                 data={categoryRecipes}
                 keyExtractor={(item) => item._id.toString()}
                 renderItem={renderCategoryRecipe}
-                horizontal
+                numColumns={2}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.foodList}
               />
