@@ -1,5 +1,4 @@
-import mongoose from "mongoose"
-import User from "./User.js"
+import mongoose from "mongoose";
 
 const AccountSchema = new mongoose.Schema({
     username: {
@@ -9,11 +8,14 @@ const AccountSchema = new mongoose.Schema({
         trim: true
     },
     password: {type: String, require: true},
-    member: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "member", 
+        ref: "users", 
         required: true 
     },
+    passwordResetToken: { type: String, default: null },  // Lưu trữ OTP
+    passwordResetExpires: { type: Date, default: null },
+    isOtpVerified: { type: Boolean, default: false }
 });
 
 const AccountModel = mongoose.model("accounts", AccountSchema);
