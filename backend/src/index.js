@@ -4,6 +4,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv";
 import AccountRouter from "./routes/auth-router.js";
 import RecipeRouter from "./routes/recipe-router.js";
+import CategoryRouter from "./routes/category-router.js";
 
 dotenv.config();
 
@@ -29,3 +30,4 @@ app.listen(3001, () => console.log("SERVER STARTED!"));
 
 app.use("/auth", AccountRouter);
 app.use("/recipe", RecipeRouter);
+app.use("/category",CategoryRouter)
