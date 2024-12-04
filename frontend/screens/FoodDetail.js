@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
 
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
-  
+
   // State to track the save status
   const [isSaved, setIsSaved] = useState(false);
 
@@ -12,6 +12,11 @@ const FoodDetail = ({ route, navigation }) => {
   const handleSave = () => {
     setIsSaved(!isSaved); // Toggle the save status
     alert(isSaved ? 'Đã bỏ lưu!' : 'Đã lưu!'); // Show an alert when saved or unsaved
+  };
+
+  // Handle navigation to CookingStepsScreen
+  const handleCookingSteps = () => {
+    navigation.navigate('CookingSteps', { steps: recipes.steps });
   };
 
   return (
@@ -72,7 +77,7 @@ const FoodDetail = ({ route, navigation }) => {
       </View>
 
       {/* Nút nấu ngay */}
-      <TouchableOpacity style={styles.cookButton} onPress={() => alert('Bắt đầu nấu!')}>
+      <TouchableOpacity style={styles.cookButton} onPress={handleCookingSteps}>
         <Text style={styles.cookButtonText}>Nấu ngay</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -83,6 +88,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingBottom:80,
   },
   image: {
     width: '100%',

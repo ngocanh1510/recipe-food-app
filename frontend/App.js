@@ -19,6 +19,8 @@ import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
+import CookingStepsScreen from './screens/CookingStepsScreen.js'; // Import CookingStepsScreen
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,6 +53,14 @@ const HomeStack = () => (
         title: 'Chi tiết món ăn',
       }}
     />
+      <Stack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Các bước nấu ăn',
+      }}
+    />
     <Stack.Screen
       name="Notifications" // Thêm màn hình Notifications
       component={NotificationsScreen}
@@ -74,6 +84,14 @@ const SearchNavigator = () => (
       name="FoodDetail"
       component={FoodDetail}
       options={{ title: 'Chi tiết món ăn' }}
+    />
+    <Stack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Các bước nấu ăn',
+      }}
     />
   </SearchStack.Navigator>
 );
