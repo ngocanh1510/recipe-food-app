@@ -33,7 +33,6 @@ export const getAllRecipes = async () => {
   }
 };
 
-<<<<<<< HEAD
 export const post = async (endpoint, data) => {
   try {
     const response = await axios.post(`http://${API_URL}:3001${endpoint}`, data);
@@ -43,7 +42,7 @@ export const post = async (endpoint, data) => {
     throw error; // Ném lỗi để catch ở nơi gọi API
   }
 };
-=======
+
 export const getAllCategories = async () => {
   try {
     console.log(API_URL);
@@ -70,4 +69,3 @@ export const getRecipesByCategory = async (categoryId) => {
     return null;
   }
 };
->>>>>>> 16b0e8dabb81a1462c4c104669cc0b941a4c31f9
