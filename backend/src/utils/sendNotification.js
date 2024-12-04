@@ -11,7 +11,7 @@ const sendNotification = async ({ recipient, sender, type, recipeId, message }) 
         });
 
         await notification.save();
-        console.log(`Thông báo được gửi đến ${recipient}: ${message}`);
+        //console.log(`Thông báo được gửi đến ${recipient}: ${message}`);
     } catch (err) {
         console.error("Lỗi khi gửi thông báo:", err.message);
     }
