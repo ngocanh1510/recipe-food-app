@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
+import FoodDetail from './screens/FoodDetail.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
@@ -18,10 +19,6 @@ import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
-import RecipeForm from './screens/RecipeForm.js';
-import RecipeDetail from './screens/RecipeDetail.js';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
-import FoodDetail from './screens/FoodDetail.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
