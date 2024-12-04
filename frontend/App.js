@@ -2,6 +2,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { SQLiteProvider } from 'expo-sqlite';
 import { useContext } from 'react';
 import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
@@ -10,8 +11,11 @@ import NoteScreen from './screens/NoteScreen.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
+import NoteScreen from './screens/NoteScreen.js';
 import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
 import ProfileScreen from './screens/ProfileScreen.js';
+import RecipeDetail from './screens/RecipeDetail.js';
+import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
@@ -24,13 +28,15 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // **AuthStack: Định nghĩa các màn hình liên quan đến xác thực**
+const StackAuth = createStackNavigator();
+
 const AuthStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Welcome" component={WelcomeScreen} />
-    <Stack.Screen name="Login" component={LoginScreen} />
-    <Stack.Screen name="Register" component={RegisterScreen} />
-    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-  </Stack.Navigator>
+  <StackAuth.Navigator screenOptions={{ headerShown: false }}>
+    <StackAuth.Screen name="Welcome" component={WelcomeScreen} />
+    <StackAuth.Screen name="Login" component={LoginScreen} />
+    <StackAuth.Screen name="Register" component={RegisterScreen} />
+    <StackAuth.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+  </StackAuth.Navigator>
 );
 
 // **HomeStack: Điều hướng trong HomeScreen**
@@ -103,12 +109,12 @@ const CreateRecipeNavigator = () => (
     <CreateRecipeStack.Screen
       name="RecipeForm"
       component={RecipeForm}
-      options={{ title: 'Chỉnh sửa công thức' }}
+      options={{title: 'Bước thực hiện' }}
     />
     <CreateRecipeStack.Screen
       name="RecipeDetail"
       component={RecipeDetail}
-      options={{ title: 'Chi tiết công thức' }}
+      options={{ title: 'Nguyên liệu' }}
     />
   </CreateRecipeStack.Navigator>
 );
@@ -228,6 +234,16 @@ async function initDatabase(db) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
+      CREATE TABLE IF NOT EXISTS recipe_steps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        step_number INTEGER,
+        title TEXT,
+        description TEXT,
+        image TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+
       CREATE TABLE IF NOT EXISTS ingredients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         recipe_id INTEGER,
@@ -253,10 +269,10 @@ async function initDatabase(db) {
 
 export default function App() {
   return (
-    <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
       <AuthProvider>
-        <AppNavigator />
+        <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
+          <AppNavigator />
+        </SQLiteProvider>
       </AuthProvider>
-    </SQLiteProvider>
   );
 }

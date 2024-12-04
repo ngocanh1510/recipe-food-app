@@ -4,7 +4,12 @@ import Category from './Categories.js'
 
 const RecipeSchema = new mongoose.Schema({
     userOwner: {type: mongoose.Types.ObjectId, ref: User},
-    title:{type:String,required:true},
+    title:{type:String,required:true,unique:true},
+    time:{type:Number,required:true},
+    carbs:{type:Number,required:true},
+    protein:{type:Number,required:true},
+    calories:{type:Number,required:true},
+    fat:{type:Number,required:true},
     description:{type:String,required:true},
     categogiesId:{type:mongoose.Types.ObjectId,ref:Category,required:true},
     ingredients:[{
@@ -12,7 +17,7 @@ const RecipeSchema = new mongoose.Schema({
         quantity: { type: String, required: true },
       }],
     steps:{type:[String],required:true},
-    image:{type:String,required:true},
+    image:{type:String},
     likes: [{ type: mongoose.Types.ObjectId, ref: 'users' }], // Danh sách người dùng đã like
     comments: [{
         user: { type: mongoose.Types.ObjectId, ref: 'users' },
