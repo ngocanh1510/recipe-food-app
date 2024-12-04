@@ -12,6 +12,7 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../components/Header';
 
 const MenuItem = ({ icon, title, onPress }) => (
     <TouchableOpacity
@@ -44,9 +45,7 @@ const ProfileScreen = ({navigation}) => {
     ];
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.header}>Tài Khoản</Text>
-
+        <View style={styles.container}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.profileSection}>
                     <Image
@@ -73,20 +72,23 @@ const ProfileScreen = ({navigation}) => {
                         <MenuItem key={index} {...item} />
                     ))}
                 </View>
+
+                <TouchableOpacity style={styles.logoutButton}>
+                    <Text style={styles.logoutText}>Đăng xuất</Text>
+                    <MaterialIcons name="logout" size={24} color="#5C3A29" />
+                </TouchableOpacity>
+
             </ScrollView>
 
-            <TouchableOpacity style={styles.logoutButton}>
-                <Text style={styles.logoutText}>Đăng xuất</Text>
-                <MaterialIcons name="logout" size={24} color="#5C3A29" />
-            </TouchableOpacity>
-        </SafeAreaView>
+
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAF3E0',
+        backgroundColor: '#f8f1f1',
     },
     header: {
         fontSize: 24,

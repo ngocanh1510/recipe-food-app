@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
+import FoodGrid from '../components/FoodGrid';
+import SearchBar from '../components/SearchBar';
 
 const foods = [
   {
@@ -78,39 +70,10 @@ export default function SearchScreen({ navigation }) {
   
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Tìm kiếm</Text>
-        <TouchableOpacity>
-          <Ionicons name="camera-outline" size={28} color="#881415" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar */}
-      <View style={styles.searchBar}>
-        <Ionicons name="search-outline" size={24} color="#881415" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Bạn muốn tìm món gì?"
-          value={searchText}
-          onChangeText={handleSearch}
-        />
-      </View>
-
-      {/* List of Foods */}
-      <View style={styles.foodSection}>
-        <Text style={styles.sectionTitle}>Khám phá các món ăn</Text>
-        <FlatList
-          data={filteredFoods}
-          keyExtractor={(item) => item.id}
-          renderItem={renderFoodItem}
-          showsVerticalScrollIndicator={false}
-        //   numColumns={1}
-        //   columnWrapperStyle={styles.foodRow}
-        />
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <SearchBar searchText={searchText} onChangeText={handleSearch} />
+      <FoodGrid foods={filteredFoods} onFoodPress={handleFoodPress} />
+    </View>
   );
 }
 
