@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
 
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
+  
+  // State to track the save status
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Handle saving the recipe
+  const handleSave = () => {
+    setIsSaved(!isSaved); // Toggle the save status
+    alert(isSaved ? 'Đã bỏ lưu!' : 'Đã lưu!'); // Show an alert when saved or unsaved
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -15,9 +24,14 @@ const FoodDetail = ({ route, navigation }) => {
         <Text style={styles.foodName}>{recipes.title}</Text>
         <View style={styles.timeContainer}>
           <Text style={styles.time}>⏱ {recipes.time || '60 phút'}</Text>
-          <TouchableOpacity onPress={() => alert('Đã lưu!')}>
-            <Icon name="bookmark" size={24} color="#881415" style={styles.bookmarkIcon} />
-          </TouchableOpacity>  
+          <TouchableOpacity onPress={handleSave}>
+            <Icon
+              name="bookmark"
+              size={24}
+              color={isSaved ? '#881415' : 'gray'} // Change color based on save status
+              style={styles.bookmarkIcon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
