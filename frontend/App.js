@@ -2,21 +2,20 @@ import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AuthProvider, AuthContext } from './screens/AuthContext.js';
-import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
-import LoginScreen from './screens/LoginScreen.js';
-import RegisterScreen from './screens/RegisterScreen.js';
-import HomeScreen from './screens/HomeScreen.js';
+import { useContext } from 'react';
+import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
-import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
 import NoteScreen from './screens/NoteScreen.js';
-import ProfileScreen from './screens/ProfileScreen.js';
-import SearchScreen from './screens/SearchScreen.js';
+import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
+import HomeScreen from './screens/HomeScreen.js';
+import LoginScreen from './screens/LoginScreen.js';
+import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
+import ProfileScreen from './screens/ProfileScreen.js';
+import RegisterScreen from './screens/RegisterScreen.js';
+import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
-import { useContext } from 'react';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,6 +80,11 @@ const CreateRecipeNavigator = () => (
       component={CreateRecipeScreen}
       options={{ title: 'Tạo công thức' }}
     />
+    <CreateRecipeStack.Screen
+      name="EditRecipe"
+      component={CreateRecipeScreen}
+      options={{ title: 'Chỉnh sửa công thức' }}
+    />
   </CreateRecipeStack.Navigator>
 );
 
@@ -92,7 +96,20 @@ const MainBottom = () => {
         tabBarShowLabel: true,
         tabBarActiveTintColor: '#881415',
         tabBarInactiveTintColor: 'black',
-
+        headerStyle: {
+          backgroundColor: '#f8f1f1',
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+        },
+        headerTitleStyle: {
+          color: '#000',
+          textAlign: 'left',
+          fontSize: 28,
+          color: '#881415',
+          fontWeight: 'bold',
+        },
+        headerTitleAlign: 'left',
         tabBarStyle: {
           backgroundColor: '#fff',
           borderTopColor: 'transparent',
@@ -129,13 +146,14 @@ const MainBottom = () => {
         component={CreateRecipeNavigator}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color }) => <AntDesign name="pluscircleo" size={28} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <AntDesign name={focused ? "pluscircle" : "pluscircleo"} size={28} color={color} />
+          ),
         }}
       />
-
       <Tab.Screen
         name="Sổ tay"
-        component={FavoriteScreen}
+        component={NoteScreen}
         options={{
           tabBarIcon: ({ color }) => <AntDesign name="book" size={28} color={color} />,
         }}
@@ -144,7 +162,6 @@ const MainBottom = () => {
         name="Hồ sơ"
         component={ProfileNavigator}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color }) => <AntDesign name="user" size={28} color={color} />,
         }}
       />

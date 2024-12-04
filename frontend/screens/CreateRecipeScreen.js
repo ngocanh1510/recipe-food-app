@@ -1,65 +1,61 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const CreateRecipeScreen = () => {
     const navigation = useNavigation();
 
     return (
-        <ScrollView style={styles.container}>
-            <View>
-                {/* Main Title */}
+            <View style={styles.container}>
                 <Text style={styles.title}>CHIA SẺ CÔNG THỨC CỦA BẠN</Text>
+                <Image
+                    source={require('/Users/datRobot/Documents/Documents/GitHub/recipe-food-app/frontend/assets/People Cooking Concept.png')}
+                    style={styles.illustration}
+                    resizeMode="contain"
+                />
+                <TouchableOpacity
+                    style={styles.createButton}
+                    activeOpacity={0.8}
+                    onPress={() => navigation.navigate('RecipeForm')}
+                >
+                    <Text style={styles.buttonText}>Tạo công thức</Text>
+                    <Ionicons name="arrow-forward" size={20} color="#8B0000" />
+                </TouchableOpacity>
             </View>
-
-            {/* Illustration */}
-            <Image
-                source={require('/Users/datRobot/Documents/Documents/GitHub/recipe-food-app/frontend/assets/People Cooking Concept.png')}
-                style={styles.illustration}
-                resizeMode="contain"
-            />
-
-            {/* Create Recipe Button */}
-            <TouchableOpacity
-                style={styles.createButton}
-                activeOpacity={0.8}
-                onPress={() => navigation.navigate('RecipeForm')}
-            >
-                <Text style={styles.buttonText}>Tạo công thức</Text>
-                <Ionicons name="arrow-forward" size={20} color="#8B0000" />
-            </TouchableOpacity>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    scrollView: {
+        flexGrow: 1,
+        backgroundColor: '#8B0000',
+    },
     container: {
         flex: 1,
+        paddingHorizontal: 20,
+        paddingTop: 60,
+        paddingBottom: 40,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        minHeight: '100%',
         backgroundColor: '#8B0000',
-        paddingTop: 40,
-    },
-    backButton: {
-        padding: 16,
-        position: 'absolute',
-        top: 40,
-        left: 0,
     },
     title: {
         color: '#FFFFFF',
-        fontSize: 24,
-        fontWeight: '300',
+        fontSize: 25,
+        fontWeight: '500',
         textAlign: 'center',
-        marginTop: 60,
         fontFamily: 'System',
         letterSpacing: 1,
+        marginBottom: 40,
+        marginTop: 40,
     },
     illustration: {
-        width: '80%',
-        height: '50%',
-        alignSelf: 'center',
-        marginTop: 40,
+        width: '100%',
+        height: 400,
+        marginVertical: 40,
+        marginBottom: 40,
     },
     createButton: {
         backgroundColor: '#FFFFFF',
@@ -67,18 +63,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 16,
-        paddingHorizontal: 32,
+        paddingHorizontal: 60,
         borderRadius: 25,
-        position: 'absolute',
-        bottom: 40,
-        alignSelf: 'center',
+        width: '80%',
         gap: 8,
+        marginTop: 40,
+        bottom: 100,
     },
     buttonText: {
         color: '#8B0000',
         fontSize: 16,
         fontWeight: '500',
         fontFamily: 'System',
+        
     },
 });
 
