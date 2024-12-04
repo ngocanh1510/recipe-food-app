@@ -140,7 +140,7 @@ const RecipeDetail = ({ navigation }) => {
             );
 
             Alert.alert('Thành công', 'Đã lưu công thức', [
-                { text: 'OK', onPress: () => navigation.goBack() }
+                { text: 'OK', onPress: () => navigation.navigate('RecipeForm', { recipeId }) }
             ]);
         } catch (error) {
             console.error('Error saving recipe:', error);
