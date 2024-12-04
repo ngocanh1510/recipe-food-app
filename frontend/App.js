@@ -2,33 +2,47 @@ import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { SQLiteProvider } from 'expo-sqlite';
 import { useContext } from 'react';
 import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
-import NoteScreen from './screens/NoteScreen.js';
-import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
+import FoodDetail from './screens/FoodDetail.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
-import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
+import NoteScreen from './screens/NoteScreen.js';
+import NotificationsScreen from './screens/NotificationScreen.js';
 import ProfileScreen from './screens/ProfileScreen.js';
+import RecipeDetail from './screens/RecipeDetail.js';
+import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
-import RecipeForm from './screens/RecipeForm.js';
+import { UserProvider } from './context/UserContext';
+import FavoritesScreen from './screens/FavoritesScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import AchievementsScreen from './screens/AchievementsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import HelpScreen from './screens/HelpScreen';
+import AboutScreen from './screens/AboutScreen';
+import CookingStepsScreen from './screens/CookingStepsScreen.js'; // Import CookingStepsScreen
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // **AuthStack: Định nghĩa các màn hình liên quan đến xác thực**
+const StackAuth = createStackNavigator();
+
 const AuthStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Welcome" component={WelcomeScreen} />
-    <Stack.Screen name="Login" component={LoginScreen} />
-    <Stack.Screen name="Register" component={RegisterScreen} />
-    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-  </Stack.Navigator>
+  <StackAuth.Navigator screenOptions={{ headerShown: false }}>
+    <StackAuth.Screen name="Welcome" component={WelcomeScreen} />
+    <StackAuth.Screen name="Login" component={LoginScreen} />
+    <StackAuth.Screen name="Register" component={RegisterScreen} />
+    <StackAuth.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+  </StackAuth.Navigator>
 );
 
 // **HomeStack: Điều hướng trong HomeScreen**
@@ -47,6 +61,14 @@ const HomeStack = () => (
         title: 'Chi tiết món ăn',
       }}
     />
+      <Stack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Các bước nấu ăn',
+      }}
+    />
     <Stack.Screen
       name="Notifications" // Thêm màn hình Notifications
       component={NotificationsScreen}
@@ -57,19 +79,43 @@ const HomeStack = () => (
     />
   </Stack.Navigator>
 );
+const SearchStack = createStackNavigator();
+
+const SearchNavigator = () => (
+  <SearchStack.Navigator screenOptions={{ headerShown: false }}>
+    <SearchStack.Screen
+      name="Search"
+      component={SearchScreen}
+      options={{ title: 'Tìm kiếm' }}
+    />
+    <SearchStack.Screen
+      name="FoodDetail"
+      component={FoodDetail}
+      options={{ title: 'Chi tiết món ăn' }}
+    />
+    <Stack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Các bước nấu ăn',
+      }}
+    />
+  </SearchStack.Navigator>
+);
+
 const ProfileStack = createStackNavigator();
 const ProfileNavigator = () => (
   <ProfileStack.Navigator screenOptions={{headerShown:false}}>
-    <ProfileStack.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{ headerShown: false }}
-    />
-    <ProfileStack.Screen
-      name="EditProfile"
-      component={EditProfileScreen}
-      options={{ title: 'Chinh sua ho so' }}
-    />
+    <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+    <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+    <ProfileStack.Screen name="Favorites" component={FavoritesScreen} />
+    <ProfileStack.Screen name="History" component={HistoryScreen} />
+    <ProfileStack.Screen name="Achievements" component={AchievementsScreen} />
+    <ProfileStack.Screen name="Settings" component={SettingsScreen} />
+    <ProfileStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+    <ProfileStack.Screen name="Help" component={HelpScreen} />
+    <ProfileStack.Screen name="About" component={AboutScreen} />
   </ProfileStack.Navigator>
 );
 
@@ -84,7 +130,12 @@ const CreateRecipeNavigator = () => (
     <CreateRecipeStack.Screen
       name="RecipeForm"
       component={RecipeForm}
-      options={{ title: 'Chỉnh sửa công thức' }}
+      options={{title: 'Bước thực hiện' }}
+    />
+    <CreateRecipeStack.Screen
+      name="RecipeDetail"
+      component={RecipeDetail}
+      options={{ title: 'Nguyên liệu' }}
     />
   </CreateRecipeStack.Navigator>
 );
@@ -137,7 +188,7 @@ const MainBottom = () => {
       />
       <Tab.Screen
         name="Tìm kiếm"
-        component={SearchScreen}
+        component={SearchNavigator}
         options={{
           tabBarIcon: ({ color }) => <AntDesign name="search1" size={28} color={color} />,
         }}
@@ -181,10 +232,70 @@ const AppNavigator = () => {
   );
 };
 
+async function initDatabase(db) {
+  const DATABASE_VERSION = 1;
+  
+  const { user_version: currentDbVersion } = await db.getFirstAsync('PRAGMA user_version');
+  
+  if (currentDbVersion >= DATABASE_VERSION) {
+    return;
+  }
+
+  if (currentDbVersion === 0) {
+    await db.execAsync(`
+      PRAGMA journal_mode = 'wal';
+      
+      CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT,
+        image TEXT,
+        servings INTEGER,
+        cookingTime TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS recipe_steps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        step_number INTEGER,
+        title TEXT,
+        description TEXT,
+        image TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+
+      CREATE TABLE IF NOT EXISTS ingredients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        name TEXT,
+        amount TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+
+      CREATE TABLE IF NOT EXISTS nutrition_values (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        carbs TEXT,
+        protein TEXT,
+        calories TEXT,
+        fat TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+    `);
+  }
+
+  await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
+}
+
 export default function App() {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+      <AuthProvider>
+        <UserProvider>
+          <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
+            <AppNavigator />
+          </SQLiteProvider>
+        </UserProvider>
+      </AuthProvider>
   );
 }

@@ -10,14 +10,14 @@ const CreateRecipeScreen = () => {
             <View style={styles.container}>
                 <Text style={styles.title}>CHIA SẺ CÔNG THỨC CỦA BẠN</Text>
                 <Image
-                    source={require('C:/Users/Admin/Documents/new_app_git/recipe-food-app/frontend/screens/CreateRecipeScreen.js')}
+                    source={require('../assets/PeopleCookingConcept.png')}
                     style={styles.illustration}
                     resizeMode="contain"
                 />
                 <TouchableOpacity
                     style={styles.createButton}
                     activeOpacity={0.8}
-                    onPress={() => navigation.navigate('RecipeForm')}
+                    onPress={() => navigation.navigate('RecipeDetail')}
                 >
                     <Text style={styles.buttonText}>Tạo công thức</Text>
                     <Ionicons name="arrow-forward" size={20} color="#8B0000" />
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         paddingTop: 60,
-        paddingBottom: 40,
+        paddingBottom: 80,
         justifyContent: 'space-between',
         alignItems: 'center',
         minHeight: '100%',

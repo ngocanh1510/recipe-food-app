@@ -11,8 +11,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from '../components/Header';
+import { useUser } from '../context/UserContext';
 
 const MenuItem = ({ icon, title, onPress }) => (
     <TouchableOpacity
@@ -27,10 +26,14 @@ const MenuItem = ({ icon, title, onPress }) => (
 );
 
 const ProfileScreen = ({navigation}) => {
-    
+    const { userData } = useUser();
 
     const menuItems1 = [
-        { icon: <MaterialIcons name="favorite" size={24} color="#5C3A29" />, title: "Yêu thích" },
+        {
+            icon: <MaterialIcons name="favorite" size={24} color="#5C3A29" />, 
+            title: "Yêu thích",
+            onPress: () => navigation.navigate('Favorites')
+        },
         { icon: <MaterialIcons name="history" size={24} color="#5C3A29" />, title: "Lịch sử" },
         { icon: <MaterialIcons name="notifications" size={24} color="#5C3A29" />, title: "Thông báo" },
         { icon: <MaterialCommunityIcons name="trophy" size={24} color="#5C3A29" />, title: "Thành tựu" },
@@ -38,7 +41,11 @@ const ProfileScreen = ({navigation}) => {
     ];
 
     const menuItems2 = [
-        { icon: <MaterialIcons name="settings" size={24} color="#5C3A29" />, title: "Cài đặt" },
+        {
+            icon: <MaterialIcons name="settings" size={24} color="#5C3A29" />, 
+            title: "Cài đặt",
+            onPress: () => navigation.navigate('Settings')
+        },
         { icon: <MaterialIcons name="security" size={24} color="#5C3A29" />, title: "Chính sách bảo mật" },
         { icon: <MaterialIcons name="help" size={24} color="#5C3A29" />, title: "Hỗ trợ" },
         { icon: <MaterialIcons name="info" size={24} color="#5C3A29" />, title: "Về chúng tôi" },
@@ -50,11 +57,11 @@ const ProfileScreen = ({navigation}) => {
                 <View style={styles.profileSection}>
                     <Image
                         style={styles.avatar}
-                        source={{ uri: 'https://via.placeholder.com/100' }}
+                        source={{ uri: userData.image }}
                     />
                     <View style={styles.profileInfo}>
-                        <Text style={styles.name}>Nguyễn Văn A</Text>
-                        <Text style={styles.description}>Yêu thích nấu ăn</Text>
+                        <Text style={styles.name}>{userData.name}</Text>
+                        <Text style={styles.description}>{userData.email}</Text>
                     </View>
                     <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
                     <MaterialIcons name="edit" size={24} color="#5C3A29" />
@@ -89,6 +96,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f8f1f1',
+        paddingBottom:80,
     },
     header: {
         fontSize: 24,

@@ -1,17 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEvent } from 'expo';
 import * as ImagePicker from 'expo-image-picker';
-import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useState } from 'react';
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSQLiteContext } from 'expo-sqlite';
 
-
-const RecipeForm = ({ navigation }) => {
+const RecipeForm = ({ navigation, recipeId }) => {
+    const db = useSQLiteContext();
     const [ingredients, setIngredients] = useState([{ name: '', quantity: '' }]);
+    const [steps, setSteps] = useState([{ title: '', description: '', image: null }]);
 
     const addIngredient = () => {
         setIngredients([...ingredients, { name: '', quantity: '' }]);
     };
+
     const [image, setImage] = useState(null);
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -21,78 +22,114 @@ const RecipeForm = ({ navigation }) => {
             aspect: [4, 3],
             quality: 1,
         });
-
-        console.log(result);
-
-        const player = useVideoPlayer(videoSource, player => {
-            player.loop = true;
-            player.play();
-        });
-        const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
+        console.log(result);
     };
-    const videoSource =
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
+    const addStep = () => {
+        setSteps([...steps, { title: '', description: '', image: null }]);
+    };
+
+    const pickStepImage = async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled) {
+            const updatedSteps = [...steps];
+            updatedSteps[index].image = result.assets[0].uri;
+            setSteps(updatedSteps);
+        }
+    };
+
+    const handleStepTitleFocus = (index) => {
+        const newSteps = [...steps];
+        if (!newSteps[index].title.startsWith(`Bước ${index + 1}: `)) {
+            newSteps[index].title = `Bước ${index + 1}: `;
+            setSteps(newSteps);
+        }
+    };
+
+    const handleComplete = async () => {
+        try {
+            // Insert all steps
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                await db.runAsync(
+                    'INSERT INTO recipe_steps (recipe_id, step_number, title, description, image) VALUES (?, ?, ?, ?, ?)',
+                    [recipeId, i + 1, step.title, step.description, step.image]
+                );
+            }
+
+            Alert.alert('Thành công', 'Công thức đã được lưu', [
+                { text: 'OK', onPress: () => navigation.navigate('CreateRecipe') }
+            ]);
+        } catch (error) {
+            console.error('Error saving steps:', error);
+            Alert.alert('Lỗi', 'Không thể lưu các bước thực hiện');
+        }
+    };
 
     return (
         <View style={styles.container}>
-            {image ? (
-                <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-                    <Image source={{ uri: image }} style={styles.image} />
-                    <View style={styles.editImageOverlay}>
-                        <Ionicons name="camera" size={24} color="white" />
-                        <Text style={styles.editImageText}>Đổi ảnh</Text>
-                    </View>
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity onPress={pickImage} style={[styles.image, styles.placeholderContainer]}>
-                    <Ionicons name="image-outline" size={50} color="#ccc" />
-                    <Text style={styles.placeholderText}>Chọn ảnh món ăn</Text>
-                </TouchableOpacity>
-            )}
-
-            <VideoView style={styles.video} player={
-                useVideoPlayer(videoSource, player => {
-                    player.loop = true;
-                    player.play();
-                })
-            } allowsFullscreen allowsPictureInPicture/>
-            
-            {/* <View style={styles.controlsContainer}> */}
-                {/* <Button
-                    title={isPlaying ? 'Pause' : 'Play'}
-                    onPress={() => {
-                        if (isPlaying) {
-                            player.pause();
-                        } else {
-                            player.play();
-                        }
-                    }}
-                />
-            </View> */}
             <ScrollView contentContainerStyle={styles.scrollView}>
-                <TextInput style={styles.input} placeholder="Tên món ăn" />
-                <TextInput style={styles.input} placeholder="Nhập thời gian nấu" />
-                <TextInput style={[styles.input, styles.textArea]} placeholder="Mô tả ngắn" multiline />
-                <Text style={styles.sectionTitle}>Nguyên liệu</Text>
-                {ingredients.map((ingredient, index) => (
-                    <View key={index} style={styles.ingredientRow}>
-                        <TextInput style={styles.ingredientInput} placeholder="Nguyên liệu" value={ingredient.name} />
-                        <TextInput style={styles.ingredientInput} placeholder="Số lượng" value={ingredient.quantity} />
+                <Text style={styles.stepsTitle}>Bước thực hiện</Text>
+                {steps.map((step, index) => (
+                    <View key={index} style={styles.stepCard}>
+                        <TouchableOpacity style={styles.stepImageContainer} onPress={() => pickStepImage(index)}>
+                            {step.image ? (
+                                <Image source={{ uri: step.image }} style={styles.stepImage} />
+                            ) : (
+                                <View style={styles.stepImagePlaceholder}>
+                                    <Ionicons name="camera-outline" size={24} color="#666" />
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                        <View style={styles.stepContent}>
+                            <TextInput
+                                style={styles.stepTitle}
+                                placeholder={`Bước ${index + 1}: `}
+                                value={step.title}
+                                onFocus={() => handleStepTitleFocus(index)}
+                                onChangeText={(text) => {
+                                    const newSteps = [...steps];
+                                    // Ensure prefix remains when user edits
+                                    const prefix = `Bước ${index + 1}: `;
+                                    if (!text.startsWith(prefix)) {
+                                        text = prefix + text.replace(prefix, '');
+                                    }
+                                    newSteps[index].title = text;
+                                    setSteps(newSteps);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.stepDescription}
+                                placeholder="Chi tiết bước thực hiện"
+                                multiline
+                                value={step.description}
+                                onChangeText={(text) => {
+                                    const newSteps = [...steps];
+                                    newSteps[index].description = text;
+                                    setSteps(newSteps);
+                                }}
+                            />
+                        </View>
                     </View>
                 ))}
-                <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
-                    <Text style={styles.addButtonText}>+ Thêm nguyên liệu</Text>
+
+                <TouchableOpacity style={styles.addButton} onPress={addStep}>
+                    <Text style={styles.addButtonText}>+ Thêm bước</Text>
                 </TouchableOpacity>
-                <Text style={styles.sectionTitle}>Hướng dẫn</Text>
-                <TextInput style={[styles.input, styles.textArea]} placeholder="Nhập hướng dẫn nấu" multiline />
+
+                <TouchableOpacity style={styles.completeButton} onPress={handleComplete}>
+                    <Text style={styles.completeButtonText}>Hoàn thành</Text>
+                </TouchableOpacity>
             </ScrollView>
-            <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu</Text>
-            </TouchableOpacity>
+
         </View>
     );
 };
@@ -101,10 +138,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F5E5E5',
+        paddingTop: 20,
+        paddingBottom: 80,
     },
     scrollView: {
         padding: 16,
         paddingTop: 8,
+        alightItems: 'center',
     },
     image: {
         width: '100%',
@@ -129,6 +169,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 8,
         padding: 8,
+        marginBottom : 10,
         marginVertical: 8,
     },
     textArea: {
@@ -172,6 +213,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 8,
         position: 'absolute',
+        marginTop: 46,
         bottom: 16,
         left: 16,
         right: 16,
@@ -199,6 +241,70 @@ const styles = StyleSheet.create({
         color: 'white',
         marginTop: 8,
         fontSize: 16,
+    },
+    stepsTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 16,
+    },
+    stepCard: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    stepImageContainer: {
+        width: 80,
+        height: 80,
+        marginRight: 12,
+    },
+    stepImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
+    stepImagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+        backgroundColor: '#f0f0f0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderStyle: 'dashed',
+    },
+    stepContent: {
+        flex: 1,
+    },
+    stepTitle: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    stepDescription: {
+        fontSize: 14,
+        color: '#666',
+    },
+    completeButton: {
+        backgroundColor: '#8B0000',
+        padding: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 40,
+    },
+    completeButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '500',
     },
 });
 

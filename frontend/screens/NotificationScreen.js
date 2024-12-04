@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5edea',
     padding: 20,
+    paddingBottom:80,
   },
   notificationItem: {
     backgroundColor: '#fff',
