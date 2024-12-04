@@ -6,6 +6,7 @@ const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
 
   return (
+    
     <ScrollView style={styles.container}>
       {/* Hình ảnh món ăn */}
       <Image source={{ uri: recipes.image }} style={styles.image} />
@@ -61,6 +62,7 @@ const FoodDetail = ({ route, navigation }) => {
       <TouchableOpacity style={styles.cookButton} onPress={() => alert('Bắt đầu nấu!')}>
         <Text style={styles.cookButtonText}>Nấu ngay</Text>
       </TouchableOpacity>
+      
     </ScrollView>
   );
 };
@@ -69,6 +71,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingBottom: 120, // Increased from 80 to 120 to add more space at bottom
+    
   },
   image: {
     width: '100%',

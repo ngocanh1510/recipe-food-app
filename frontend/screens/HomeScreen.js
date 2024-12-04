@@ -9,6 +9,7 @@ import Animated, {
   withTiming, 
   useAnimatedStyle 
 } from 'react-native-reanimated';
+import { useUser } from '../context/UserContext';
 import {
   View,
   Text,
@@ -76,6 +77,7 @@ const SkeletonCategoryItem = () => (
 );
 
 const HomeScreen = ({ navigation }) => {
+  const { userData } = useUser();
   const [categories,setCategories]=useState([])
   const [recipes, setRecipes] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
@@ -210,10 +212,10 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.header}>
           <View style={styles.user}>
 
-            <Image source={{ uri: avatar }} style={styles.profileImage}/>
+            <Image source={{ uri: userData.image }} style={styles.profileImage}/>
             <View>
               <Text style={styles.greeting}>Chào buổi sáng!</Text>
-              <Text style={styles.username}>{username}</Text>
+              <Text style={styles.username}>{userData.name}</Text>
             </View>
 
           </View>

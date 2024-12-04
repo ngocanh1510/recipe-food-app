@@ -12,13 +12,21 @@ import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
 import NoteScreen from './screens/NoteScreen.js';
-import NotificationsScreen from './screens/NotificationScreen.js'; // Import NotificationsScreen
+import NotificationsScreen from './screens/NotificationScreen.js';
 import ProfileScreen from './screens/ProfileScreen.js';
 import RecipeDetail from './screens/RecipeDetail.js';
 import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
+import { UserProvider } from './context/UserContext';
+import FavoritesScreen from './screens/FavoritesScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import AchievementsScreen from './screens/AchievementsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import HelpScreen from './screens/HelpScreen';
+import AboutScreen from './screens/AboutScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,16 +89,15 @@ const SearchNavigator = () => (
 const ProfileStack = createStackNavigator();
 const ProfileNavigator = () => (
   <ProfileStack.Navigator screenOptions={{headerShown:false}}>
-    <ProfileStack.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{ headerShown: false }}
-    />
-    <ProfileStack.Screen
-      name="EditProfile"
-      component={EditProfileScreen}
-      options={{ title: 'Chinh sua ho so' }}
-    />
+    <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+    <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} />
+    <ProfileStack.Screen name="Favorites" component={FavoritesScreen} />
+    <ProfileStack.Screen name="History" component={HistoryScreen} />
+    <ProfileStack.Screen name="Achievements" component={AchievementsScreen} />
+    <ProfileStack.Screen name="Settings" component={SettingsScreen} />
+    <ProfileStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+    <ProfileStack.Screen name="Help" component={HelpScreen} />
+    <ProfileStack.Screen name="About" component={AboutScreen} />
   </ProfileStack.Navigator>
 );
 
@@ -266,9 +273,11 @@ async function initDatabase(db) {
 export default function App() {
   return (
       <AuthProvider>
-        <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
-          <AppNavigator />
-        </SQLiteProvider>
+        <UserProvider>
+          <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
+            <AppNavigator />
+          </SQLiteProvider>
+        </UserProvider>
       </AuthProvider>
   );
 }
