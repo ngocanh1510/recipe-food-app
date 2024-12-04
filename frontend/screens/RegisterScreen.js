@@ -2,11 +2,44 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { post } from '../src/api/api.js';
+import { Alert } from 'react-native';
+
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [cfpassword, setCfpassword] = useState('');
+
+  // Hàm đăng ký
+  const handleRegister = async () => {
+  
+    if (!name || !email || !password || !cfpassword) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    if (password !== cfpassword) {
+      Alert.alert('Lỗi', 'Mật khẩu và xác nhận mật khẩu không khớp!');
+      return;
+    }
+
+    try {
+      // Gửi yêu cầu đăng ký tới API
+      const response = post('/auth/register', { name, email, password });
+
+      if (response.status === 200) {
+        Alert.alert('Thành công', 'Đăng ký thành công!');
+        navigation.navigate('Login'); // Điều hướng về màn hình Đăng nhập
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : 'Đã xảy ra lỗi, vui lòng thử lại!';
+      Alert.alert('Lỗi', errorMessage);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -16,7 +49,7 @@ export default function RegisterScreen({ navigation }) {
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='account-outline' style={styles.icon} />
-        <TextInput placeholder="Nhập tên đăng nhập" value={name} onChangeText={setName} />
+        <TextInput placeholder="Nhập họ và tên" value={name} onChangeText={setName} />
       </View>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons name='email-outline' style={styles.icon} />
@@ -30,7 +63,7 @@ export default function RegisterScreen({ navigation }) {
         <MaterialCommunityIcons name='lock-outline' style={styles.icon} />
         <TextInput placeholder="Xác nhận mật khẩu" value={cfpassword} onChangeText={setCfpassword} secureTextEntry />
       </View>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
+      <TouchableOpacity onPress={handleRegister} style={styles.button}>
         <Text style={styles.creatText}>Đăng ký</Text>
       </TouchableOpacity>
       <View style={styles.registerContainer}>
