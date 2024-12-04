@@ -7,7 +7,6 @@ import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
 import NoteScreen from './screens/NoteScreen.js';
-import FoodDetail from './screens/FoodDetail.js'; // Import màn hình FoodDetail
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
@@ -17,6 +16,7 @@ import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
 import RecipeForm from './screens/RecipeForm.js';
+import FoodDetail from './screens/FoodDetail.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,6 +57,23 @@ const HomeStack = () => (
     />
   </Stack.Navigator>
 );
+const SearchStack = createStackNavigator();
+
+const SearchNavigator = () => (
+  <SearchStack.Navigator screenOptions={{ headerShown: false }}>
+    <SearchStack.Screen
+      name="Search"
+      component={SearchScreen}
+      options={{ title: 'Tìm kiếm' }}
+    />
+    <SearchStack.Screen
+      name="FoodDetail"
+      component={FoodDetail}
+      options={{ title: 'Chi tiết món ăn' }}
+    />
+  </SearchStack.Navigator>
+);
+
 const ProfileStack = createStackNavigator();
 const ProfileNavigator = () => (
   <ProfileStack.Navigator screenOptions={{headerShown:false}}>
@@ -137,7 +154,7 @@ const MainBottom = () => {
       />
       <Tab.Screen
         name="Tìm kiếm"
-        component={SearchScreen}
+        component={SearchNavigator}
         options={{
           tabBarIcon: ({ color }) => <AntDesign name="search1" size={28} color={color} />,
         }}
