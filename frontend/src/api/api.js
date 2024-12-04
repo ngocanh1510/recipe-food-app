@@ -49,3 +49,13 @@ export const getAllCategories = async () => {
     return null;
   }
 };
+
+export const getRecipesByCategory = async (categoryId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/recipes/category/${categoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching recipes by category:', error);
+    return null;
+  }
+};
