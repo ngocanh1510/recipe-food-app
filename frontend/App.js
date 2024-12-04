@@ -16,6 +16,7 @@ import ProfileScreen from './screens/ProfileScreen.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
+import RecipeForm from './screens/RecipeForm.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,8 +82,8 @@ const CreateRecipeNavigator = () => (
       options={{ title: 'Tạo công thức' }}
     />
     <CreateRecipeStack.Screen
-      name="EditRecipe"
-      component={CreateRecipeScreen}
+      name="RecipeForm"
+      component={RecipeForm}
       options={{ title: 'Chỉnh sửa công thức' }}
     />
   </CreateRecipeStack.Navigator>
