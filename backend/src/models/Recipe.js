@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
+import Category from './Categories.js';
 import User from './User.js';
-import Category from './Categories.js'
 
 const RecipeSchema = new mongoose.Schema({
     userOwner: {type: mongoose.Types.ObjectId, ref: User},
@@ -11,7 +11,7 @@ const RecipeSchema = new mongoose.Schema({
     calories:{type:Number,required:true},
     fat:{type:Number,required:true},
     description:{type:String,required:true},
-    categogiesId:{type:mongoose.Types.ObjectId,ref:Category,required:true},
+    categoriesId:{type:mongoose.Types.ObjectId,ref:Category,required:true},
     ingredients:[{
         name: { type: String, required: true },
         quantity: { type: String, required: true },

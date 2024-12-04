@@ -20,69 +20,70 @@ const FoodDetail = ({ route, navigation }) => {
   };
 
   return (
-    
-    <ScrollView style={styles.container}>
-      {/* Hình ảnh món ăn */}
-      <Image source={{ uri: recipes.image }} style={styles.image} />
+    <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        {/* Hình ảnh món ăn */}
+        <Image source={{ uri: recipes.image }} style={styles.image} />
 
-      {/* Tiêu đề món ăn */}
-      <View style={styles.header}>
-        <Text style={styles.foodName}>{recipes.title}</Text>
-        <View style={styles.timeContainer}>
-          <Text style={styles.time}>⏱ {recipes.time || '60 phút'}</Text>
-          <TouchableOpacity onPress={handleSave}>
-            <Icon
-              name="bookmark"
-              size={24}
-              color={isSaved ? '#881415' : 'gray'} // Change color based on save status
-              style={styles.bookmarkIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Dòng mô tả */}
-      <Text style={styles.description}>
-        {recipes.description || 'Món ăn đậm đà hương vị truyền thống.'}
-      </Text>
-
-      {/* Thông tin dinh dưỡng */}
-      <View style={styles.nutritionContainer}>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionTitle}>Tính bột</Text>
-          <Text style={styles.nutritionValue}>{recipes.carbs || '65g'}</Text>
-        </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionTitle}>Chất đạm</Text>
-          <Text style={styles.nutritionValue}>{recipes.protein || '27g'}</Text>
-        </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionTitle}>Năng lượng</Text>
-          <Text style={styles.nutritionValue}>{recipes.calories || '120 calo'}</Text>
-        </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionTitle}>Chất béo</Text>
-          <Text style={styles.nutritionValue}>{recipes.fat || '9g'}</Text>
-        </View>
-      </View>
-
-      {/* Nguyên liệu */}
-      <Text style={styles.sectionTitle}>Nguyên liệu</Text>
-      <View style={styles.ingredients}>
-        {recipes.ingredients?.map((ingredient, index) => (
-          <View key={index} style={styles.ingredientItem}>
-            <Text style={styles.ingredientName}>{ingredient.name}</Text>
-            <Text style={styles.ingredientQuantity}>{ingredient.quantity}</Text>
+        {/* Tiêu đề món ăn */}
+        <View style={styles.header}>
+          <Text style={styles.foodName}>{recipes.title}</Text>
+          <View style={styles.timeContainer}>
+            <Text style={styles.time}>⏱ {recipes.time || '60 phút'}</Text>
+            <TouchableOpacity onPress={handleSave}>
+              <Icon
+                name="bookmark"
+                size={24}
+                color={isSaved ? '#881415' : 'gray'} // Change color based on save status
+                style={styles.bookmarkIcon}
+              />
+            </TouchableOpacity>
           </View>
-        ))}
-      </View>
+        </View>
 
-      {/* Nút nấu ngay */}
-      <TouchableOpacity style={styles.cookButton} onPress={handleCookingSteps}>
-        <Text style={styles.cookButtonText}>Nấu ngay</Text>
-      </TouchableOpacity>
-      
-    </ScrollView>
+        {/* Dòng mô tả */}
+        <Text style={styles.description}>
+          {recipes.description || 'Món ăn đậm đà hương vị truyền thống.'}
+        </Text>
+
+        {/* Thông tin dinh dưỡng */}
+        <View style={styles.nutritionContainer}>
+          <View style={styles.nutritionItem}>
+            <Text style={styles.nutritionTitle}>Tính bột</Text>
+            <Text style={styles.nutritionValue}>{recipes.carbs || '65g'}</Text>
+          </View>
+          <View style={styles.nutritionItem}>
+            <Text style={styles.nutritionTitle}>Chất đạm</Text>
+            <Text style={styles.nutritionValue}>{recipes.protein || '27g'}</Text>
+          </View>
+          <View style={styles.nutritionItem}>
+            <Text style={styles.nutritionTitle}>Năng lượng</Text>
+            <Text style={styles.nutritionValue}>{recipes.calories || '120 calo'}</Text>
+          </View>
+          <View style={styles.nutritionItem}>
+            <Text style={styles.nutritionTitle}>Chất béo</Text>
+            <Text style={styles.nutritionValue}>{recipes.fat || '9g'}</Text>
+          </View>
+        </View>
+
+        {/* Nguyên liệu */}
+        <Text style={styles.sectionTitle}>Nguyên liệu</Text>
+        <View style={styles.ingredients}>
+          {recipes.ingredients?.map((ingredient, index) => (
+            <View key={index} style={styles.ingredientItem}>
+              <Text style={styles.ingredientName}>{ingredient.name}</Text>
+              <Text style={styles.ingredientQuantity}>{ingredient.quantity}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Nút nấu ngay */}
+        <TouchableOpacity style={styles.cookButton} onPress={handleCookingSteps}>
+          <Text style={styles.cookButtonText}>Nấu ngay</Text>
+        </TouchableOpacity>
+
+      </ScrollView>
+    </View>
   );
 };
 
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingBottom:80,
+    paddingBottom: 80,
   },
   image: {
     width: '100%',

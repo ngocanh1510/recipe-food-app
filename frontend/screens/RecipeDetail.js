@@ -64,15 +64,14 @@ const RecipeDetail = ({ navigation }) => {
         // { name: 'Hành lá', amount: '50g' },
         // { name: 'Gia vị', amount: '1 gói' }
     ]);
-    const [nutritionValues, setNutritionValues] = useState({
-            carbs: '',
-            protein: '',
-            calories: '',
-            fat: ''
-        });
+    const [carbs,setCarbs] = useState(0);
+    const [protein,setProtein] = useState(0);
+    const [calories,setCalories] = useState(0);
+    const [fat,setFat] = useState(0);
     const spiceList = [
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'
     ];
+    const [cookingTime, setCookingTime] = useState('60 phút');
 
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
@@ -104,44 +103,81 @@ const RecipeDetail = ({ navigation }) => {
     const [servings, setServings] = useState(1);
     const increaseServings = () => setServings(prev => prev + 1);
     const decreaseServings = () => setServings(prev => Math.max(1, prev - 1));
+    const [steps, setSteps] = useState([{ title: '', description: '', image: null }]);
+
+    const addStep = () => {
+        setSteps([...steps, { title: '', description: '', image: null }]);
+    };
+
+    const pickStepImage = async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled) {
+            const updatedSteps = [...steps];
+            updatedSteps[index].image = result.assets[0].uri;
+            setSteps(updatedSteps);
+        }
+    };
+
+    const handleStepTitleFocus = (index) => {
+        const newSteps = [...steps];
+        if (!newSteps[index].title.startsWith(`Bước ${index + 1}: `)) {
+            newSteps[index].title = `Bước ${index + 1}: `;
+            setSteps(newSteps);
+        }
+    };
+
     const handleSave = async () => {
-        // Validate required fields
-        if (!title || !description) {
-            Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
-            return;
-        }
+        // // Validate required fields
+        // if (!title || !description) {
+        //     Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
+        //     return;
+        // }
 
-        try {
-            // Insert recipe
-            const recipeResult = await db.runAsync(
-                'INSERT INTO recipes (title, description, image, servings, cookingTime) VALUES (?, ?, ?, ?, ?)',
-                [title, description, image, servings, '60 phút']
-            );
+        // try {
+        //     // Insert recipe
+        //     const recipeResult = await db.runAsync(
+        //         'INSERT INTO recipes (title, description, image, servings, cookingTime) VALUES (?, ?, ?, ?, ?)',
+        //         [title, description, image, servings, '60 phút']
+        //     );
 
-            const recipeId = recipeResult.lastInsertRowId;
+        //     const recipeId = recipeResult.lastInsertRowId;
 
-            // Insert ingredients
-            for (const ingredient of ingredients) {
-                await db.runAsync(
-                    'INSERT INTO ingredients (recipe_id, name, amount) VALUES (?, ?, ?)',
-                    [recipeId, ingredient.name, ingredient.amount]
-                );
-            }
+        //     // Insert ingredients
+        //     for (const ingredient of ingredients) {
+        //         await db.runAsync(
+        //             'INSERT INTO ingredients (recipe_id, name, amount) VALUES (?, ?, ?)',
+        //             [recipeId, ingredient.name, ingredient.amount]
+        //         );
+        //     }
 
-            // Insert nutrition values
-            await db.runAsync(
-                'INSERT INTO nutrition_values (recipe_id, carbs, protein, calories, fat) VALUES (?, ?, ?, ?, ?)',
-                [recipeId, nutritionValues.carbs || '0g', nutritionValues.protein || '0g', 
-                nutritionValues.calories || '0kcal', nutritionValues.fat || '0g']
-            );
+        //     // Insert nutrition values
+        //     await db.runAsync(
+        //         'INSERT INTO nutrition_values (recipe_id, carbs, protein, calories, fat) VALUES (?, ?, ?, ?, ?)',
+        //         [recipeId, nutritionValues.carbs || '0g', nutritionValues.protein || '0g', 
+        //         nutritionValues.calories || '0kcal', nutritionValues.fat || '0g']
+        //     );
 
-            Alert.alert('Thành công', 'Đã lưu công thức', [
-                { text: 'OK', onPress: () => navigation.navigate('RecipeForm', { recipeId }) }
-            ]);
-        } catch (error) {
-            console.error('Error saving recipe:', error);
-            Alert.alert('Lỗi', 'Không thể lưu công thức');
-        }
+        //     // Add steps insertion
+        //     for (let i = 0; i < steps.length; i++) {
+        //         const step = steps[i];
+        //         await db.runAsync(
+        //             'INSERT INTO recipe_steps (recipe_id, step_number, title, description, image) VALUES (?, ?, ?, ?, ?)',
+        //             [recipeId, i + 1, step.title, step.description, step.image]
+        //         );
+        //     }
+
+        //     Alert.alert('Thành công', 'Đã lưu công thức', [
+        //         { text: 'OK', onPress: () => navigation.navigate('RecipeForm', { recipeId }) }
+        //     ]);
+        // } catch (error) {
+        //     console.error('Error saving recipe:', error);
+        //     Alert.alert('Lỗi', 'Không thể lưu công thức');
+        // }
     };
 
     return (
@@ -164,7 +200,12 @@ const RecipeDetail = ({ navigation }) => {
                 
                 <View style={styles.timeContainer}>
                     <Ionicons name="time-outline" size={20} color="#666" />
-                    <Text style={styles.timeText}>60 phút</Text>
+                    <TextInput
+                        style={styles.timeText}
+                        value={cookingTime}
+                        onChangeText={setCookingTime}
+                        placeholder="60 phút"
+                    />
                 </View>
 
                 <View style={styles.contentContainer}>
@@ -185,22 +226,19 @@ const RecipeDetail = ({ navigation }) => {
 
                     <View style={styles.nutritionGrid}>
                         {[
-                            { icon: 'nutrition', name: 'Tinh bột', value: nutritionValues.carbs, key: 'carbs' },
-                            { icon: 'fish', name: 'Chất đạm', value: nutritionValues.protein, key: 'protein' },
-                            { icon: 'flame', name: 'Năng lượng', value: nutritionValues.calories, key: 'calories' },
-                            { icon: 'water', name: 'Chất béo', value: nutritionValues.fat, key: 'fat' }
+                            { icon: 'nutrition', name: 'Tinh bột', value: carbs, setValue: setCarbs },
+                            { icon: 'fish', name: 'Chất đạm', value: protein,setValue: setProtein},
+                            { icon: 'flame', name: 'Năng lượng', value: calories, setValue: setCalories },
+                            { icon: 'water', name: 'Chất béo', value: fat, setValue: setFat }
                         ].map((item, index) => (
                             <View key={index} style={styles.nutritionItem}>
                                 <Ionicons name={`${item.icon}-outline`} size={24} color="#666" />
-                                <TextInput
+                                    <TextInput
                                     style={styles.nutritionInput}
                                     value={item.value}
-                                    onChangeText={(text) => setNutritionValues(prev => ({
-                                        ...prev,
-                                        [item.key]: text
-                                    }))}
+                                    onChangeText={(text) => item.setValue(text)}
                                     placeholder="0g"
-                                />
+                                /> 
                                 <Text style={styles.nutritionName}>{item.name}</Text>
                             </View>
                         ))}
@@ -247,6 +285,53 @@ const RecipeDetail = ({ navigation }) => {
                     >
                         <Text style={styles.spiceButtonText}>Thêm gia vị</Text>
                     </TouchableOpacity>
+                    
+                    <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
+                    {steps.map((step, index) => (
+                        <View key={index} style={styles.stepCard}>
+                            <TouchableOpacity style={styles.stepImageContainer} onPress={() => pickStepImage(index)}>
+                                {step.image ? (
+                                    <Image source={{ uri: step.image }} style={styles.stepImage} />
+                                ) : (
+                                    <View style={styles.stepImagePlaceholder}>
+                                        <Ionicons name="camera-outline" size={24} color="#666" />
+                                    </View>
+                                )}
+                            </TouchableOpacity>
+                            <View style={styles.stepContent}>
+                                <TextInput
+                                    style={styles.stepTitle}
+                                    placeholder={`Bước ${index + 1}: `}
+                                    value={step.title}
+                                    onFocus={() => handleStepTitleFocus(index)}
+                                    onChangeText={(text) => {
+                                        const newSteps = [...steps];
+                                        const prefix = `Bước ${index + 1}: `;
+                                        if (!text.startsWith(prefix)) {
+                                            text = prefix + text.replace(prefix, '');
+                                        }
+                                        newSteps[index].title = text;
+                                        setSteps(newSteps);
+                                    }}
+                                />
+                                <TextInput
+                                    style={styles.stepDescription}
+                                    placeholder="Chi tiết bước thực hiện"
+                                    multiline
+                                    value={step.description}
+                                    onChangeText={(text) => {
+                                        const newSteps = [...steps];
+                                        newSteps[index].description = text;
+                                        setSteps(newSteps);
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    ))}
+
+                    <TouchableOpacity style={styles.spiceButton} onPress={addStep}>
+                        <Text style={styles.spiceButtonText}>Thêm bước</Text>
+                    </TouchableOpacity>
 
                     <TouchableOpacity 
                         style={styles.nextButton} 
@@ -256,7 +341,7 @@ const RecipeDetail = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-
+            
             <Modal
                 visible={showSpiceModal}
                 transparent={true}
@@ -609,6 +694,51 @@ const styles = StyleSheet.create({
         marginTop: 8,
         color: '#666',
         fontSize: 16,
+    },
+    stepCard: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 12,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    stepImageContainer: {
+        width: 80,
+        height: 80,
+        marginRight: 12,
+    },
+    stepImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
+    stepImagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+        backgroundColor: '#f0f0f0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderStyle: 'dashed',
+    },
+    stepContent: {
+        flex: 1,
+    },
+    stepTitle: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    stepDescription: {
+        fontSize: 14,
+        color: '#666',
     },
 });
 

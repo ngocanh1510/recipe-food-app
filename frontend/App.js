@@ -190,6 +190,7 @@ const MainBottom = () => {
         name="Tìm kiếm"
         component={SearchNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => <AntDesign name="search1" size={28} color={color} />,
         }}
       />
@@ -214,6 +215,7 @@ const MainBottom = () => {
         name="Hồ sơ"
         component={ProfileNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => <AntDesign name="user" size={28} color={color} />,
         }}
       />

@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f1f1',
-    paddingBottom:80,
+    paddingBottom: '60'
   },
   header: {
     flexDirection: 'row',
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#881415',
     marginBottom: 10,
+
   },
   searchInput: {
     marginLeft: 10,
