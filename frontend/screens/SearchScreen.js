@@ -32,6 +32,26 @@ const foods = [
     name: 'Gỏi',
     image: require('../assets/comtam.jpeg'),
   },
+  {
+    id: '1',
+    name: 'Món xào',
+    image: require('../assets/phobo.jpeg'),
+  },
+  {
+    id: '2',
+    name: 'Món nướng',
+    image: require('../assets/bunbo.jpeg'),
+  },
+  {
+    id: '3',
+    name: 'Món kho',
+    image: require('../assets/miquang.jpeg'),
+  },
+  {
+    id: '4',
+    name: 'Gỏi',
+    image: require('../assets/comtam.jpeg'),
+  },
 ];
 
 export default function SearchScreen({ navigation }) {
@@ -55,6 +75,7 @@ export default function SearchScreen({ navigation }) {
       <Text style={styles.foodName}>{item.name}</Text>
     </TouchableOpacity>
   );
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -84,8 +105,9 @@ export default function SearchScreen({ navigation }) {
           data={filteredFoods}
           keyExtractor={(item) => item.id}
           renderItem={renderFoodItem}
-          numColumns={2}
-          columnWrapperStyle={styles.foodRow}
+          showsVerticalScrollIndicator={false}
+        //   numColumns={1}
+        //   columnWrapperStyle={styles.foodRow}
         />
       </View>
     </SafeAreaView>
@@ -139,21 +161,28 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   foodItem: {
-    width: '48%',
-    backgroundColor: '#881415',
+    flexDirection: 'row', // Đặt các phần tử nằm ngang
+    alignItems: 'center', // Căn giữa theo chiều dọc
+    backgroundColor: '#f8f1f1',
     borderRadius: 8,
     padding: 10,
-    alignItems: 'center',
+
+    marginBottom: 10, // Khoảng cách giữa các item
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   foodImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
+    width: 60, // Kích thước nhỏ hơn
+    height: 60,
+    borderRadius: 8,
+    marginRight: 15, // Khoảng cách giữa ảnh và tên
   },
   foodName: {
-    color: 'white',
+    color: '#881415',
     fontSize: 16,
     fontWeight: 'bold',
+    flex: 1, // Để đảm bảo tên chiếm phần còn lại của row
   },
 });
