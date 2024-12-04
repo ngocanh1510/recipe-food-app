@@ -75,18 +75,26 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Featured Dish */}
       <View style={styles.dishItem}>
-        <View>
-          <Text style={styles.dishName}>Cơm tấm</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('FoodDetail', { food: foods[3] })}
-          >
-            <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
-            <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-        <Image source={require('../assets/comtam.jpeg')} style={styles.dishImage} />
-      </View>
+  <View>
+    <Text style={styles.dishName}>{recipes[0]?.title || "Loading..."}</Text>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {
+        if (recipes.length > 0) {
+          navigation.navigate('FoodDetail', { recipes: recipes[0] });
+        }
+      }}
+    >
+      <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
+      <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
+    </TouchableOpacity>
+  </View>
+  {recipes[0]?.image ? (
+    <Image source={{ uri: recipes[0].image }} style={styles.dishImage} />
+  ) : (
+    <Text style={{ color: 'white', marginLeft: 15 }}>Đang tải ảnh...</Text>
+  )}
+</View>
 
       {/* Food List Section */}
       <View style={styles.section}>
