@@ -54,13 +54,6 @@ export default function SearchScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Tìm kiếm</Text>
-        <TouchableOpacity>
-          <Ionicons name="camera-outline" size={28} color="#881415" />
-        </TouchableOpacity>
-      </View>
 
       {/* Search Bar */}
       <View style={styles.searchBar}>
