@@ -3,10 +3,46 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useContext, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AuthContext } from './AuthContext.js';
+import { Alert } from 'react-native';
+import { post } from '../src/api/api.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ email và mật khẩu!');
+      return;
+    }
+
+    try {
+      // Gọi API đăng nhập
+      const response = await post('/auth/login', { username: email, password });
+
+      if (response.status === 200) {
+        const { token } = response.data; // Lấy token từ response (giả sử token trả về từ API)
+        
+        // Lưu token vào AsyncStorage
+        login(token);
+
+        // Hiển thị thông báo thành công và chuyển hướng đến màn hình chính
+        Alert.alert('Thành công', 'Đăng nhập thành công!');
+        
+      }
+    } catch (error) {
+      // Nếu có lỗi, hiển thị thông báo lỗi
+      const errorMessage =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : 'Đã xảy ra lỗi, vui lòng thử lại!';
+      Alert.alert('Lỗi', errorMessage);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -38,7 +74,7 @@ export default function LoginScreen({ navigation }) {
       >
         Quên mật khẩu?
       </Text>
-      <TouchableOpacity style={styles.button} onPress={() => login(email, password)}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.loginText}>Đăng nhập</Text>
       </TouchableOpacity>
       <Text style={styles.loginWithText}>Hoặc đăng nhập bằng</Text>

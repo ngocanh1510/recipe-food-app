@@ -11,8 +11,13 @@ dotenv.config();
 // Đăng ký tài khoản mới
 export const register = async (req, res) => {
     try {
-        const { name, email, gender, password } = req.body;
-        
+        const { name, email, password } = req.body;
+       
+        // Kiểm tra mật khẩu và xác nhận mật khẩu
+        // if (password !== cfpassword) {
+        //     return res.status(400).json({ message: 'Mật khẩu và xác nhận mật khẩu không khớp!' });
+        // }
+
         // Kiểm tra email hợp lệ
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(email)) {
@@ -33,11 +38,9 @@ export const register = async (req, res) => {
                 message: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và ký tự đặc biệt.',
             });
         }
-
-        const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;
-
+        
         // Tạo User
-        const user = new User({ name, email, gender, avatar: avatarPath });
+        const user = new User({ name, email });
         await user.save();
 
 
@@ -64,6 +67,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
+        
 
         if (!username || !password) {
             return res.status(400).json({ message: 'Vui lòng nhập tên người dùng và mật khẩu' });
@@ -112,7 +116,7 @@ export const getProfile = async (req, res) => {
         const userProfile = {
             name: account.user.name,
             email: account.user.email,
-            gender: account.user.gender,
+            // gender: account.user.gender,
             avatar: account.user.avatar,
         };
 

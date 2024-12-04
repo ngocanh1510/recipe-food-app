@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
+import Category from './Categories.js';
 import User from './User.js';
-import Category from './Categories.js'
 
 const RecipeSchema = new mongoose.Schema({
     userOwner: {type: mongoose.Types.ObjectId, ref: User},
