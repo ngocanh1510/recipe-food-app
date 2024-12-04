@@ -7,7 +7,6 @@ import { useContext } from 'react';
 import { AuthContext, AuthProvider } from './screens/AuthContext.js';
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
-import NoteScreen from './screens/NoteScreen.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
