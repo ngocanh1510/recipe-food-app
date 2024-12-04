@@ -101,7 +101,7 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.sectionTitle}>Hôm nay ăn gì?</Text>
         <FlatList
           data={recipes}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => (item._id ? item._id.toString() : '')}
           renderItem={renderFoodItem}
           horizontal
           showsHorizontalScrollIndicator={false}

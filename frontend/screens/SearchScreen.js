@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,58 +10,34 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const foods = [
-  {
-    id: '1',
-    name: 'Món xào',
-    image: require('../assets/phobo.jpeg'),
-  },
-  {
-    id: '2',
-    name: 'Món nướng',
-    image: require('../assets/bunbo.jpeg'),
-  },
-  {
-    id: '3',
-    name: 'Món kho',
-    image: require('../assets/miquang.jpeg'),
-  },
-  {
-    id: '4',
-    name: 'Gỏi',
-    image: require('../assets/comtam.jpeg'),
-  },
-  {
-    id: '1',
-    name: 'Món xào',
-    image: require('../assets/phobo.jpeg'),
-  },
-  {
-    id: '2',
-    name: 'Món nướng',
-    image: require('../assets/bunbo.jpeg'),
-  },
-  {
-    id: '3',
-    name: 'Món kho',
-    image: require('../assets/miquang.jpeg'),
-  },
-  {
-    id: '4',
-    name: 'Gỏi',
-    image: require('../assets/comtam.jpeg'),
-  },
-];
+import { getAllRecipes } from '../src/api/api';
 
 export default function SearchScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
-  const [filteredFoods, setFilteredFoods] = useState(foods);
+  const [filteredFoods, setFilteredFoods] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      setIsLoading(true); 
+      const data = await getAllRecipes(); 
+      if (data) 
+        {
+          setRecipes(data);
+          setFilteredFoods(data);
+        }; 
+      setIsLoading(false);
+    };
+    fetchRecipes();
+  }, []);
+
+
+  // Hàm tìm kiếm món ăn
   const handleSearch = (text) => {
     setSearchText(text);
-    const filtered = foods.filter((food) =>
-      food.name.toLowerCase().includes(text.toLowerCase())
+    const filtered = recipes.filter((recipe) =>
+      recipe.title.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredFoods(filtered);
   };
@@ -69,13 +45,12 @@ export default function SearchScreen({ navigation }) {
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
       style={styles.foodItem}
-      onPress={() => navigation.navigate('FoodDetail', { food: item })}
+      onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
     >
-      <Image source={item.image} style={styles.foodImage} />
-      <Text style={styles.foodName}>{item.name}</Text>
+      <Image source={{ uri: item.image }} style={styles.foodImage} />
+      <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
   );
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,16 +78,15 @@ export default function SearchScreen({ navigation }) {
         <Text style={styles.sectionTitle}>Khám phá các món ăn</Text>
         <FlatList
           data={filteredFoods}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => (item._id ? item._id.toString() : '')}
           renderItem={renderFoodItem}
           showsVerticalScrollIndicator={false}
-        //   numColumns={1}
-        //   columnWrapperStyle={styles.foodRow}
         />
       </View>
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
