@@ -1,6 +1,7 @@
 import React from 'react';
-import { getRecipesInHomepage } from '../src/api/api';
+import { getAllCategories, getRecipesInHomepage } from '../src/api/api';
 import { useState,useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import {
   View,
   Text,
@@ -13,7 +14,7 @@ import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = ({ navigation }) => {
-
+  const [categories,setCategories]=useState([])
   const [recipes, setRecipes] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,13 +28,16 @@ const HomeScreen = ({ navigation }) => {
     fetchRecipes();
   }, []);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoading(true); 
+      const data = await getAllCategories(); 
+      if (data) setCategories(data); 
+      setIsLoading(false);
+    };
+    fetchCategories();
+  }, []);
 
-  // Danh sách thể loại món ăn
-  const categories = [
-    'Cơm', 'Cháo/Súp', 'Bún/Bánh canh', 'Bánh/Tráng miệng'
-  ];
-
-  // Hàm render item cho FlatList
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
       style={styles.foodItem}
@@ -50,10 +54,17 @@ const HomeScreen = ({ navigation }) => {
   // Hàm render item cho danh sách thể loại món ăn
   const renderCategoryItem = ({ item }) => (
     <TouchableOpacity style={styles.foodCategory}>
-      <Text style={styles.foodCategoryText}>{item}</Text>
+      <Text style={styles.foodCategoryText}>{item.name}</Text>
     </TouchableOpacity>
   );
-
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#881415" />
+        <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -75,25 +86,33 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Featured Dish */}
       <View style={styles.dishItem}>
-        <View>
-          <Text style={styles.dishName}>Cơm tấm</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('FoodDetail', { food: foods[3] })}
-          >
-            <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
-            <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-        <Image source={require('../assets/comtam.jpeg')} style={styles.dishImage} />
-      </View>
+  <View>
+    <Text style={styles.dishName}>{recipes[0]?.title || "Loading..."}</Text>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {
+        if (recipes.length > 0) {
+          navigation.navigate('FoodDetail', { recipes: recipes[0] });
+        }
+      }}
+    >
+      <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
+      <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
+    </TouchableOpacity>
+  </View>
+  {recipes[0]?.image ? (
+    <Image source={{ uri: recipes[0].image }} style={styles.dishImage} />
+  ) : (
+    <Text style={{ color: 'white', marginLeft: 15 }}>Đang tải ảnh...</Text>
+  )}
+</View>
 
       {/* Food List Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Hôm nay ăn gì?</Text>
         <FlatList
           data={recipes}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => (item._id ? item._id.toString() : '')}
           renderItem={renderFoodItem}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -112,7 +131,7 @@ const HomeScreen = ({ navigation }) => {
 
         <FlatList
           data={categories}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, id) => id.toString()}
           renderItem={renderCategoryItem}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -159,6 +178,17 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: 'gray',
     fontWeight: '900',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5edea',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#881415',
   },
   button: {
     marginTop: 10,
@@ -241,6 +271,7 @@ const styles = StyleSheet.create({
   foodCategoryText: {
     fontSize: 16,
     textAlign: 'center',
+    color:'black'
   },
   categoryHeader: {
     flexDirection: 'row',

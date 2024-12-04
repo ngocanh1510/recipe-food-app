@@ -17,7 +17,7 @@ const FoodDetail = ({ route, navigation }) => {
           <Text style={styles.time}>⏱ {recipes.time || '60 phút'}</Text>
           <TouchableOpacity onPress={() => alert('Đã lưu!')}>
             <Icon name="bookmark" size={24} color="#881415" style={styles.bookmarkIcon} />
-          </TouchableOpacity>
+          </TouchableOpacity>  
         </View>
       </View>
 
