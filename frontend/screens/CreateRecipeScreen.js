@@ -17,7 +17,7 @@ const CreateRecipeScreen = () => {
                 <TouchableOpacity
                     style={styles.createButton}
                     activeOpacity={0.8}
-                    onPress={() => navigation.navigate('RecipeForm')}
+                    onPress={() => navigation.navigate('RecipeDetail')}
                 >
                     <Text style={styles.buttonText}>Tạo công thức</Text>
                     <Ionicons name="arrow-forward" size={20} color="#8B0000" />

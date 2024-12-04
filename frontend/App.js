@@ -17,6 +17,8 @@ import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import WelcomeScreen from './screens/WelcomeScreen.js';
 import RecipeForm from './screens/RecipeForm.js';
+import RecipeDetail from './screens/RecipeDetail.js';
+import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,6 +87,11 @@ const CreateRecipeNavigator = () => (
       name="RecipeForm"
       component={RecipeForm}
       options={{ title: 'Chỉnh sửa công thức' }}
+    />
+    <CreateRecipeStack.Screen
+      name="RecipeDetail"
+      component={RecipeDetail}
+      options={{ title: 'Chi tiết công thức' }}
     />
   </CreateRecipeStack.Navigator>
 );
@@ -181,10 +188,58 @@ const AppNavigator = () => {
   );
 };
 
+async function initDatabase(db) {
+  const DATABASE_VERSION = 1;
+  
+  const { user_version: currentDbVersion } = await db.getFirstAsync('PRAGMA user_version');
+  
+  if (currentDbVersion >= DATABASE_VERSION) {
+    return;
+  }
+
+  if (currentDbVersion === 0) {
+    await db.execAsync(`
+      PRAGMA journal_mode = 'wal';
+      
+      CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT,
+        image TEXT,
+        servings INTEGER,
+        cookingTime TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS ingredients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        name TEXT,
+        amount TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+
+      CREATE TABLE IF NOT EXISTS nutrition_values (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        carbs TEXT,
+        protein TEXT,
+        calories TEXT,
+        fat TEXT,
+        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
+      );
+    `);
+  }
+
+  await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
+}
+
 export default function App() {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+    <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
+    </SQLiteProvider>
   );
 }

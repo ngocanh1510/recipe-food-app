@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import VideoPlayer from '../components/VideoPlayer';
 
 const RecipeForm = ({ navigation }) => {
     const [ingredients, setIngredients] = useState([{ name: '', quantity: '' }]);
@@ -25,9 +24,6 @@ const RecipeForm = ({ navigation }) => {
         }
         console.log(result);
     };
-
-    const videoSource = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-
     return (
         <View style={styles.container}>
             {image ? (
@@ -60,11 +56,9 @@ const RecipeForm = ({ navigation }) => {
                 <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
                     <Text style={styles.addButtonText}>+ Thêm nguyên liệu</Text>
                 </TouchableOpacity>
-                <Text style={styles.sectionTitle}>Hướng dẫn</Text>
-                <TextInput style={[styles.input, styles.textArea]} placeholder="Nhập hướng dẫn nấu" multiline />
                 
                 <TouchableOpacity style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>Lưu</Text>
+                    <Text style={styles.saveButtonText}>Tiếp tục</Text>
                 </TouchableOpacity>
             </ScrollView>
 
@@ -80,6 +74,7 @@ const styles = StyleSheet.create({
     scrollView: {
         padding: 16,
         paddingTop: 8,
+        alightItems: 'center',
     },
     image: {
         width: '100%',
@@ -148,6 +143,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 8,
         position: 'absolute',
+        marginTop: 46,
         bottom: 16,
         left: 16,
         right: 16,
