@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
   FlatList,
   Image,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllRecipes } from '../src/api/api';
 
@@ -54,13 +53,6 @@ export default function SearchScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Tìm kiếm</Text>
-        <TouchableOpacity>
-          <Ionicons name="camera-outline" size={28} color="#881415" />
-        </TouchableOpacity>
-      </View>
 
       {/* Search Bar */}
       <View style={styles.searchBar}>
