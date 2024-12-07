@@ -1,21 +1,24 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { getSavedRecipes } from '../src/api/api';
 
 // Sample Data with Local Images
-const recipes = [
-  {
-    id: '1',
-    title: 'Phở Hà Nội',
-    image: require('../assets/phobo.jpeg'), // Correct way to include local images
-  },
-  {
-    id: '2',
-    title: 'Bún bò Huế',
-    image: require('../assets/bunbo.jpeg'), // Correct way to include local images
-  },
-];
+
 
 export default function NoteScreen() {
+
+  const [recipes, setRecipes] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSavedRecipes = async () => {
+      setIsLoading(true);
+      const data = await getSavedRecipes(); 
+      if (data) setRecipes(data); 
+      setIsLoading(false);
+    };
+    fetchSavedRecipes();
+  }, []);
   const renderRecipe = ({ item }) => (
     <TouchableOpacity style={styles.card}>
       <Image source={item.image} style={styles.image} />

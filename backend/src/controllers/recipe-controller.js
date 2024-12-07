@@ -17,11 +17,41 @@ export const getAllRecipes = async (req, res, next) => {
     return console.log(err);
   }
 
+<<<<<<< HEAD
+  export const getRecipesByCategory = async (req, res) =>  {
+    try {
+      const { categoryId } = req.params;
+      // Truy vấn các công thức với categoryId tương ứng
+      const recipes = await RecipeModel.find({ categoriesId: categoryId });
+      if (recipes.length === 0) {
+        return res.status(404).json({
+          status: false,
+          message: "No recipes found for this category",
+        });
+      }
+  
+      return res.status(200).json({
+        status: true,
+        message: "Recipes fetched successfully",
+        recipes,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  };
+  export const addRecipe = async (req, res) => {
+=======
   if (!recipes) {
     return res.status(500).json({ message: "Request Failed" });
   }
   return res.status(200).json({ recipes });
 };
+>>>>>>> e1dff842500e36f2283ebf65080f8a0ffeb43bc1
 
 export const getRecipesInHomepage = async (req, res, next) => {
   let recipes;
@@ -451,6 +481,69 @@ export const commentOnRecipe = async (req, res) => {
     res.status(500).json({ status: false, message: "Failed to add comment", error: err.message });
   }
 };
+
+//Xuất danh sách đã lưu
+export const getSavedRecipes = async (req, res) => {
+  const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
+
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Invalid Account ID" });
+  }
+
+  try {
+    // Tìm user thông qua accountId
+    const account = await AccountModel.findById(accountId).populate("user");
+    if (!account || !account.user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const userId = account.user._id; // Lấy userId thực
+    const user = await UserModel.findById(userId).populate("savedRecipes"); // Lấy các công thức đã lưu
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    // Lấy danh sách công thức đã lưu
+    const savedRecipes = user.savedRecipes;
+
+    res.status(200).json({
+      status: true,
+      savedRecipes,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: false, message: "Failed to get saved recipes" });
+  }
+};
+
+export const getSavedRecipesByUserId = async (req, res) => {
+  const { userId } = req.params;  // Lấy userId từ tham số
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ status: false, message: "Invalid User ID" });
+  }
+
+  try {
+    // Tìm user thông qua userId
+    const user = await UserModel.findById(userId).populate("savedRecipes"); // Lấy các công thức đã lưu
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    // Lấy danh sách công thức đã lưu
+    const savedRecipes = user.savedRecipes;
+
+    res.status(200).json({
+      status: true,
+      savedRecipes,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: false, message: "Failed to get saved recipes" });
+  }
+};
+
+
 
 // Delete Comment
 export const deleteCommentFromRecipe = async (req, res) => {
