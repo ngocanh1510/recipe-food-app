@@ -16,9 +16,9 @@ export const getAllRecipes = async (req, res, next) => {
   } catch (err) {
     return console.log(err);
   }
+}
 
-<<<<<<< HEAD
-  export const getRecipesByCategory = async (req, res) =>  {
+export const getRecipesByCategory = async (req, res) =>  {
     try {
       const { categoryId } = req.params;
       // Truy vấn các công thức với categoryId tương ứng
@@ -43,15 +43,14 @@ export const getAllRecipes = async (req, res, next) => {
         error: error.message,
       });
     }
-  };
-  export const addRecipe = async (req, res) => {
-=======
-  if (!recipes) {
-    return res.status(500).json({ message: "Request Failed" });
-  }
-  return res.status(200).json({ recipes });
 };
->>>>>>> e1dff842500e36f2283ebf65080f8a0ffeb43bc1
+
+// export const addRecipe = async (req, res) => {
+//   if (!recipes) {
+//     return res.status(500).json({ message: "Request Failed" });
+//   }
+//   return res.status(200).json({ recipes });
+// };
 
 export const getRecipesInHomepage = async (req, res, next) => {
   let recipes;
