@@ -5,21 +5,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const [userEmail, setUserEmail] = useState(null);
   const [token, setToken] = useState(null);
-  // const login = (email, password) => {
-  //   if (email==='0' && password === '0') {
-  //     setUserEmail(email);
-  //     setIsAuthenticated(true);
-  //   } else {
-  //     alert('Incorrect email or password');
-  //   }
-  // };
-
-  // const logout = () => {
-  //   setUserEmail(null);
-  //   setIsAuthenticated(false);
-  // };
+ 
 
   useEffect(() => {
     const loadToken = async () => {
