@@ -91,23 +91,20 @@ export const getRecipesByCategory = async (categoryId) => {
     return null;
   }
 };
-<<<<<<< HEAD
 
 
-export const getImage = async () => {
-  try {
-    console.log(API_URL);
-    const res = await axios.get(`http://${API_URL}:3002/api/images/6750924bcd6f8b82f79c7ab5`);
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      console.error("Lỗi API:", res.status);
-      return null;
-    }
-  } catch (err) {
-    console.error("Lỗi khi gửi yêu cầu API:", err);
-    return null;
-  }
-};
-=======
->>>>>>> e1dff842500e36f2283ebf65080f8a0ffeb43bc1
+// export const getImage = async () => {
+//   try {
+//     console.log(API_URL);
+//     const res = await axios.get(`http://${API_URL}:3002/api/images/6750924bcd6f8b82f79c7ab5`);
+//     if (res.status === 200) {
+//       return res.data;
+//     } else {
+//       console.error("Lỗi API:", res.status);
+//       return null;
+//     }
+//   } catch (err) {
+//     console.error("Lỗi khi gửi yêu cầu API:", err);
+//     return null;
+//   }
+// };
