@@ -16,8 +16,8 @@ export const getAllRecipes = async (req, res, next) => {
   } catch (err) {
     return console.log(err);
   }
+}
 
-<<<<<<< HEAD
   export const getRecipesByCategory = async (req, res) =>  {
     try {
       const { categoryId } = req.params;
@@ -44,16 +44,9 @@ export const getAllRecipes = async (req, res, next) => {
       });
     }
   };
-  export const addRecipe = async (req, res) => {
-=======
-  if (!recipes) {
-    return res.status(500).json({ message: "Request Failed" });
-  }
-  return res.status(200).json({ recipes });
-};
->>>>>>> e1dff842500e36f2283ebf65080f8a0ffeb43bc1
-
-export const getRecipesInHomepage = async (req, res, next) => {
+  // export const addRecipe = async (req, res) => {
+git
+ export const getRecipesInHomepage = async (req, res, next) => {
   let recipes;
 
   try {
@@ -660,5 +653,4 @@ export const markNotificationAsRead = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: false, message: "Failed to mark notification as read" });
-  }
-};
+  }}
