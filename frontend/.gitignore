@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+frontend/src/config.js
 src/config.js
 # Expo
 .expo/

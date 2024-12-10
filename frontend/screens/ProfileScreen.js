@@ -14,6 +14,7 @@ import {
 import { useUser } from '../context/UserContext';
 import { post } from '../src/api/api';
 import { AuthContext } from './AuthContext';
+import { Alert } from 'react-native';
 
 const MenuItem = ({ icon, title, onPress }) => (
     <TouchableOpacity
@@ -31,13 +32,13 @@ const ProfileScreen = ({navigation}) => {
     const { userData } = useUser();
     const { logout } = useContext(AuthContext);
      // Hàm xử lý logout
-     const handleLogout = async () => {
+    const handleLogout = async () => {
         try {
             // Gọi API logout
             const response = await post('/auth/logout');
 
             if (response.status === 200) {
-                logout();                
+                logout();
 
                 // Chuyển hướng về màn hình Login
                 Alert.alert('Thành công', 'Đăng xuất thành công!'

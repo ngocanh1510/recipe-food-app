@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API_URL} from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Alert } from 'react-native';
 
 export const getRecipesInHomepage = async () => {
   try {
@@ -53,7 +54,7 @@ export const post = async (endpoint, data) => {
     const token = await AsyncStorage.getItem('token');
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const response = await axios.post(`http://${API_URL}:3001${endpoint}`, data, 
+    const response = await axios.post(`http://${API_URL}:3001${endpoint}`, data,
       {
         headers,
         withCredentials: true,

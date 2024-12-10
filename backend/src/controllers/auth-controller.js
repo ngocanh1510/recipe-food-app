@@ -12,7 +12,7 @@ dotenv.config();
 export const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-       
+
         // Kiểm tra mật khẩu và xác nhận mật khẩu
         // if (password !== cfpassword) {
         //     return res.status(400).json({ message: 'Mật khẩu và xác nhận mật khẩu không khớp!' });

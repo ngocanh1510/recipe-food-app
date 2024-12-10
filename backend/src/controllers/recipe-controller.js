@@ -18,11 +18,7 @@ export const getAllRecipes = async (req, res, next) => {
   }
 }
 
-<<<<<<< HEAD
-  export const getRecipesByCategory = async (req, res) =>  {
-=======
 export const getRecipesByCategory = async (req, res) =>  {
->>>>>>> e66ce435f9b2fb989a39c6ec379518ad414e0fc2
     try {
       const { categoryId } = req.params;
       // Truy vấn các công thức với categoryId tương ứng
@@ -47,12 +43,6 @@ export const getRecipesByCategory = async (req, res) =>  {
         error: error.message,
       });
     }
-<<<<<<< HEAD
-  };
-  // export const addRecipe = async (req, res) => {
-git
- export const getRecipesInHomepage = async (req, res, next) => {
-=======
 };
 
 // export const addRecipe = async (req, res) => {
@@ -63,7 +53,6 @@ git
 // };
 
 export const getRecipesInHomepage = async (req, res, next) => {
->>>>>>> e66ce435f9b2fb989a39c6ec379518ad414e0fc2
   let recipes;
 
   try {
