@@ -2,7 +2,7 @@ import {
     MaterialCommunityIcons,
     MaterialIcons
 } from '@expo/vector-icons';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     Image,
     ScrollView,
@@ -12,6 +12,8 @@ import {
     View
 } from 'react-native';
 import { useUser } from '../context/UserContext';
+import { post } from '../src/api/api';
+import { AuthContext } from './AuthContext';
 
 const MenuItem = ({ icon, title, onPress }) => (
     <TouchableOpacity
@@ -27,6 +29,36 @@ const MenuItem = ({ icon, title, onPress }) => (
 
 const ProfileScreen = ({navigation}) => {
     const { userData } = useUser();
+    const { logout } = useContext(AuthContext);
+     // Hàm xử lý logout
+     const handleLogout = async () => {
+        try {
+            // Gọi API logout
+            const response = await post('/auth/logout');
+
+            if (response.status === 200) {
+                logout();                
+
+                // Chuyển hướng về màn hình Login
+                Alert.alert('Thành công', 'Đăng xuất thành công!'
+                //     , [
+                //     {
+                //         text: 'OK',
+                //         onPress: () => navigation.replace('Login'), // Chuyển về màn hình Login
+                //     },
+                // ]
+            );
+            } else {
+                Alert.alert('Lỗi', 'Không thể đăng xuất, vui lòng thử lại!');
+            }
+        } catch (error) {
+            console.error('Lỗi khi đăng xuất:', error);
+            Alert.alert(
+                'Lỗi',
+                'Đã xảy ra lỗi khi đăng xuất. Vui lòng thử lại sau!'
+            );
+        }
+    };
 
     const menuItems1 = [
         {
@@ -80,7 +112,10 @@ const ProfileScreen = ({navigation}) => {
                     ))}
                 </View>
 
-                <TouchableOpacity style={styles.logoutButton}>
+                <TouchableOpacity 
+                    style={styles.logoutButton}
+                    onPress={handleLogout}
+                >
                     <Text style={styles.logoutText}>Đăng xuất</Text>
                     <MaterialIcons name="logout" size={24} color="#5C3A29" />
                 </TouchableOpacity>
