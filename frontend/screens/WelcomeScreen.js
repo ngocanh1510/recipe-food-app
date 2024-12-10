@@ -17,13 +17,13 @@ const WelcomeScreen = ({ navigation }) => {
           style={styles.registerButton}
           onPress={() => navigation.navigate('Register')}
         >
-          <Text style={styles.registerText}>{registerText}</Text> {/* Style riêng cho registerText */}
+          <Text style={styles.registerText}>{registerText}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.loginButton}
           onPress={() => navigation.navigate('Login')}
         >
-          <Text style={styles.loginText}>{loginText}</Text> {/* Style riêng cho loginText */}
+          <Text style={styles.loginText}>{loginText}</Text>
         </TouchableOpacity>
       </View>
     </View>

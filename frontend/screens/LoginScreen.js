@@ -14,7 +14,7 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (navigation) => {
     if (!email || !password) {
       Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ email và mật khẩu!');
       return;
@@ -32,6 +32,7 @@ export default function LoginScreen({ navigation }) {
 
         // Hiển thị thông báo thành công và chuyển hướng đến màn hình chính
         Alert.alert('Thành công', 'Đăng nhập thành công!');
+        () => navigation.navigate('HomeScreen');
         
       }
     } catch (error) {

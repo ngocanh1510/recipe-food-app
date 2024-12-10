@@ -83,7 +83,6 @@ export const getRecipesByCategory = async (categoryId) => {
     return null;
   }
 };
-<<<<<<< HEAD
 
 
 export const getImage = async () => {
@@ -101,5 +100,3 @@ export const getImage = async () => {
     return null;
   }
 };
-=======
->>>>>>> e1dff842500e36f2283ebf65080f8a0ffeb43bc1
