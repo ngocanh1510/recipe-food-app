@@ -67,7 +67,6 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
-        
 
         if (!username || !password) {
             return res.status(400).json({ message: 'Vui lòng nhập tên người dùng và mật khẩu' });
@@ -97,7 +96,7 @@ export const login = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
     
-    res.status(200).json({ message: 'Đăng nhập thành công!' });
+    // res.status(200).json({ message: 'Đăng nhập thành công!' });
 
 };
 
