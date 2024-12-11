@@ -28,7 +28,7 @@ import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import SettingsScreen from './screens/SettingsScreen';
 import WelcomeScreen from './screens/WelcomeScreen.js';
-
+import EditRecipeScreen from './screens/EditRecipeScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -139,7 +139,38 @@ const CreateRecipeNavigator = () => (
     />
   </CreateRecipeStack.Navigator>
 );
-
+const NoteStack = createStackNavigator();
+const NoteNavigator = () => (
+  <NoteStack.Navigator>
+    <NoteStack.Screen 
+      name="Note" 
+      component={NoteScreen}
+      options={{ headerShown: false }} 
+    />
+    <NoteStack.Screen 
+      name="RecipeDetail" 
+      component={RecipeDetail}
+      options={{
+        title: 'Chi tiết công thức',
+        headerStyle: {
+          backgroundColor: '#FF6B6B',
+        },
+        headerTintColor: '#fff',
+      }} 
+    />
+    <NoteStack.Screen 
+      name="EditRecipe" 
+      component={EditRecipeScreen}
+      options={{
+        title: 'Chỉnh sửa công thức',
+        headerStyle: {
+          backgroundColor: '#FF6B6B',
+        },
+        headerTintColor: '#fff',
+      }} 
+    />
+  </NoteStack.Navigator>
+);
 // **MainBottom: Điều hướng Tab chính của ứng dụng**
 const MainBottom = () => {
   return (
@@ -206,7 +237,7 @@ const MainBottom = () => {
       />
       <Tab.Screen
         name="Sổ tay"
-        component={NoteScreen}
+        component={NoteNavigator}
         options={{
           tabBarIcon: ({ color }) => <AntDesign name="book" size={28} color={color} />,
         }}
