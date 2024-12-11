@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getSavedRecipes, getMyRecipes, deleteRecipe } from '../src/api/api';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-
+import { Alert } from 'react-native';
 export default function NoteScreen({ navigation }) {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [myRecipes, setMyRecipes] = useState([]);
   const [activeTab, setActiveTab] = useState('saved'); // 'saved' or 'my'
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     fetchRecipes();
-  }, [activeTab]); // Re-fetch when tab changes
+  }, []));
 
   const fetchRecipes = async () => {
     setIsLoading(true);
@@ -31,8 +33,29 @@ export default function NoteScreen({ navigation }) {
   };
 
   const handleDelete = async (recipeId) => {
-    await deleteRecipe(recipeId);
-    fetchRecipes();
+    Alert.alert(
+      'Xác nhận xóa',
+      'Bạn có chắc chắn muốn xóa công thức này không?',
+      [
+        {
+          text: 'Hủy',
+          // style: 'cancel',
+        },
+        {
+          text: 'Xóa',
+          onPress: async () => {
+            try {
+              await deleteRecipe(recipeId);  // Gọi API xóa công thức
+              fetchRecipes();                // Cập nhật lại danh sách công thức
+            } catch (error) {
+              Alert.alert('Lỗi', 'Có lỗi xảy ra khi xóa công thức, vui lòng thử lại.');
+              console.error('Lỗi khi gọi API xóa công thức:', error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const renderRecipe = ({ item }) => (
@@ -45,7 +68,7 @@ export default function NoteScreen({ navigation }) {
         <Text numberOfLines={1} style={styles.title}>{item.title}</Text>
         <View style={styles.infoRow}>
           <Ionicons name="time-outline" size={16} color="#666" />
-          <Text style={styles.info}>{item.time}</Text>
+          <Text style={styles.info}>{item.time} phút</Text>
         </View>
         {activeTab === 'my' && (
           <View style={styles.actions}>
