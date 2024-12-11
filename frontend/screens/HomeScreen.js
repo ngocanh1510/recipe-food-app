@@ -170,12 +170,12 @@ const HomeScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
     >
       <Image
-      source={imageSource}
+      source={{uri:item.image}}
       style={[styles.glassEffect, styles.foodImage]}
     />
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
-  )};
+  );
 
   // Hàm render item cho danh sách thể loại món ăn
   const renderCategoryItem = ({ item }) => (
