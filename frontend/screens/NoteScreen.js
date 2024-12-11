@@ -11,15 +11,23 @@ export default function NoteScreen({ navigation }) {
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  }, [activeTab]); // Re-fetch when tab changes
 
   const fetchRecipes = async () => {
     setIsLoading(true);
-    const savedData = await getSavedRecipes();
-    const myData = await getMyRecipes();
-    if (savedData) setSavedRecipes(savedData);
-    if (myData) setMyRecipes(myData);
-    setIsLoading(false);
+    try {
+      if (activeTab === 'saved') {
+        const savedData = await getSavedRecipes();
+        if (savedData) setSavedRecipes(savedData);
+      } else {
+        const myData = await getMyRecipes();
+        if (myData) setMyRecipes(myData);
+      }
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDelete = async (recipeId) => {
@@ -30,7 +38,7 @@ export default function NoteScreen({ navigation }) {
   const renderRecipe = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
-      onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
+      onPress={() => navigation.navigate('FoodDetail', { recipe: item })}
     >
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.details}>
@@ -45,7 +53,7 @@ export default function NoteScreen({ navigation }) {
               style={styles.actionButton}
               onPress={(e) => {
                 e.stopPropagation();
-                navigation.navigate('EditRecipe', { recipe: item });
+                navigation.navigate('RecipeDetail', { recipe: item });
               }}
             >
               <MaterialIcons name="edit" size={18} color="#FF6B6B" />

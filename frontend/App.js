@@ -2,7 +2,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SQLiteProvider } from 'expo-sqlite';
 import { useContext } from 'react';
 import { UserProvider } from './context/UserContext';
 import AboutScreen from './screens/AboutScreen';
@@ -151,23 +150,32 @@ const NoteNavigator = () => (
       name="RecipeDetail" 
       component={RecipeDetail}
       options={{
-        title: 'Chi tiết công thức',
-        headerStyle: {
-          backgroundColor: '#FF6B6B',
-        },
-        headerTintColor: '#fff',
-      }} 
-    />
-    <NoteStack.Screen 
-      name="EditRecipe" 
-      component={EditRecipeScreen}
-      options={{
         title: 'Chỉnh sửa công thức',
         headerStyle: {
           backgroundColor: '#FF6B6B',
         },
         headerTintColor: '#fff',
+        headerShown: false,
       }} 
+    />
+    <NoteStack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+      options={{
+        headerBackTitle: '',
+        title: 'Các bước nấu ăn',
+      }}
+    />
+    <NoteStack.Screen
+      name="FoodDetail"
+      component={FoodDetail}
+      options={{
+        title: 'Xem công thức',
+        headerStyle: {
+          backgroundColor: '#FF6B6B',
+        },
+        headerTintColor: '#fff',
+      }}
     />
   </NoteStack.Navigator>
 );
