@@ -228,8 +228,8 @@ const AppNavigator = () => {
   const { isAuthenticated } = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainBottom /> : <AuthStack />}
-      {/* <MainBottom /> */}
+      {/* {isAuthenticated ? <MainBottom /> : <AuthStack />} */}
+      <MainBottom />
     </NavigationContainer>
   );
 };
