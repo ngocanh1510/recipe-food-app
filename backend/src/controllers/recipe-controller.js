@@ -16,13 +16,14 @@ export const getAllRecipes = async (req, res, next) => {
   } catch (err) {
     return console.log(err);
   }
-}
 
-<<<<<<< HEAD
-  export const getRecipesByCategory = async (req, res) =>  {
-=======
+  if (!recipes) {
+    return res.status(500).json({ message: "Request Failed" });
+  }
+  return res.status(200).json({ recipes });
+};
+
 export const getRecipesByCategory = async (req, res) =>  {
->>>>>>> e66ce435f9b2fb989a39c6ec379518ad414e0fc2
     try {
       const { categoryId } = req.params;
       // Truy vấn các công thức với categoryId tương ứng
@@ -47,12 +48,6 @@ export const getRecipesByCategory = async (req, res) =>  {
         error: error.message,
       });
     }
-<<<<<<< HEAD
-  };
-  // export const addRecipe = async (req, res) => {
-git
- export const getRecipesInHomepage = async (req, res, next) => {
-=======
 };
 
 // export const addRecipe = async (req, res) => {
@@ -63,7 +58,6 @@ git
 // };
 
 export const getRecipesInHomepage = async (req, res, next) => {
->>>>>>> e66ce435f9b2fb989a39c6ec379518ad414e0fc2
   let recipes;
 
   try {
@@ -83,7 +77,6 @@ export const addRecipe = async (req, res) => {
 
 
   const {
-    userOwner,
     title,
     time,
     carbs,
@@ -91,11 +84,14 @@ export const addRecipe = async (req, res) => {
     calories,
     fat,
     description,
-    categoriesId,
+    // category,
     ingredients,
     steps,
     image
   } = req.body
+  // let image = req.file ? req.file.buffer.toString('base64') : null;
+  const userId = req.user.id;
+  console.log(userId)
   // if (!userOwner) {
   //   return res.status(400).json({
   //     status: false,
@@ -123,20 +119,22 @@ export const addRecipe = async (req, res) => {
   //     status: false,
   //     message: "Categories ID Not Found!",
   //   });
-  // }
-
-
+  // }  
+  // const categoryDoc = await CategoryModel.findOne({ name: category });
+  //       if (!categoryDoc) {
+  //           return res.status(400).json({ error: "Category not found" });
+  //       }
   if (
     !title || title.trim() === "" ||
-    // !time || 
+    !time || 
     !carbs ||
     !protein ||
     !calories ||
     !fat ||
     !description || description.trim() === "" ||
     !Array.isArray(ingredients) || ingredients.length === 0
-    // ||
-    // !Array.isArray(steps) || steps.length === 0
+    ||
+    !Array.isArray(steps) || steps.length === 0
 
   ) {
     return res.status(422).json({ message: "invalid input" });
@@ -162,7 +160,7 @@ export const addRecipe = async (req, res) => {
   let recipe;
   try {
     recipe = new RecipeModel({
-      userOwner,
+      userOwner:userId,
       title,
       time,
       carbs,
@@ -170,10 +168,11 @@ export const addRecipe = async (req, res) => {
       calories,
       fat,
       description,
-      categoriesId,
+      // categoriesId: categoryDoc._id,
       ingredients,
       steps,
       image
+      // :`data:${req.file.mimetype};base64,${imageBase64}`
     });
 
     await recipe.save();
@@ -184,7 +183,6 @@ export const addRecipe = async (req, res) => {
 
   return res.status(201).json({ message: "Recipe added successfully", recipe })
 };
-
 
 export const editRecipe = async (req, res) => {
   try {
@@ -492,7 +490,7 @@ export const commentOnRecipe = async (req, res) => {
   }
 };
 
-//Xuất danh sách đã lưu
+// Xuất danh sách đã lưu
 export const getSavedRecipes = async (req, res) => {
   const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
 
@@ -525,35 +523,6 @@ export const getSavedRecipes = async (req, res) => {
     res.status(500).json({ status: false, message: "Failed to get saved recipes" });
   }
 };
-
-export const getSavedRecipesByUserId = async (req, res) => {
-  const { userId } = req.params;  // Lấy userId từ tham số
-
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ status: false, message: "Invalid User ID" });
-  }
-
-  try {
-    // Tìm user thông qua userId
-    const user = await UserModel.findById(userId).populate("savedRecipes"); // Lấy các công thức đã lưu
-    if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
-    }
-
-    // Lấy danh sách công thức đã lưu
-    const savedRecipes = user.savedRecipes;
-
-    res.status(200).json({
-      status: true,
-      savedRecipes,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ status: false, message: "Failed to get saved recipes" });
-  }
-};
-
-
 
 // Delete Comment
 export const deleteCommentFromRecipe = async (req, res) => {

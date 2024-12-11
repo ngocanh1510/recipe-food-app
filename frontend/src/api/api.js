@@ -110,11 +110,10 @@ export const addRecipe = async (recipe) => {
     console.log('Response Data:', res.data);
 
     if (res.data.success) {
-      Alert.alert('Thêm công thức thành công');
+      console.log('Thêm thành công');
     } else {
-      Alert.alert('Thất bại');
+      console.log('Thêm thất bại')
     }
-
     return res.data;
   } catch (err) {
     console.log(err)
@@ -139,7 +138,7 @@ export const addRecipe = async (recipe) => {
 // export const getImage = async () => {
 //   try {
 //     console.log(API_URL);
-//     const res = await axios.get(`http://${API_URL}:3002/api/images/6750924bcd6f8b82f79c7ab5`);
+//     const res = await axios.get(`http://${API_URL}:3001/api/images/6750924bcd6f8b82f79c7ab5`);
 //     if (res.status === 200) {
 //       return res.data;
 //     } else {

@@ -87,6 +87,7 @@ export const login = async (req, res) => {
 
         // Tạo JWT
         const token = jwt.sign({ id: account._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        console.log('req.user:', req.user); 
 
         res.json({ 
             message: 'Đăng nhập thành công!',

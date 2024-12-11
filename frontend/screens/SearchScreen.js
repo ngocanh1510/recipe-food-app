@@ -44,7 +44,13 @@ export default function SearchScreen({ navigation }) {
     setFilteredFoods(filtered);
   };
 
-  const renderFoodItem = ({ item }) => (
+  const renderFoodItem = ({ item }) =>{const imageSource =
+    item.image.startsWith('http') || item.image.startsWith('https')
+      ? { uri: item.image } // Đường dẫn URL
+      : item.image.startsWith('data:image')
+      ? { uri:`data:image/jpeg;base64,${item.image}`} // Base64
+      : null;
+      return (
     <TouchableOpacity
       style={styles.foodItem}
       onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
@@ -53,6 +59,7 @@ export default function SearchScreen({ navigation }) {
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
   );
+}
 
   return (
     <SafeAreaView style={styles.container}>

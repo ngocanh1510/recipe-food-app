@@ -4,6 +4,9 @@ import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { addRecipe } from '../src/api/api';
+import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from 'expo-image-manipulator';
+
 const RecipeDetail = ({ navigation }) => {
     const db = useSQLiteContext();
 
@@ -48,6 +51,7 @@ const RecipeDetail = ({ navigation }) => {
             setShowSpiceModal(false);
         }
     };
+z
     const [image, setImage] = useState('');
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -62,6 +66,7 @@ const RecipeDetail = ({ navigation }) => {
         console.log(result);
         console.log(result.assets[0].uri);
     };
+
     const handleDeleteIngredient = (index) => {
         setIngredients(prev => prev.filter((_, i) => i !== index));
     };
@@ -128,6 +133,7 @@ const RecipeDetail = ({ navigation }) => {
                         <Text style={styles.placeholderText}>Chọn ảnh món ăn</Text>
                     </TouchableOpacity>
                 )}
+
                 
                 <View style={styles.timeContainer}>
                     <Ionicons name="time-outline" size={20} color="#666" />

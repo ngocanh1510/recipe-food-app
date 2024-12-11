@@ -123,18 +123,25 @@ const HomeScreen = ({ navigation }) => {
     fetchCategoryRecipes();
   }, [selectedCategory]));
 
-  const renderFoodItem = ({ item }) => (
+  const renderFoodItem = ({ item }) => {
+    const imageSource =
+    item.image.startsWith('http') || item.image.startsWith('https')
+      ? { uri: item.image } // Đường dẫn URL
+      : item.image.startsWith('data:image')
+      ? { uri:`data:image/jpeg;base64,${item.image}`} // Base64
+      : null;
+      return(
     <TouchableOpacity
       style={styles.foodItem}
       onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
     >
       <Image
-      source={{ uri: item.image }}
+      source={imageSource}
       style={[styles.glassEffect, styles.foodImage]}
     />
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
-  );
+  )};
 
   // Hàm render item cho danh sách thể loại món ăn
   const renderCategoryItem = ({ item }) => (
