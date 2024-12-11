@@ -52,13 +52,16 @@ const SAMPLE_MY_RECIPES = [
     difficulty: 'Dễ'
   }
 ];
-//Sửa hàm dô đây nhen Lan
 export const getSavedRecipes = async () => {
   try {
-    // Tạm thời return dữ liệu mẫu
-    return SAMPLE_SAVED_RECIPES;
-    // const res = await axios.get(`${BASE_URL}/recipe/savedRecipes`);
-    // return res.data.recipes;
+    const token = await AsyncStorage.getItem('token')
+    const res = await axios.get(`${BASE_URL}/recipe/savedRecipes`,{
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  })
+  console.log(res.data)
+  return res.data.savedRecipes;
   } catch (err) {
     console.error("Lỗi khi gửi yêu cầu API:", err);
     return null;

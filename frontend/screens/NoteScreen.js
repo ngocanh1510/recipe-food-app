@@ -60,7 +60,7 @@ export default function NoteScreen({ navigation }) {
         <Text numberOfLines={1} style={styles.title}>{item.title}</Text>
         <View style={styles.infoRow}>
           <Ionicons name="time-outline" size={16} color="#666" />
-          <Text style={styles.info}>{item.time}</Text>
+          <Text style={styles.info}>{item.time} phút</Text>
         </View>
         {activeTab === 'my' && (
           <View style={styles.actions}>
