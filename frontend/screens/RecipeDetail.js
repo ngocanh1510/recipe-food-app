@@ -3,10 +3,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { addRecipe } from '../src/api/api';
 
 const RecipeDetail = ({ navigation }) => {
-    const db = useSQLiteContext();
-
 
     React.useEffect(() => {
         navigation.setOptions({
@@ -25,7 +24,7 @@ const RecipeDetail = ({ navigation }) => {
     const [showSpiceModal, setShowSpiceModal] = useState(false);
     const [selectedSpice, setSelectedSpice] = useState(null);
     const [customSpice, setCustomSpice] = useState('');
-    const [spiceAmount, setSpiceAmount] = useState('');
+    const [quantity, setQuantity] = useState('');
     const [ingredients, setIngredients] = useState([
 
     ]);
@@ -37,20 +36,19 @@ const RecipeDetail = ({ navigation }) => {
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'
     ];
     const [time, setTime] = useState(0);
-
+    
     const [category, setCategory] = useState('');
     const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
     
     const categories = [
-        'Món chính',
-        'Món phụ',
-        'Món tráng miệng',
-        'Món khai vị',
-        'Món chay',
-        'Đồ uống',
-        'Khác'
+        'Cơm',
+        'Cháo/Súp',
+        'Phở/Bún/Bánh canh',
+        'Món xào',
+        'Bánh mì',
+        'Ăn vặt',
+        'Món cuốn'
     ];
-
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
         if (spiceName && quantity) {
@@ -97,7 +95,6 @@ const RecipeDetail = ({ navigation }) => {
     };
 
     const handleSave = async () => {
-
         const recipe = {
             title,
             description,
@@ -107,6 +104,7 @@ const RecipeDetail = ({ navigation }) => {
             protein,
             calories,
             fat,
+            category,
             ingredients,
             steps
         };
@@ -163,7 +161,7 @@ const RecipeDetail = ({ navigation }) => {
                         onChangeText={setTitle}
                         placeholder="Tên món ăn"
                     />
-
+                    
                     <TouchableOpacity 
                         style={styles.categoryDropdown}
                         onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
@@ -247,7 +245,7 @@ const RecipeDetail = ({ navigation }) => {
                         <View key={index} style={styles.ingredientRow}>
                             <Text style={styles.ingredientName}>{ingredient.name}</Text>
                             <View style={styles.ingredientActions}>
-                                <Text style={styles.ingredientAmount}>{ingredient.amount}</Text>
+                                <Text style={styles.ingredientAmount}>{ingredient.quantity}</Text>
                                 <TouchableOpacity 
                                     onPress={() => handleDeleteIngredient(index)}
                                     style={styles.deleteButton}
@@ -268,15 +266,6 @@ const RecipeDetail = ({ navigation }) => {
                     <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
                     {steps.map((step, index) => (
                         <View key={index} style={styles.stepCard}>
-                            <TouchableOpacity style={styles.stepImageContainer} onPress={() => pickStepImage(index)}>
-                                {step.image ? (
-                                    <Image source={{ uri: step.image }} style={styles.stepImage} />
-                                ) : (
-                                    <View style={styles.stepImagePlaceholder}>
-                                        <Ionicons name="camera-outline" size={24} color="#666" />
-                                    </View>
-                                )}
-                            </TouchableOpacity>
                             <View style={styles.stepContent}>
                                 <TextInput
                                     style={styles.stepTitle}
@@ -369,8 +358,8 @@ const RecipeDetail = ({ navigation }) => {
                                 <Text>Số lượng:</Text>
                                 <TextInput
                                     style={styles.amountInput}
-                                    value={spiceAmount}
-                                    onChangeText={setSpiceAmount}
+                                    value={quantity}
+                                    onChangeText={setQuantity}
                                     placeholder="VD: 10g, 1 muỗng,..."
                                     placeholderTextColor="#999"
                                 />
@@ -386,10 +375,10 @@ const RecipeDetail = ({ navigation }) => {
                                 <TouchableOpacity 
                                     style={[
                                         styles.addButton,
-                                        (!selectedSpice || !spiceAmount) && styles.disabledButton
+                                        (!selectedSpice || !quantity) && styles.disabledButton
                                     ]}
                                     onPress={handleAddSpice}
-                                    disabled={!selectedSpice || !spiceAmount}
+                                    disabled={!selectedSpice || !quantity}
                                 >
                                     <Text style={styles.buttonText}>Thêm</Text>
                                 </TouchableOpacity>
@@ -754,7 +743,7 @@ const styles = StyleSheet.create({
     dropdownItemText: {
         fontSize: 16,
         color: '#333',
-    },
+    }
 });
 
 export default RecipeDetail;

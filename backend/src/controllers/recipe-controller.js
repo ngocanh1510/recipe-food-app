@@ -84,7 +84,7 @@ export const addRecipe = async (req, res) => {
     calories,
     fat,
     description,
-    // category,
+    category,
     ingredients,
     steps,
     image
@@ -120,10 +120,10 @@ export const addRecipe = async (req, res) => {
   //     message: "Categories ID Not Found!",
   //   });
   // }  
-  // const categoryDoc = await CategoryModel.findOne({ name: category });
-  //       if (!categoryDoc) {
-  //           return res.status(400).json({ error: "Category not found" });
-  //       }
+  const categoryDoc = await CategoryModel.findOne({ name: category });
+        if (!categoryDoc) {
+            return res.status(400).json({ error: "Category not found" });
+        }
   if (
     !title || title.trim() === "" ||
     !time || 
@@ -168,7 +168,7 @@ export const addRecipe = async (req, res) => {
       calories,
       fat,
       description,
-      // categoriesId: categoryDoc._id,
+      categoriesId: categoryDoc._id,
       ingredients,
       steps,
       image
