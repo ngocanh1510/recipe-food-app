@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   FlatList,
@@ -20,18 +21,19 @@ export default function SearchScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch recipes
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
       const data = await getAllRecipes();
       if (data) {
         setRecipes(data);
         setFilteredFoods(data);
-      }
+      };
       setIsLoading(false);
     };
     fetchRecipes();
-  }, []);
+  }, []));
 
   // Search function
   const handleSearch = (text) => {
@@ -42,7 +44,13 @@ export default function SearchScreen({ navigation }) {
     setFilteredFoods(filtered);
   };
 
-  const renderFoodItem = ({ item }) => (
+  const renderFoodItem = ({ item }) =>{const imageSource =
+    item.image.startsWith('http') || item.image.startsWith('https')
+      ? { uri: item.image } // Đường dẫn URL
+      : item.image.startsWith('data:image')
+      ? { uri:`data:image/jpeg;base64,${item.image}`} // Base64
+      : null;
+      return (
     <TouchableOpacity
       style={styles.foodItem}
       onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
@@ -51,6 +59,7 @@ export default function SearchScreen({ navigation }) {
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
   );
+}
 
   return (
     <SafeAreaView style={styles.container}>

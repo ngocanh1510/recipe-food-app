@@ -11,12 +11,15 @@ const RecipeSchema = new mongoose.Schema({
     calories:{type:Number,required:true},
     fat:{type:Number,required:true},
     description:{type:String,required:true},
-    categoriesId:{type:mongoose.Types.ObjectId,ref:Category,required:true},
+    categoriesId:{type:mongoose.Types.ObjectId,ref:Category},
     ingredients:[{
         name: { type: String, required: true },
         quantity: { type: String, required: true },
       }],
-    steps:{type:[String],required:true},
+    steps:[{
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+      }],
     image:{type:String},
     likes: [{ type: mongoose.Types.ObjectId, ref: 'users' }], // Danh sách người dùng đã like
     comments: [{

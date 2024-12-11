@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { getAllCategories, getRecipesInHomepage, getRecipesByCategory } from '../src/api/api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { 
   useSharedValue, 
@@ -142,7 +144,8 @@ const HomeScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchCategoryRecipes = async () => {
       if (selectedCategory) {
         const data = await getRecipesByCategory(selectedCategory._id);
@@ -150,7 +153,7 @@ const HomeScreen = ({ navigation }) => {
       }
     };
     fetchCategoryRecipes();
-  }, [selectedCategory]);
+  }, [selectedCategory]));
 
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
@@ -167,7 +170,7 @@ const HomeScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('FoodDetail', { recipes: item })}
     >
       <Image
-      source={{ uri: item.image }}
+      source={{uri:item.image}}
       style={[styles.glassEffect, styles.foodImage]}
     />
       <Text style={styles.foodName}>{item.title}</Text>
