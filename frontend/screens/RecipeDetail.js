@@ -3,42 +3,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { addRecipe } from '../src/api/api';
 const RecipeDetail = ({ navigation }) => {
     const db = useSQLiteContext();
-    /* LOCAL STORAGE INTEGRATION GUIDE
-    Required Tables:
-    1. recipes
-        CREATE TABLE IF NOT EXISTS recipes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            description TEXT,
-            image TEXT,
-            servings INTEGER,
-            cookingTime TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
 
-    2. ingredients
-        CREATE TABLE IF NOT EXISTS ingredients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            recipe_id INTEGER,
-            name TEXT,
-            amount TEXT,
-            FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-        );
-
-    3. nutrition_values
-        CREATE TABLE IF NOT EXISTS nutrition_values (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            recipe_id INTEGER,
-            carbs TEXT,
-            protein TEXT,
-            calories TEXT,
-            fat TEXT,
-            FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-        );
-    */
 
     React.useEffect(() => {
         navigation.setOptions({
@@ -57,12 +25,9 @@ const RecipeDetail = ({ navigation }) => {
     const [showSpiceModal, setShowSpiceModal] = useState(false);
     const [selectedSpice, setSelectedSpice] = useState(null);
     const [customSpice, setCustomSpice] = useState('');
-    const [spiceAmount, setSpiceAmount] = useState('');
+    const [quantity, setQuantity] = useState('');
     const [ingredients, setIngredients] = useState([
-        // { name: 'Bánh phở', amount: '500g' },
-        // { name: 'Thịt bò', amount: '300g' },
-        // { name: 'Hành lá', amount: '50g' },
-        // { name: 'Gia vị', amount: '1 gói' }
+
     ]);
     const [carbs,setCarbs] = useState(0);
     const [protein,setProtein] = useState(0);
@@ -71,15 +36,15 @@ const RecipeDetail = ({ navigation }) => {
     const spiceList = [
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'
     ];
-    const [cookingTime, setCookingTime] = useState('60 phút');
+    const [time, setTime] = useState(0);
 
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
-        if (spiceName && spiceAmount) {
-            setIngredients(prev => [...prev, { name: spiceName, amount: spiceAmount }]);
+        if (spiceName && quantity) {
+            setIngredients(prev => [...prev, { name: spiceName, quantity: quantity }]);
             setSelectedSpice(null);
             setCustomSpice('');
-            setSpiceAmount('');
+            setQuantity('');
             setShowSpiceModal(false);
         }
     };
@@ -109,20 +74,6 @@ const RecipeDetail = ({ navigation }) => {
         setSteps([...steps, { title: '', description: '', image: null }]);
     };
 
-    const pickStepImage = async (index) => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-        if (!result.canceled) {
-            const updatedSteps = [...steps];
-            updatedSteps[index].image = result.assets[0].uri;
-            setSteps(updatedSteps);
-        }
-    };
-
     const handleStepTitleFocus = (index) => {
         const newSteps = [...steps];
         if (!newSteps[index].title.startsWith(`Bước ${index + 1}: `)) {
@@ -132,52 +83,32 @@ const RecipeDetail = ({ navigation }) => {
     };
 
     const handleSave = async () => {
-        // // Validate required fields
-        // if (!title || !description) {
-        //     Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
-        //     return;
-        // }
+        const recipe = {
+            title,
+            description,
+            image,
+            time,
+            carbs,
+            protein,
+            calories,
+            fat,
+            ingredients,
+            steps
+        };
 
-        // try {
-        //     // Insert recipe
-        //     const recipeResult = await db.runAsync(
-        //         'INSERT INTO recipes (title, description, image, servings, cookingTime) VALUES (?, ?, ?, ?, ?)',
-        //         [title, description, image, servings, '60 phút']
-        //     );
+        try {
+            // Gửi công thức lên backend
+            const savedRecipe = await addRecipe(recipe);
 
-        //     const recipeId = recipeResult.lastInsertRowId;
-
-        //     // Insert ingredients
-        //     for (const ingredient of ingredients) {
-        //         await db.runAsync(
-        //             'INSERT INTO ingredients (recipe_id, name, amount) VALUES (?, ?, ?)',
-        //             [recipeId, ingredient.name, ingredient.amount]
-        //         );
-        //     }
-
-        //     // Insert nutrition values
-        //     await db.runAsync(
-        //         'INSERT INTO nutrition_values (recipe_id, carbs, protein, calories, fat) VALUES (?, ?, ?, ?, ?)',
-        //         [recipeId, nutritionValues.carbs || '0g', nutritionValues.protein || '0g', 
-        //         nutritionValues.calories || '0kcal', nutritionValues.fat || '0g']
-        //     );
-
-        //     // Add steps insertion
-        //     for (let i = 0; i < steps.length; i++) {
-        //         const step = steps[i];
-        //         await db.runAsync(
-        //             'INSERT INTO recipe_steps (recipe_id, step_number, title, description, image) VALUES (?, ?, ?, ?, ?)',
-        //             [recipeId, i + 1, step.title, step.description, step.image]
-        //         );
-        //     }
-
-        //     Alert.alert('Thành công', 'Đã lưu công thức', [
-        //         { text: 'OK', onPress: () => navigation.navigate('RecipeForm', { recipeId }) }
-        //     ]);
-        // } catch (error) {
-        //     console.error('Error saving recipe:', error);
-        //     Alert.alert('Lỗi', 'Không thể lưu công thức');
-        // }
+            // Hiển thị thông báo thành công
+            Alert.alert('Thành công', 'Công thức đã được lưu', [
+                { text: 'OK', onPress: () => navigation.goBack() },
+            ]);
+        } catch (error) {
+            // Xử lý lỗi
+            Alert.alert('Lỗi', 'Không thể lưu công thức');
+            console.log(error)
+        }
     };
 
     return (
@@ -202,10 +133,11 @@ const RecipeDetail = ({ navigation }) => {
                     <Ionicons name="time-outline" size={20} color="#666" />
                     <TextInput
                         style={styles.timeText}
-                        value={cookingTime}
-                        onChangeText={setCookingTime}
-                        placeholder="60 phút"
+                        value={time}
+                        onChangeText={setTime}
+                        placeholder="60 "
                     />
+                    <Text> phút</Text>
                 </View>
 
                 <View style={styles.contentContainer}>
@@ -268,7 +200,7 @@ const RecipeDetail = ({ navigation }) => {
                         <View key={index} style={styles.ingredientRow}>
                             <Text style={styles.ingredientName}>{ingredient.name}</Text>
                             <View style={styles.ingredientActions}>
-                                <Text style={styles.ingredientAmount}>{ingredient.amount}</Text>
+                                <Text style={styles.ingredientAmount}>{ingredient.quantity}</Text>
                                 <TouchableOpacity 
                                     onPress={() => handleDeleteIngredient(index)}
                                     style={styles.deleteButton}
@@ -289,15 +221,6 @@ const RecipeDetail = ({ navigation }) => {
                     <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
                     {steps.map((step, index) => (
                         <View key={index} style={styles.stepCard}>
-                            <TouchableOpacity style={styles.stepImageContainer} onPress={() => pickStepImage(index)}>
-                                {step.image ? (
-                                    <Image source={{ uri: step.image }} style={styles.stepImage} />
-                                ) : (
-                                    <View style={styles.stepImagePlaceholder}>
-                                        <Ionicons name="camera-outline" size={24} color="#666" />
-                                    </View>
-                                )}
-                            </TouchableOpacity>
                             <View style={styles.stepContent}>
                                 <TextInput
                                     style={styles.stepTitle}
@@ -390,8 +313,8 @@ const RecipeDetail = ({ navigation }) => {
                                 <Text>Số lượng:</Text>
                                 <TextInput
                                     style={styles.amountInput}
-                                    value={spiceAmount}
-                                    onChangeText={setSpiceAmount}
+                                    value={quantity}
+                                    onChangeText={setQuantity}
                                     placeholder="VD: 10g, 1 muỗng,..."
                                     placeholderTextColor="#999"
                                 />
@@ -407,10 +330,10 @@ const RecipeDetail = ({ navigation }) => {
                                 <TouchableOpacity 
                                     style={[
                                         styles.addButton,
-                                        (!selectedSpice || !spiceAmount) && styles.disabledButton
+                                        (!selectedSpice || !quantity) && styles.disabledButton
                                     ]}
                                     onPress={handleAddSpice}
-                                    disabled={!selectedSpice || !spiceAmount}
+                                    disabled={!selectedSpice || !quantity}
                                 >
                                     <Text style={styles.buttonText}>Thêm</Text>
                                 </TouchableOpacity>

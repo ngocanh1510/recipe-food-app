@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       const storedToken = await AsyncStorage.getItem('token');
       if (storedToken) {
         setToken(storedToken);
-        setIsAuthenticated(true);
+        // setIsAuthenticated(true);
       }
     };
     loadToken();
@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     await AsyncStorage.setItem('token', newToken);
     setToken(newToken);
     setIsAuthenticated(true);
+    console.log(token)
   };
 
   const logout = async () => {
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated,token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

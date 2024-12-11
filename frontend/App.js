@@ -226,6 +226,7 @@ const MainBottom = () => {
 // **AppNavigator: Điều hướng chính dựa trên trạng thái xác thực**
 const AppNavigator = () => {
   const { isAuthenticated } = useContext(AuthContext);
+  console.log(isAuthenticated)
   return (
     <NavigationContainer>
       {isAuthenticated ? <MainBottom /> : <AuthStack />}

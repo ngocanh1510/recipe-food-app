@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { API_URL} from '../config';
-import AsyncStorage from '@react-native-async-storage/async-storage'
-
+import { API_URL} from '../config.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const BASE_URL=`http://${API_URL}:3001`
 export const getRecipesInHomepage = async () => {
   try {
-    const res = await axios.get(`http://${API_URL}:3001/recipe`);
+    const res = await axios.get(`${BASE_URL}/recipe`);
     if (res.status === 200) {
       return res.data.recipes; 
     } else {
@@ -19,7 +19,7 @@ export const getRecipesInHomepage = async () => {
 
 export const getSavedRecipes = async () => {
   try {
-    const res = await axios.get(`http://${API_URL}:3001/recipe/savedRecipes`);
+    const res = await axios.get(`${BASE_URL}/recipe/savedRecipes`);
     if (res.status === 200) {
       return res.data.recipes; 
     } else {
@@ -34,8 +34,7 @@ export const getSavedRecipes = async () => {
 
 export const getAllRecipes = async () => {
   try {
-    const res = await axios.get(`http://${API_URL}:3001/recipe/all`);
-    
+    const res = await axios.get(`${BASE_URL}/recipe/all`);
     if (res.status === 200) {
       return res.data.recipes; 
     } else {
@@ -53,7 +52,7 @@ export const post = async (endpoint, data) => {
     const token = await AsyncStorage.getItem('token');
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const response = await axios.post(`http://${API_URL}:3001${endpoint}`, data, 
+    const response = await axios.post(`${BASE_URL}${endpoint}`, data, 
       {
         headers,
         withCredentials: true,
@@ -67,8 +66,7 @@ export const post = async (endpoint, data) => {
 
 export const getAllCategories = async () => {
   try {
-    console.log(API_URL);
-    const res = await axios.get(`http://${API_URL}:3001/category/all`);
+    const res = await axios.get(`${BASE_URL}/category/all`);
     
     if (res.status === 200) {
       return res.data.categories; 
@@ -84,13 +82,58 @@ export const getAllCategories = async () => {
 
 export const getRecipesByCategory = async (categoryId) => {
   try {
-    const response = await axios.get(`http://${API_URL}:3001/recipe/category/${categoryId}`);
-    return response.data;
+    const res = await axios.get(`${BASE_URL}/recipe/category/${categoryId}`);
+    return res.data;
   } catch (error) {
     console.error('Error fetching recipes by category:', error);
     return null;
   }
 };
+
+export const addRecipe = async (recipe) => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    console.log('Token:', token);
+    if (!token) {
+      throw new Error('Token không tồn tại');
+    }
+
+    console.log('Recipe payload:', recipe);
+
+    const res = await axios.post(`${BASE_URL}/recipe/add`, recipe, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Response Data:', res.data);
+
+    if (res.data.success) {
+      Alert.alert('Thêm công thức thành công');
+    } else {
+      Alert.alert('Thất bại');
+    }
+
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    console.error('Error:', err.response?.data || err.message);
+    throw new Error(err.response?.data?.message || 'Failed to add recipe');
+  }
+};
+
+
+// export const addRecipe = async (recipe) => {
+//   const response = await fetch(`${BASE_URL}/add`, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(recipe),
+//   });
+//   const data = await response.json();
+//   if (!response.ok) throw new Error(data.message || 'Failed to add recipe');
+//   return data;
+// };
 
 
 // export const getImage = async () => {

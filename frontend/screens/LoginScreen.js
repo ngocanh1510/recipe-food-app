@@ -1,4 +1,3 @@
-// 22520073-Phan Thị Ngọc Ánh
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useContext, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';

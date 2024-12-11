@@ -1,7 +1,8 @@
 import React from 'react';
 import { getAllCategories, getRecipesInHomepage, getRecipesByCategory } from '../src/api/api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { 
   useSharedValue, 
@@ -87,7 +88,8 @@ const HomeScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryRecipes, setCategoryRecipes] = useState([]);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
       const data = await getRecipesInHomepage(); 
@@ -95,9 +97,10 @@ const HomeScreen = ({ navigation }) => {
       setIsLoading(false);
     };
     fetchRecipes();
-  }, []);
+  }, []));
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchCategories = async () => {
       setIsLoading(true); 
       const data = await getAllCategories(); 
@@ -105,9 +108,10 @@ const HomeScreen = ({ navigation }) => {
       setIsLoading(false);
     };
     fetchCategories();
-  }, []);
+  }, []));
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchCategoryRecipes = async () => {
       if (selectedCategory) {
         setIsLoading(true);
@@ -115,11 +119,9 @@ const HomeScreen = ({ navigation }) => {
         setCategoryRecipes(data.recipes);
         setIsLoading(false);
       }
-      console.log(categoryRecipes);
-
     };
     fetchCategoryRecipes();
-  }, [selectedCategory]);
+  }, [selectedCategory]));
 
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
