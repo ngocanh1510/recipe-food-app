@@ -80,7 +80,7 @@ const SkeletonCategoryItem = () => (
 
 const HomeScreen = ({ navigation }) => {
   // const { userData } = useUser();
-  const [ userData, setUserData ] = useState({});
+  const [ userData, setUserData ] = useState();
 
   const [categories,setCategories]=useState([])
   const [recipes, setRecipes] = useState([]); 
@@ -98,7 +98,7 @@ const HomeScreen = ({ navigation }) => {
         const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
         setUserData(profileData); // Cập nhật thông tin người dùng vào state
         // console.log('Profile data:', profileData);
-
+        console.log(userData);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }

@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       const storedToken = await AsyncStorage.getItem('token');
       if (storedToken) {
         setToken(storedToken);
-        setIsAuthenticated(true);
+        // setIsAuthenticated(true);
       }
     };
     loadToken();

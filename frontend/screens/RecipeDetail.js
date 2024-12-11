@@ -6,39 +6,6 @@ import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleS
 
 const RecipeDetail = ({ navigation }) => {
     const db = useSQLiteContext();
-    /* LOCAL STORAGE INTEGRATION GUIDE
-    Required Tables:
-    1. recipes
-        CREATE TABLE IF NOT EXISTS recipes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            description TEXT,
-            image TEXT,
-            servings INTEGER,
-            cookingTime TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-
-    2. ingredients
-        CREATE TABLE IF NOT EXISTS ingredients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            recipe_id INTEGER,
-            name TEXT,
-            amount TEXT,
-            FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-        );
-
-    3. nutrition_values
-        CREATE TABLE IF NOT EXISTS nutrition_values (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            recipe_id INTEGER,
-            carbs TEXT,
-            protein TEXT,
-            calories TEXT,
-            fat TEXT,
-            FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-        );
-    */
 
     React.useEffect(() => {
         navigation.setOptions({
@@ -72,6 +39,19 @@ const RecipeDetail = ({ navigation }) => {
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'
     ];
     const [cookingTime, setCookingTime] = useState('60 phút');
+
+    const [category, setCategory] = useState('');
+    const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+    
+    const categories = [
+        'Món chính',
+        'Món phụ',
+        'Món tráng miệng',
+        'Món khai vị',
+        'Món chay',
+        'Đồ uống',
+        'Khác'
+    ];
 
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
@@ -132,52 +112,7 @@ const RecipeDetail = ({ navigation }) => {
     };
 
     const handleSave = async () => {
-        // // Validate required fields
-        // if (!title || !description) {
-        //     Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
-        //     return;
-        // }
 
-        // try {
-        //     // Insert recipe
-        //     const recipeResult = await db.runAsync(
-        //         'INSERT INTO recipes (title, description, image, servings, cookingTime) VALUES (?, ?, ?, ?, ?)',
-        //         [title, description, image, servings, '60 phút']
-        //     );
-
-        //     const recipeId = recipeResult.lastInsertRowId;
-
-        //     // Insert ingredients
-        //     for (const ingredient of ingredients) {
-        //         await db.runAsync(
-        //             'INSERT INTO ingredients (recipe_id, name, amount) VALUES (?, ?, ?)',
-        //             [recipeId, ingredient.name, ingredient.amount]
-        //         );
-        //     }
-
-        //     // Insert nutrition values
-        //     await db.runAsync(
-        //         'INSERT INTO nutrition_values (recipe_id, carbs, protein, calories, fat) VALUES (?, ?, ?, ?, ?)',
-        //         [recipeId, nutritionValues.carbs || '0g', nutritionValues.protein || '0g', 
-        //         nutritionValues.calories || '0kcal', nutritionValues.fat || '0g']
-        //     );
-
-        //     // Add steps insertion
-        //     for (let i = 0; i < steps.length; i++) {
-        //         const step = steps[i];
-        //         await db.runAsync(
-        //             'INSERT INTO recipe_steps (recipe_id, step_number, title, description, image) VALUES (?, ?, ?, ?, ?)',
-        //             [recipeId, i + 1, step.title, step.description, step.image]
-        //         );
-        //     }
-
-        //     Alert.alert('Thành công', 'Đã lưu công thức', [
-        //         { text: 'OK', onPress: () => navigation.navigate('RecipeForm', { recipeId }) }
-        //     ]);
-        // } catch (error) {
-        //     console.error('Error saving recipe:', error);
-        //     Alert.alert('Lỗi', 'Không thể lưu công thức');
-        // }
     };
 
     return (
@@ -215,6 +150,37 @@ const RecipeDetail = ({ navigation }) => {
                         onChangeText={setTitle}
                         placeholder="Tên món ăn"
                     />
+
+                    <TouchableOpacity 
+                        style={styles.categoryDropdown}
+                        onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                    >
+                        <Text style={styles.categoryText}>
+                            {category || 'Chọn thể loại món ăn'}
+                        </Text>
+                        <Ionicons 
+                            name={showCategoryDropdown ? 'chevron-up' : 'chevron-down'} 
+                            size={24} 
+                            color="#666" 
+                        />
+                    </TouchableOpacity>
+
+                    {showCategoryDropdown && (
+                        <View style={styles.dropdownList}>
+                            {categories.map((item, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.dropdownItem}
+                                    onPress={() => {
+                                        setCategory(item);
+                                        setShowCategoryDropdown(false);
+                                    }}
+                                >
+                                    <Text style={styles.dropdownItemText}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
                     
                     <TextInput
                         style={styles.descriptionInput}
@@ -739,6 +705,42 @@ const styles = StyleSheet.create({
     stepDescription: {
         fontSize: 14,
         color: '#666',
+    },
+    categoryDropdown: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 12,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginBottom: 16,
+    },
+    categoryText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    dropdownList: {
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginTop: -14,
+        marginBottom: 16,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    dropdownItem: {
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#333',
     },
 });
 
