@@ -142,11 +142,6 @@ export const addRecipe = async (recipe) => {
 
     console.log('Response Data:', res.data);
 
-    if (res.data.success) {
-      console.log('Thêm thành công');
-    } else {
-      console.log('Thêm thất bại')
-    }
     return res.data;
   } catch (err) {
     console.log(err)
