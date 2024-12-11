@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { get } from '../src/api/api';
 
 const ShimmerEffect = ({ width, height, style }) => {
   const translateX = useSharedValue(-width);
@@ -78,9 +79,9 @@ const SkeletonCategoryItem = () => (
 const HeaderSection = ({ userData, navigation }) => (
   <View style={styles.header}>
     <View style={styles.user}>
-      <Image source={{ uri: userData.image }} style={styles.profileImage}/>
+      <Image source={{ uri: userData.avatar }} style={styles.profileImage}/>
       <View>
-        <Text style={styles.greeting}>Chào buổi sáng!</Text>
+        <Text style={styles.greeting}>Chúc một ngày tốt lành!</Text>
         <Text style={styles.username}>{userData.name}</Text>
       </View>
     </View>
@@ -107,14 +108,26 @@ const FeaturedDishSection = ({ recipe, navigation }) => (
 );
 
 const HomeScreen = ({ navigation }) => {
-  const { userData } = useUser();
   const [categories, setCategories] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryRecipes, setCategoryRecipes] = useState([]);
   const flatListRef = useRef(null);
-
+  const [ userData, setUserData ] = useState({});
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        // console.log('Fetching profile...')
+        const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+        setUserData(profileData); // Cập nhật thông tin người dùng vào state
+        // console.log('Profile data:', profileData);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+    fetchProfile();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
