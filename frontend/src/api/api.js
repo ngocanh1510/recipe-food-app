@@ -17,15 +17,60 @@ export const getRecipesInHomepage = async () => {
   }
 };
 
+// Dữ liệu mẫu cho saved recipes
+const SAMPLE_SAVED_RECIPES = [
+  {
+    _id: '1',
+    title: 'Phở Bò Việt Nam',
+    image: 'https://cdn.tgdd.vn/Files/2022/01/25/1412805/cach-nau-pho-bo-nam-dinh-chuan-vi-thom-ngon-nhu-hang-quan-202201250230038502.jpg',
+    time: '60 phút',
+    difficulty: 'Trung bình'
+  },
+  {
+    _id: '2',
+    title: 'Bún Chả Hà Nội',
+    image: 'https://cdn.tgdd.vn/Files/2021/08/09/1374160/cach-lam-bun-cha-ha-noi-bang-noi-chien-khong-dau-thom-ngon-chuan-vi-202108091559062485.jpg',
+    time: '45 phút',
+    difficulty: 'Dễ'
+  }
+];
+
+// Dữ liệu mẫu cho my recipes
+const SAMPLE_MY_RECIPES = [
+  {
+    _id: '3',
+    title: 'Cơm Gà Hải Nam',
+    image: 'https://cdn.tgdd.vn/Files/2021/08/09/1374160/cach-lam-com-ga-hai-nam-don-gian-tai-nha-202108091559062485.jpg',
+    time: '50 phút',
+    difficulty: 'Trung bình'
+  },
+  {
+    _id: '4',
+    title: 'Bánh Xèo Miền Tây',
+    image: 'https://cdn.tgdd.vn/Files/2021/08/09/1374160/cach-lam-banh-xeo-mien-tay-gion-rum-thom-ngon-202108091559062485.jpg',
+    time: '30 phút',
+    difficulty: 'Dễ'
+  }
+];
+//Sửa hàm dô đây nhen Lan
 export const getSavedRecipes = async () => {
   try {
-    const res = await axios.get(`${BASE_URL}/recipe/savedRecipes`);
-    if (res.status === 200) {
-      return res.data.recipes; 
-    } else {
-      console.error("Lỗi API:", res.status);
-      return null;
-    }
+    // Tạm thời return dữ liệu mẫu
+    return SAMPLE_SAVED_RECIPES;
+    // const res = await axios.get(`${BASE_URL}/recipe/savedRecipes`);
+    // return res.data.recipes;
+  } catch (err) {
+    console.error("Lỗi khi gửi yêu cầu API:", err);
+    return null;
+  }
+};
+
+export const getMyRecipes = async () => {
+  try {
+    // Tạm thời return dữ liệu mẫu
+    return SAMPLE_MY_RECIPES;
+    // const res = await axios.get(`${BASE_URL}/recipe/myRecipes`);
+    // return res.data.recipes;
   } catch (err) {
     console.error("Lỗi khi gửi yêu cầu API:", err);
     return null;
