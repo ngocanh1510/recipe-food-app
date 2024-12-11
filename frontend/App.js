@@ -4,30 +4,30 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SQLiteProvider } from 'expo-sqlite';
 import { useContext } from 'react';
+import { UserProvider } from './context/UserContext';
+import AboutScreen from './screens/AboutScreen';
+import AchievementsScreen from './screens/AchievementsScreen';
 import { AuthContext, AuthProvider } from './screens/AuthContext.js';
+import CookingStepsScreen from './screens/CookingStepsScreen.js'; // Import CookingStepsScreen
 import CreateRecipeScreen from './screens/CreateRecipeScreen.js';
 import EditProfileScreen from './screens/EditProfileScreen.js';
+import FavoritesScreen from './screens/FavoritesScreen';
 import FoodDetail from './screens/FoodDetail.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
+import HelpScreen from './screens/HelpScreen';
+import HistoryScreen from './screens/HistoryScreen';
 import HomeScreen from './screens/HomeScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
 import NoteScreen from './screens/NoteScreen.js';
 import NotificationsScreen from './screens/NotificationScreen.js';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import ProfileScreen from './screens/ProfileScreen.js';
 import RecipeDetail from './screens/RecipeDetail.js';
 import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
-import WelcomeScreen from './screens/WelcomeScreen.js';
-import { UserProvider } from './context/UserContext';
-import FavoritesScreen from './screens/FavoritesScreen';
-import HistoryScreen from './screens/HistoryScreen';
-import AchievementsScreen from './screens/AchievementsScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import HelpScreen from './screens/HelpScreen';
-import AboutScreen from './screens/AboutScreen';
-import CookingStepsScreen from './screens/CookingStepsScreen.js'; // Import CookingStepsScreen
+import WelcomeScreen from './screens/WelcomeScreen.js';
 
 
 const Stack = createStackNavigator();
@@ -229,75 +229,17 @@ const AppNavigator = () => {
   console.log(isAuthenticated)
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainBottom /> : <AuthStack />}
-      {/* <MainBottom /> */}
+      {/* {isAuthenticated ? <MainBottom /> : <AuthStack />} */}
+      <MainBottom />
     </NavigationContainer>
   );
 };
-
-async function initDatabase(db) {
-  const DATABASE_VERSION = 1;
-  
-  const { user_version: currentDbVersion } = await db.getFirstAsync('PRAGMA user_version');
-  
-  if (currentDbVersion >= DATABASE_VERSION) {
-    return;
-  }
-
-  if (currentDbVersion === 0) {
-    await db.execAsync(`
-      PRAGMA journal_mode = 'wal';
-      
-      CREATE TABLE IF NOT EXISTS recipes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        description TEXT,
-        image TEXT,
-        servings INTEGER,
-        cookingTime TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE IF NOT EXISTS recipe_steps (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        recipe_id INTEGER,
-        step_number INTEGER,
-        title TEXT,
-        description TEXT,
-        image TEXT,
-        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-      );
-
-      CREATE TABLE IF NOT EXISTS ingredients (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        recipe_id INTEGER,
-        name TEXT,
-        amount TEXT,
-        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-      );
-
-      CREATE TABLE IF NOT EXISTS nutrition_values (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        recipe_id INTEGER,
-        carbs TEXT,
-        protein TEXT,
-        calories TEXT,
-        fat TEXT,
-        FOREIGN KEY (recipe_id) REFERENCES recipes (id)
-      );
-    `);
-  }
-
-  await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
-}
 
 export default function App() {
   return (
       <AuthProvider>
         <UserProvider>
-          <SQLiteProvider databaseName="recipes.db" onInit={initDatabase}>
             <AppNavigator />
-          </SQLiteProvider>
         </UserProvider>
       </AuthProvider>
   );

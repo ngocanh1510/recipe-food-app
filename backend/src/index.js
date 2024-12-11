@@ -1,10 +1,10 @@
-import express from "express";
-import cors from "cors"
-import mongoose from "mongoose"
+import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
 import AccountRouter from "./routes/auth-router.js";
-import RecipeRouter from "./routes/recipe-router.js";
 import CategoryRouter from "./routes/category-router.js";
+import RecipeRouter from "./routes/recipe-router.js";
 
 dotenv.config();
 
@@ -13,7 +13,6 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
-
 
 
 mongoose.connect(

@@ -26,9 +26,9 @@ export default function RegisterScreen({ navigation }) {
 
     try {
       // Gửi yêu cầu đăng ký tới API
-      const response = post('/auth/register', { name, email, password });
+      const response = await post('/auth/register', { name, email, password });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         Alert.alert('Thành công', 'Đăng ký thành công!');
         navigation.navigate('Login'); // Điều hướng về màn hình Đăng nhập
       }

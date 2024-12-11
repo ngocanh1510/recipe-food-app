@@ -3,9 +3,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { addRecipe } from '../src/api/api';
-import * as FileSystem from "expo-file-system";
-import * as ImageManipulator from 'expo-image-manipulator';
 
 const RecipeDetail = ({ navigation }) => {
     const db = useSQLiteContext();
@@ -28,7 +25,7 @@ const RecipeDetail = ({ navigation }) => {
     const [showSpiceModal, setShowSpiceModal] = useState(false);
     const [selectedSpice, setSelectedSpice] = useState(null);
     const [customSpice, setCustomSpice] = useState('');
-    const [quantity, setQuantity] = useState('');
+    const [spiceAmount, setSpiceAmount] = useState('');
     const [ingredients, setIngredients] = useState([
 
     ]);
@@ -41,6 +38,19 @@ const RecipeDetail = ({ navigation }) => {
     ];
     const [time, setTime] = useState(0);
 
+    const [category, setCategory] = useState('');
+    const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+    
+    const categories = [
+        'Món chính',
+        'Món phụ',
+        'Món tráng miệng',
+        'Món khai vị',
+        'Món chay',
+        'Đồ uống',
+        'Khác'
+    ];
+
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
         if (spiceName && quantity) {
@@ -51,7 +61,6 @@ const RecipeDetail = ({ navigation }) => {
             setShowSpiceModal(false);
         }
     };
-z
     const [image, setImage] = useState('');
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -88,6 +97,7 @@ z
     };
 
     const handleSave = async () => {
+
         const recipe = {
             title,
             description,
@@ -153,6 +163,37 @@ z
                         onChangeText={setTitle}
                         placeholder="Tên món ăn"
                     />
+
+                    <TouchableOpacity 
+                        style={styles.categoryDropdown}
+                        onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                    >
+                        <Text style={styles.categoryText}>
+                            {category || 'Chọn thể loại món ăn'}
+                        </Text>
+                        <Ionicons 
+                            name={showCategoryDropdown ? 'chevron-up' : 'chevron-down'} 
+                            size={24} 
+                            color="#666" 
+                        />
+                    </TouchableOpacity>
+
+                    {showCategoryDropdown && (
+                        <View style={styles.dropdownList}>
+                            {categories.map((item, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.dropdownItem}
+                                    onPress={() => {
+                                        setCategory(item);
+                                        setShowCategoryDropdown(false);
+                                    }}
+                                >
+                                    <Text style={styles.dropdownItemText}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
                     
                     <TextInput
                         style={styles.descriptionInput}
@@ -206,7 +247,7 @@ z
                         <View key={index} style={styles.ingredientRow}>
                             <Text style={styles.ingredientName}>{ingredient.name}</Text>
                             <View style={styles.ingredientActions}>
-                                <Text style={styles.ingredientAmount}>{ingredient.quantity}</Text>
+                                <Text style={styles.ingredientAmount}>{ingredient.amount}</Text>
                                 <TouchableOpacity 
                                     onPress={() => handleDeleteIngredient(index)}
                                     style={styles.deleteButton}
@@ -227,6 +268,15 @@ z
                     <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
                     {steps.map((step, index) => (
                         <View key={index} style={styles.stepCard}>
+                            <TouchableOpacity style={styles.stepImageContainer} onPress={() => pickStepImage(index)}>
+                                {step.image ? (
+                                    <Image source={{ uri: step.image }} style={styles.stepImage} />
+                                ) : (
+                                    <View style={styles.stepImagePlaceholder}>
+                                        <Ionicons name="camera-outline" size={24} color="#666" />
+                                    </View>
+                                )}
+                            </TouchableOpacity>
                             <View style={styles.stepContent}>
                                 <TextInput
                                     style={styles.stepTitle}
@@ -319,8 +369,8 @@ z
                                 <Text>Số lượng:</Text>
                                 <TextInput
                                     style={styles.amountInput}
-                                    value={quantity}
-                                    onChangeText={setQuantity}
+                                    value={spiceAmount}
+                                    onChangeText={setSpiceAmount}
                                     placeholder="VD: 10g, 1 muỗng,..."
                                     placeholderTextColor="#999"
                                 />
@@ -336,10 +386,10 @@ z
                                 <TouchableOpacity 
                                     style={[
                                         styles.addButton,
-                                        (!selectedSpice || !quantity) && styles.disabledButton
+                                        (!selectedSpice || !spiceAmount) && styles.disabledButton
                                     ]}
                                     onPress={handleAddSpice}
-                                    disabled={!selectedSpice || !quantity}
+                                    disabled={!selectedSpice || !spiceAmount}
                                 >
                                     <Text style={styles.buttonText}>Thêm</Text>
                                 </TouchableOpacity>
@@ -668,6 +718,42 @@ const styles = StyleSheet.create({
     stepDescription: {
         fontSize: 14,
         color: '#666',
+    },
+    categoryDropdown: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 12,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginBottom: 16,
+    },
+    categoryText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    dropdownList: {
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginTop: -14,
+        marginBottom: 16,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    dropdownItem: {
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#333',
     },
 });
 

@@ -59,10 +59,43 @@ export const post = async (endpoint, data) => {
       });
     return response; // Trả về response của API (ví dụ: { status, data })
   } catch (error) {
-    console.error("Error during API call:", error);
+    // console.error("Error during API call:", error);
     throw error; // Ném lỗi để catch ở nơi gọi API
   }
 };
+
+export const get = async (endpoint) => {
+  try {
+    const token = await AsyncStorage.getItem('token'); // Lấy token từ AsyncStorage
+    const headers = token ? { Authorization: `Bearer ${token}` } : {}; // Thêm header Authorization nếu có token
+
+    const response = await axios.get(`http://${API_URL}:3001${endpoint}`, {
+      headers,
+      withCredentials: true, // Đảm bảo gửi cookie nếu cần thiết
+    });
+
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    // console.error("Error during API call:", error);
+    throw error; // Ném lỗi để catch ở nơi gọi API
+  }
+};
+
+export const put = async (endpoint, data, headers = {}) => {
+  try {
+    const response = await axios.put(`http://${API_URL}:3001${endpoint}`, data, {
+      headers: {
+        // 'Content-Type': 'application/json',
+        ...headers,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('PUT request error:', error.response?.data || error.message);
+    throw new Error(error.response?.data.message || 'Lỗi khi gửi yêu cầu PUT');
+  }
+};
+
 
 export const getAllCategories = async () => {
   try {

@@ -27,7 +27,7 @@ const CookingStepsScreen = ({ route }) => {
         <View>
           <TouchableOpacity
             style={styles.completeButton}
-            onPress={() => navigation.navigate('SearchScreen')}
+            onPress={() => navigation.goBack()}
           >
             <Text style={styles.completeButtonText}>Hoàn thành</Text>
           </TouchableOpacity>

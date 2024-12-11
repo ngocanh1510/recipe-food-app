@@ -413,7 +413,7 @@ export const toggleSaveRecipe = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: hasSaved ? "Recipe unsaved" : "Recipe saved",
+      message: hasSaved ? "Đã bỏ lưu công thức" : "Đã lưu công thức",
       savedRecipes: user.savedRecipes
     });
   } catch (err) {

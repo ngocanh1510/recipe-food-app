@@ -2,7 +2,7 @@ import {
     MaterialCommunityIcons,
     MaterialIcons
 } from '@expo/vector-icons';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Image,
     ScrollView,
@@ -14,6 +14,8 @@ import {
 import { useUser } from '../context/UserContext';
 import { post } from '../src/api/api';
 import { AuthContext } from './AuthContext';
+import { Alert } from 'react-native';
+import { get } from '../src/api/api';
 
 const MenuItem = ({ icon, title, onPress }) => (
     <TouchableOpacity
@@ -28,16 +30,33 @@ const MenuItem = ({ icon, title, onPress }) => (
 );
 
 const ProfileScreen = ({navigation}) => {
-    const { userData } = useUser();
+    const [ userData, setUserData ] = useState({});
     const { logout } = useContext(AuthContext);
      // Hàm xử lý logout
-     const handleLogout = async () => {
+
+     useEffect(() => {
+        const fetchProfile = async () => {
+          try {
+            // console.log('Fetching profile...')
+            const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+            setUserData(profileData); // Cập nhật thông tin người dùng vào state
+            // console.log('Profile data:', profileData);
+            
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+          }
+        };
+    
+        fetchProfile();
+      }, []);
+
+    const handleLogout = async () => {
         try {
             // Gọi API logout
             const response = await post('/auth/logout');
 
             if (response.status === 200) {
-                logout();                
+                logout();
 
                 // Chuyển hướng về màn hình Login
                 Alert.alert('Thành công', 'Đăng xuất thành công!'
@@ -89,7 +108,7 @@ const ProfileScreen = ({navigation}) => {
                 <View style={styles.profileSection}>
                     <Image
                         style={styles.avatar}
-                        source={{ uri: userData.image }}
+                        source={{ uri: userData.avatar }}
                     />
                     <View style={styles.profileInfo}>
                         <Text style={styles.name}>{userData.name}</Text>
