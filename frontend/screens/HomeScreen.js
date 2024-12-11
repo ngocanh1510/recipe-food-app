@@ -20,8 +20,6 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { get } from '../src/api/api';
-
 
 const ShimmerEffect = ({ width, height, style }) => {
   const translateX = useSharedValue(-width);
@@ -117,20 +115,7 @@ const HomeScreen = ({ navigation }) => {
   const [categoryRecipes, setCategoryRecipes] = useState([]);
   const flatListRef = useRef(null);
 
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     try {
-  //       const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
-  //       setUserData(profileData); // Cập nhật thông tin người dùng vào state
-  //     } catch (error) {
-  //       console.error('Error fetching profile:', error);
-  //     }
-  //   };
-
-  //   fetchProfile();
-  // }, []);
-
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const [recipesData, categoriesData] = await Promise.all([
@@ -319,93 +304,12 @@ const HomeScreen = ({ navigation }) => {
         keyExtractor={(item, index) => item.type + index}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        nestedScrollEnabled
-      >
-        <View style={styles.header}>
-          <View style={styles.user}>
-
-            <Image source={{ uri: userData.image }} style={styles.profileImage}/>
-            <View>
-              <Text style={styles.greeting}>Chúc bạn ngon miệng!</Text>
-              <Text style={styles.username}>{userData.name}</Text>
-            </View>
-
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-            <Ionicons name="notifications-outline" style={styles.notification} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Featured Dish */}
-        <View style={styles.dishItem}>
-        
-          <View>
-
-            <Text style={styles.dishName}>{recipes[0]?.title || "Loading..."}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                if (recipes.length > 0) {
-                  navigation.navigate('FoodDetail', { recipes: recipes[0] });
-                }
-            }}>
-
-              <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
-              <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
-            
-            </TouchableOpacity>
-
-          </View>
-
-          <Image source={require('../assets/bunbohue.png')} style={styles.dishImage} />
-
-        </View>
-
-        {/* Food List Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hôm nay nấu gì?</Text>
-          <FlatList
-            data={recipes}
-            keyExtractor={(item) => (item._id ? item._id.toString() : '')}
-            renderItem={renderFoodItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.foodList}
-          />
-        </View>
-
-        {/* Popular Categories */}
-        <View style={styles.section}>
-          <View style={styles.categoryHeader}>
-            <Text style={styles.sectionTitle}>Thể loại phổ biến</Text>
-          </View>
-
-          <FlatList
-            data={categories}
-            keyExtractor={(item, id) => id.toString()}
-            renderItem={renderCategoryItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.foodCategories}
-          />
-
-          {/* Add new section for category recipes */}
-          {selectedCategory && (
-            <View style={styles.categoryRecipes}>
-              <Text style={styles.categoryTitle}>Món ăn {selectedCategory.name}</Text>
-              <FlatList
-                data={categoryRecipes}
-                keyExtractor={(item) => item._id.toString()}
-                renderItem={renderCategoryRecipe}
-                numColumns={2}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.foodList}
-              />
-            </View>
-          )}
-        </View>
-      </ScrollView>
+        getItemLayout={(data, index) => ({
+          length: 400, // Approximate height of each section
+          offset: 400 * index,
+          index,
+        })}
+      />
     </SafeAreaView>
   );
 };
