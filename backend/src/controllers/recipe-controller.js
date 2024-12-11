@@ -90,36 +90,19 @@ export const addRecipe = async (req, res) => {
     image
   } = req.body
   // let image = req.file ? req.file.buffer.toString('base64') : null;
-  const userId = req.user.id;
-  console.log(userId)
-  // if (!userOwner) {
-  //   return res.status(400).json({
-  //     status: false,
-  //     message: "User ID is required",
-  //   });
-  // }
+  const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
 
-  // Check if user id is in database
-  // const checkUserId = await UserModel.findById(userOwner);
-  // if (!checkUserId) {
-  //   return res.status(404).json({
-  //     status: false,
-  //     message: "User ID Not Found!",
-  //   });
-  // }
-  // if (!categoriesId) {
-  //   return res.status(400).json({
-  //     status: false,
-  //     message: "Category is required",
-  //   });
-  // }
-  // const checkCategoryId = await CategoryModel.findById(categoriesId);
-  // if (!checkCategoryId) {
-  //   return res.status(404).json({
-  //     status: false,
-  //     message: "Categories ID Not Found!",
-  //   });
-  // }  
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Invalid Account ID" });
+  }
+    // Tìm user thông qua accountId
+    const account = await AccountModel.findById(accountId).populate("user");
+    if (!account || !account.user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const userId = account.user._id;
+    console.log(userId)
   const categoryDoc = await CategoryModel.findOne({ name: category });
         if (!categoryDoc) {
             return res.status(400).json({ error: "Category not found" });
@@ -139,22 +122,6 @@ export const addRecipe = async (req, res) => {
   ) {
     return res.status(422).json({ message: "invalid input" });
   }
-
-  // Check if file is empty
-  // if (!image) {
-  //   return res.status(400).json({
-  //     status: false,
-  //     message: 'Photo is required!'
-  //   })
-  // }
-
-  // // Check if file size > 2MB
-  // if (image.size > 2000000) {
-  //   return res.status(400).json({
-  //     status: false,
-  //     message: 'File must be less than 2MB!'
-  //   })
-  // }
 
 
   let recipe;
@@ -182,6 +149,30 @@ export const addRecipe = async (req, res) => {
   }
 
   return res.status(201).json({ message: "Recipe added successfully", recipe })
+};
+
+export const getCreateRecipes = async (req, res) => {
+  const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
+
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(400).json({ status: false, message: "Invalid Account ID" });
+  }
+
+  try {
+    // Tìm user thông qua accountId
+    const account = await AccountModel.findById(accountId).populate("user");
+    if (!account || !account.user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const userId = account.user._id; // Lấy userId thực
+    console.log(userId)
+    const userRecipes = await RecipeModel.find({ userOwner: userId }); // Tìm các công thức của người dùng
+    res.status(200).json({ success: true, recipes: userRecipes }); // Đồng bộ tên trả về
+  } catch (error) {
+    console.error('Lỗi khi lấy công thức:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server', error });
+  }
 };
 
 export const editRecipe = async (req, res) => {

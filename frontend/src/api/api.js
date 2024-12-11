@@ -67,10 +67,13 @@ export const getSavedRecipes = async () => {
 
 export const getMyRecipes = async () => {
   try {
-    // Tạm thời return dữ liệu mẫu
-    return SAMPLE_MY_RECIPES;
-    // const res = await axios.get(`${BASE_URL}/recipe/myRecipes`);
-    // return res.data.recipes;
+    const token = await AsyncStorage.getItem('token')
+    const res = await axios.get(`${BASE_URL}/recipe/my`,{
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  })
+  return res.data.recipes;
   } catch (err) {
     console.error("Lỗi khi gửi yêu cầu API:", err);
     return null;
@@ -141,7 +144,6 @@ export const put = async (endpoint, data, headers = {}) => {
   }
 };
 
-
 export const getAllCategories = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/category/all`);
@@ -195,31 +197,13 @@ export const addRecipe = async (recipe) => {
   }
 };
 
-
-// export const addRecipe = async (recipe) => {
-//   const response = await fetch(`${BASE_URL}/add`, {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify(recipe),
-//   });
-//   const data = await response.json();
-//   if (!response.ok) throw new Error(data.message || 'Failed to add recipe');
-//   return data;
-// };
-
-
-// export const getImage = async () => {
-//   try {
-//     console.log(API_URL);
-//     const res = await axios.get(`http://${API_URL}:3001/api/images/6750924bcd6f8b82f79c7ab5`);
-//     if (res.status === 200) {
-//       return res.data;
-//     } else {
-//       console.error("Lỗi API:", res.status);
-//       return null;
-//     }
-//   } catch (err) {
-//     console.error("Lỗi khi gửi yêu cầu API:", err);
-//     return null;
-//   }
-// };
+export const deleteRecipe =async(recipeId) =>{
+    try{
+      await axios.delete(`${BASE_URL}/recipe/${recipeId}`);
+      alert('Công thức đã được xóa thành công.');
+    }
+    catch (error) {
+      console.error('Lỗi :', error);
+      alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+    }
+}
