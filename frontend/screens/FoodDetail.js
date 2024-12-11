@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
-
+import { post } from '../src/api/api';
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
 
@@ -9,9 +9,23 @@ const FoodDetail = ({ route, navigation }) => {
   const [isSaved, setIsSaved] = useState(false);
 
   // Handle saving the recipe
-  const handleSave = () => {
-    setIsSaved(!isSaved); // Toggle the save status
-    alert(isSaved ? 'Đã bỏ lưu!' : 'Đã lưu!'); // Show an alert when saved or unsaved
+  const handleSave = async () => {
+    try {
+      // Gửi yêu cầu đến API để lưu công thức
+      const response = await post(`/recipe/${recipes._id}/toggle-save`);
+
+
+
+      if (response.status === 200) {
+        setIsSaved(!isSaved); // Toggle trạng thái lưu
+        alert(response.data.message); // Hiển thị thông báo thành công
+      } else {
+        alert('Đã có lỗi xảy ra! Vui lòng thử lại.');
+      }
+    } catch (error) {
+      alert('Đã có lỗi xảy ra! Vui lòng thử lại.');
+      console.error("Error during save recipe:", error);
+    }
   };
 
   // Handle navigation to CookingStepsScreen

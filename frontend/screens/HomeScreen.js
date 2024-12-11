@@ -21,6 +21,8 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { get } from '../src/api/api';
+
 
 const ShimmerEffect = ({ width, height, style }) => {
   const translateX = useSharedValue(-width);
@@ -78,6 +80,8 @@ const SkeletonCategoryItem = () => (
 
 const HomeScreen = ({ navigation }) => {
   const { userData } = useUser();
+  // const {userData, setUserData } = useState(null);
+
   const [categories,setCategories]=useState([])
   const [recipes, setRecipes] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +91,20 @@ const HomeScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryRecipes, setCategoryRecipes] = useState([]);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+  //       setUserData(profileData); // Cập nhật thông tin người dùng vào state
+  //     } catch (error) {
+  //       console.error('Error fetching profile:', error);
+  //     }
+  //   };
+
+  //   fetchProfile();
+  // }, []);
+
+   useEffect(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
       const data = await getRecipesInHomepage(); 
@@ -217,7 +234,7 @@ const HomeScreen = ({ navigation }) => {
 
             <Image source={{ uri: userData.image }} style={styles.profileImage}/>
             <View>
-              <Text style={styles.greeting}>Chào buổi sáng!</Text>
+              <Text style={styles.greeting}>Chúc bạn ngon miệng!</Text>
               <Text style={styles.username}>{userData.name}</Text>
             </View>
 
