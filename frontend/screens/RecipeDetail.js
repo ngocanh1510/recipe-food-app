@@ -1,11 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const RecipeDetail = ({ navigation }) => {
-    const db = useSQLiteContext();
 
     React.useEffect(() => {
         navigation.setOptions({
