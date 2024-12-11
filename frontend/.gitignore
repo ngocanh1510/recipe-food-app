@@ -4,12 +4,13 @@
 node_modules/
 frontend/src/config.js
 src/config.js
+
 # Expo
 .expo/
 dist/
 web-build/
 expo-env.d.ts
-
+frontend/App.js
 # Native
 *.orig.*
 *.jks
