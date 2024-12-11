@@ -405,7 +405,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
           )}
         </View>
-      </ScrollView>
+      </FlatList>
     </SafeAreaView>
   );
 };
