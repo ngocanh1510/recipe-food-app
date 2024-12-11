@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { getAllCategories, getRecipesInHomepage, getRecipesByCategory } from '../src/api/api';
 import { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { 
   useSharedValue, 
@@ -75,78 +76,68 @@ const SkeletonCategoryItem = () => (
   </View>
 );
 
-const HeaderSection = ({ userData, navigation }) => (
-  <View style={styles.header}>
-    <View style={styles.user}>
-      <Image source={{ uri: userData.image }} style={styles.profileImage}/>
-      <View>
-        <Text style={styles.greeting}>Chào buổi sáng!</Text>
-        <Text style={styles.username}>{userData.name}</Text>
-      </View>
-    </View>
-    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-      <Ionicons name="notifications-outline" style={styles.notification} />
-    </TouchableOpacity>
-  </View>
-);
-
-const FeaturedDishSection = ({ recipe, navigation }) => (
-  <View style={styles.dishItem}>
-    <View>
-      <Text style={styles.dishName}>{recipe?.title || "Loading..."}</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => recipe && navigation.navigate('FoodDetail', { recipes: recipe })}
-      >
-        <Text style={styles.buttonText}>Tìm hiểu ngay</Text>
-        <MaterialCommunityIcons name="arrow-right-thin" style={styles.icon} />
-      </TouchableOpacity>
-    </View>
-    <Image source={require('../assets/bunbohue.png')} style={styles.dishImage} />
-  </View>
-);
-
 const HomeScreen = ({ navigation }) => {
-  const { userData } = useUser();
-  const [categories, setCategories] = useState([]);
-  const [recipes, setRecipes] = useState([]);
+  // const { userData } = useUser();
+  const [ userData, setUserData ] = useState();
+
+  const [categories,setCategories]=useState([])
+  const [recipes, setRecipes] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
+  // const [username, setUsername] = useState('Tiến Đạt');
+  // const [avatar, setAvatar] = useState('https://scontent.fsgn5-15.fna.fbcdn.net/v/t39.30808-1/469007200_1963875310783527_4976491389156393719_n.jpg?stp=c0.0.721.721a_dst-jpg_s480x480&_nc_cat=111&ccb=1-7&_nc_sid=50d2ac&_nc_eui2=AeGFftM_sBs1xboRaFaJexvV0ZQ2SC-wFTjRlDZIL7AVOPvouQlhLN4VAL8qEuG8pi5JWAZK4SKT0lkX22K7nAwj&_nc_ohc=rgajlr2BuqYQ7kNvgGz_wM2&_nc_zt=24&_nc_ht=scontent.fsgn5-15.fna&_nc_gid=A2QiW-wz_Kc0dnt39CmRlkp&oh=00_AYB8-WICBIcigd_Sm6kGG_f3TlcRvo0fR2uixIQMu2Yc6A&oe=67566C0D')
+  // const image_path = '../assets/bunbo.png'
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryRecipes, setCategoryRecipes] = useState([]);
-  const flatListRef = useRef(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfile = async () => {
+      try {
+        // console.log('Fetching profile...')
+        const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+        setUserData(profileData); // Cập nhật thông tin người dùng vào state
+        // console.log('Profile data:', profileData);
+        console.log(userData);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+   useEffect(() => {
+    const fetchRecipes = async () => {
       setIsLoading(true);
-      const [recipesData, categoriesData] = await Promise.all([
-        getRecipesInHomepage(),
-        getAllCategories(),
-      ]);
-      if (recipesData) setRecipes(recipesData);
-      if (categoriesData) setCategories(categoriesData);
+      const data = await getRecipesInHomepage(); 
+      if (data) setRecipes(data); 
       setIsLoading(false);
     };
-    fetchData();
+    fetchRecipes();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoading(true); 
+      const data = await getAllCategories(); 
+      if (data) setCategories(data); 
+      setIsLoading(false);
+    };
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     const fetchCategoryRecipes = async () => {
       if (selectedCategory) {
+        setIsLoading(true);
         const data = await getRecipesByCategory(selectedCategory._id);
         setCategoryRecipes(data.recipes);
+        setIsLoading(false);
       }
+      console.log(categoryRecipes);
+
     };
     fetchCategoryRecipes();
   }, [selectedCategory]);
-
-  const handleCategoryPress = (category) => {
-    setSelectedCategory(category);
-    flatListRef.current?.scrollToIndex({
-      index: 3,
-      animated: true,
-      viewPosition: 0
-    });
-  };
 
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
@@ -163,12 +154,12 @@ const HomeScreen = ({ navigation }) => {
 
   // Hàm render item cho danh sách thể loại món ăn
   const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity
+    <TouchableOpacity 
       style={[
         styles.foodCategory,
         selectedCategory?._id === item._id && styles.selectedCategory
       ]}
-      onPress={() => handleCategoryPress(item)}
+      onPress={() => setSelectedCategory(item)}
     >
       <Text style={[
         styles.foodCategoryText,
@@ -189,68 +180,6 @@ const HomeScreen = ({ navigation }) => {
       <Text style={styles.foodName}>{item.title}</Text>
     </TouchableOpacity>
   );
-
-  const sections = [
-    { type: 'header' },
-    { type: 'featured' },
-    { type: 'recipes' },
-    { type: 'categories' }
-  ];
-
-  const renderSection = ({ item }) => {
-    switch (item.type) {
-      case 'header':
-        return <HeaderSection userData={userData} navigation={navigation} />;
-      case 'featured':
-        return <FeaturedDishSection recipe={recipes[0]} navigation={navigation} />;
-      case 'recipes':
-        return (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Hôm nay nấu gì?</Text>
-            <FlatList
-              data={recipes}
-              keyExtractor={(item) => item._id?.toString()}
-              renderItem={renderFoodItem}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.foodList}
-            />
-          </View>
-        );
-      case 'categories':
-        return (
-          <View style={styles.section}>
-            <View style={styles.categoryHeader}>
-              <Text style={styles.sectionTitle}>Thể loại phổ biến</Text>
-            </View>
-            <FlatList
-              data={categories}
-              keyExtractor={(item, id) => id.toString()}
-              renderItem={renderCategoryItem}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.foodCategories}
-            />
-            {selectedCategory && (
-              <View style={styles.categoryRecipes}>
-                <Text style={styles.categoryTitle}>Món ăn {selectedCategory.name}</Text>
-                <FlatList
-                  data={categoryRecipes}
-                  keyExtractor={(item) => item._id.toString()}
-                  renderItem={renderCategoryRecipe}
-                  numColumns={2}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.categoryRecipesList}
-
-                />
-              </View>
-            )}
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
 
   if (isLoading) {
     return (
@@ -294,14 +223,9 @@ const HomeScreen = ({ navigation }) => {
       </SafeAreaView>
     );
   }
-
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        data={sections}
-        renderItem={renderSection}
-        keyExtractor={(item, index) => item.type + index}
+      <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         getItemLayout={(data, index) => ({
@@ -430,7 +354,6 @@ const styles = StyleSheet.create({
   },
   foodItem: {
     marginRight: 15, // Khoảng cách giữa các món ăn
-    
   },
   foodImage: {
     width: 160,  // Cố định kích thước ảnh
@@ -463,6 +386,7 @@ const styles = StyleSheet.create({
   },
   foodCategories: {
     flexDirection: 'row',
+    marginTop: 10,
   },
   foodCategory: {
     paddingVertical: 10,
@@ -484,12 +408,11 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Căn giữa theo chiều dọc
     marginBottom: 10,
   },
-  categoryTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  seemore: {
     color: '#881415',
+    fontSize: 16,
+    fontWeight: '600',
     fontFamily: 'Cursive',
-    paddingVertical: 10,
   },
   selectedCategory: {
     backgroundColor: '#881415',
@@ -498,15 +421,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   categoryRecipes: {
-    marginTop: 10,
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    marginTop: 20,
   },
-  categoryRecipesList: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignSelf: 'center',
+  categoryTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#881415',
+    marginBottom: 10,
+    fontFamily: 'Cursive',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });
 
