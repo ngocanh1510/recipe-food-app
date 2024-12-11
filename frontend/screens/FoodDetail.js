@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
 import { post } from '../src/api/api';
+import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
 
   // State to track the save status
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const loadSaveStatus = async () => {
+      try {
+        const savedRecipes = await AsyncStorage.getItem('savedRecipes');
+        if (savedRecipes) {
+          const savedRecipesArray = JSON.parse(savedRecipes);
+          setIsSaved(savedRecipesArray.includes(recipes._id));
+        }
+      } catch (error) {
+        console.error('Error loading save status:', error);
+      }
+    };
+
+    loadSaveStatus();
+  }, [recipes._id]);
 
   // Handle saving the recipe
   const handleSave = async () => {
@@ -14,11 +33,28 @@ const FoodDetail = ({ route, navigation }) => {
       // Gửi yêu cầu đến API để lưu công thức
       const response = await post(`/recipe/${recipes._id}/toggle-save`);
 
-
-
+      // if (response.status === 200) {
+      //   setIsSaved(!isSaved); // Toggle trạng thái lưu
+      //   Alert.alert('Thông báo', response.data.message);
+      // } else {
+      //   alert('Đã có lỗi xảy ra! Vui lòng thử lại.');
+      // }
       if (response.status === 200) {
-        setIsSaved(!isSaved); // Toggle trạng thái lưu
-        alert(response.data.message); // Hiển thị thông báo thành công
+        const newSaveStatus = !isSaved;
+        setIsSaved(newSaveStatus);
+
+        // Lưu trạng thái vào AsyncStorage
+        const savedRecipes = await AsyncStorage.getItem('savedRecipes');
+        let savedRecipesArray = savedRecipes ? JSON.parse(savedRecipes) : [];
+
+        if (newSaveStatus) {
+          savedRecipesArray.push(recipes._id); // Thêm ID vào danh sách
+        } else {
+          savedRecipesArray = savedRecipesArray.filter((id) => id !== recipes._id); // Loại bỏ ID
+        }
+
+        await AsyncStorage.setItem('savedRecipes', JSON.stringify(savedRecipesArray));
+        Alert.alert('Thông báo', response.data.message);
       } else {
         alert('Đã có lỗi xảy ra! Vui lòng thử lại.');
       }

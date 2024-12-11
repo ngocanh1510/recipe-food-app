@@ -82,6 +82,22 @@ export const get = async (endpoint) => {
   }
 };
 
+export const put = async (endpoint, data, headers = {}) => {
+  try {
+    const response = await axios.put(`http://${API_URL}:3001${endpoint}`, data, {
+      headers: {
+        // 'Content-Type': 'application/json',
+        ...headers,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('PUT request error:', error.response?.data || error.message);
+    throw new Error(error.response?.data.message || 'Lỗi khi gửi yêu cầu PUT');
+  }
+};
+
+
 export const getAllCategories = async () => {
   try {
     console.log(API_URL);

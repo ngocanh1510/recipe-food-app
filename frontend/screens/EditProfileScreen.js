@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Alert,
     Image,
@@ -12,15 +12,46 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useUser } from '../context/UserContext';
+import { get, put } from '../src/api/api';
 
 const EditProfileScreen = ({ navigation }) => {
-    const { userData, updateUserData } = useUser();
+    // const { userData, updateUserData } = useUser();
+    const [ userData, setUserData ] = useState({});
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+          try {
+            // console.log('Fetching profile...')
+            const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+            setUserData(profileData); // Cập nhật thông tin người dùng vào state
+            // console.log('Profile data:', profileData);
+            
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+          }
+        };
+    
+        fetchProfile();
+      }, []);
+
     const [formData, setFormData] = useState({
-        name: userData.name,
-        email: userData.email,
-        image: userData.image
+        name: '',
+        email: '',
+        image: '',
     });
+       
+    useEffect(() => {
+        if (userData) {
+            setFormData({
+                name: userData.name || '',
+                email: userData.email || '',
+                image: userData.avatar || '', // Lấy ảnh từ userData
+            });
+        }
+    }, [userData]);
+
     const [errors, setErrors] = useState({});
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -34,12 +65,42 @@ const EditProfileScreen = ({ navigation }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        // if (validateForm()) {
+        //     updateUserData(formData);
+        //     Alert.alert('Thành công', 'Thông tin đã được cập nhật', [
+        //         { text: 'OK', onPress: () => navigation.goBack() }
+        //     ]);
+        // }
+        
         if (validateForm()) {
-            updateUserData(formData);
-            Alert.alert('Thành công', 'Thông tin đã được cập nhật', [
-                { text: 'OK', onPress: () => navigation.goBack() }
+            try {
+                const formDataToUpdate = new FormData();
+                if (formData.name) formDataToUpdate.append('name', formData.name);
+                if (formData.email) formDataToUpdate.append('email', formData.email);
+                // if (formData.image) {
+                //     formDataToUpdate.append('avatar', {
+                //     uri: formData.image,
+                //     type: 'image/jpeg',
+                //     name: 'avatar.jpg',
+                // });
+                // }
+
+            const response = await put('/auth/update-profile', formDataToUpdate);
+               
+            // setUserData(
+            //     name: userData.name || '',
+            //     email: userData.email || '',
+            // );
+
+            // Thông báo thành công
+            Alert.alert('Thành công', response.message, [
+                { text: 'OK', onPress: () => navigation.goBack() },
             ]);
+            } catch (error) {
+                // Nếu có lỗi xảy ra
+                Alert.alert('Lỗi', error.message || 'Cập nhật thất bại');
+            }
         }
     };
 
@@ -92,7 +153,7 @@ const EditProfileScreen = ({ navigation }) => {
                 </View>
 
                 <TouchableOpacity onPress={handleSave}>
-                        <Text style={styles.saveText}>Lưu</Text>
+                        <Text style={styles.saveText}>Cập nhật</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

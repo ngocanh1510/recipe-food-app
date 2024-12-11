@@ -79,30 +79,33 @@ const SkeletonCategoryItem = () => (
 );
 
 const HomeScreen = ({ navigation }) => {
-  const { userData } = useUser();
-  // const {userData, setUserData } = useState(null);
+  // const { userData } = useUser();
+  const [ userData, setUserData ] = useState({});
 
   const [categories,setCategories]=useState([])
   const [recipes, setRecipes] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
-  const [username, setUsername] = useState('Tiến Đạt');
-  const [avatar, setAvatar] = useState('https://scontent.fsgn5-15.fna.fbcdn.net/v/t39.30808-1/469007200_1963875310783527_4976491389156393719_n.jpg?stp=c0.0.721.721a_dst-jpg_s480x480&_nc_cat=111&ccb=1-7&_nc_sid=50d2ac&_nc_eui2=AeGFftM_sBs1xboRaFaJexvV0ZQ2SC-wFTjRlDZIL7AVOPvouQlhLN4VAL8qEuG8pi5JWAZK4SKT0lkX22K7nAwj&_nc_ohc=rgajlr2BuqYQ7kNvgGz_wM2&_nc_zt=24&_nc_ht=scontent.fsgn5-15.fna&_nc_gid=A2QiW-wz_Kc0dnt39CmRlkp&oh=00_AYB8-WICBIcigd_Sm6kGG_f3TlcRvo0fR2uixIQMu2Yc6A&oe=67566C0D')
-  const image_path = '../assets/bunbo.png'
+  // const [username, setUsername] = useState('Tiến Đạt');
+  // const [avatar, setAvatar] = useState('https://scontent.fsgn5-15.fna.fbcdn.net/v/t39.30808-1/469007200_1963875310783527_4976491389156393719_n.jpg?stp=c0.0.721.721a_dst-jpg_s480x480&_nc_cat=111&ccb=1-7&_nc_sid=50d2ac&_nc_eui2=AeGFftM_sBs1xboRaFaJexvV0ZQ2SC-wFTjRlDZIL7AVOPvouQlhLN4VAL8qEuG8pi5JWAZK4SKT0lkX22K7nAwj&_nc_ohc=rgajlr2BuqYQ7kNvgGz_wM2&_nc_zt=24&_nc_ht=scontent.fsgn5-15.fna&_nc_gid=A2QiW-wz_Kc0dnt39CmRlkp&oh=00_AYB8-WICBIcigd_Sm6kGG_f3TlcRvo0fR2uixIQMu2Yc6A&oe=67566C0D')
+  // const image_path = '../assets/bunbo.png'
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryRecipes, setCategoryRecipes] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     try {
-  //       const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
-  //       setUserData(profileData); // Cập nhật thông tin người dùng vào state
-  //     } catch (error) {
-  //       console.error('Error fetching profile:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        // console.log('Fetching profile...')
+        const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+        setUserData(profileData); // Cập nhật thông tin người dùng vào state
+        // console.log('Profile data:', profileData);
 
-  //   fetchProfile();
-  // }, []);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
    useEffect(() => {
     const fetchRecipes = async () => {
@@ -232,7 +235,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.header}>
           <View style={styles.user}>
 
-            <Image source={{ uri: userData.image }} style={styles.profileImage}/>
+            <Image source={{ uri: userData.avatar }} style={styles.profileImage}/>
             <View>
               <Text style={styles.greeting}>Chúc bạn ngon miệng!</Text>
               <Text style={styles.username}>{userData.name}</Text>
