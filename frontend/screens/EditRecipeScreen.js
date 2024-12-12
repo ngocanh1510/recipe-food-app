@@ -42,8 +42,7 @@ const EditRecipeScreen = ({ route, navigation }) => {
     const spiceList = [
         'Hạt tiêu', 'Ớt', 'Hành khô', 'Tỏi', 'Gừng', 'Quế', 'Hồi', 'Khác'
     ];
-    console.log("Recipes: ",recipes);
-    
+        
     const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
     useEffect(() => {
         // Gọi hàm cập nhật category khi màn hình được mở
@@ -79,7 +78,6 @@ const EditRecipeScreen = ({ route, navigation }) => {
                 break;
         }
     };
-    console.log(category)
     const categories = [
         'Cơm',
         'Cháo/Súp',
@@ -110,8 +108,6 @@ const EditRecipeScreen = ({ route, navigation }) => {
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
-        console.log(result);
-        console.log(result.assets[0].uri);
     };
 
     const handleDeleteIngredient = (index) => {
@@ -148,8 +144,6 @@ const EditRecipeScreen = ({ route, navigation }) => {
         }
         try {
             // Gửi công thức lên backend
-            console.log(id)
-            console.log(recipe)
             const savedRecipe = await editRecipe(id, recipe);
             console.log(savedRecipe)
             Alert.alert('Thành công', 'Công thức đã được thay đổi', [
