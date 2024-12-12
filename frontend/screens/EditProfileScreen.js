@@ -75,28 +75,22 @@ const EditProfileScreen = ({ navigation }) => {
         
         if (validateForm()) {
             try {
-                const formDataToUpdate = new FormData();
-                if (formData.name) formDataToUpdate.append('name', formData.name);
-                if (formData.email) formDataToUpdate.append('email', formData.email);
-                // if (formData.image) {
-                //     formDataToUpdate.append('avatar', {
-                //     uri: formData.image,
-                //     type: 'image/jpeg',
-                //     name: 'avatar.jpg',
-                // });
-                // }
+                const payload = {
+                    name: formData.name,
+                    email: formData.email,
+                };
+              
 
-            const response = await put('/auth/update-profile', formDataToUpdate);
-               
-            // setUserData(
-            //     name: userData.name || '',
-            //     email: userData.email || '',
-            // );
+                const response = await put('/auth/update-profile', payload);
+            //    if (response.status === 200) {
+                    setUserData(response.updatedProfile);
 
-            // Thông báo thành công
-            Alert.alert('Thành công', response.message, [
-                { text: 'OK', onPress: () => navigation.goBack() },
-            ]);
+                    // Thông báo thành công
+                    Alert.alert('Thành công', response.message, [
+                        { text: 'OK', onPress: () => navigation.goBack() },
+                    ]);
+                
+                
             } catch (error) {
                 // Nếu có lỗi xảy ra
                 Alert.alert('Lỗi', error.message || 'Cập nhật thất bại');

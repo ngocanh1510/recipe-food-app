@@ -245,8 +245,9 @@ export const resetPassword = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
+        
         const accountId = req.user.id; // ID từ JWT
-        const { name, email, avatar } = req.body;
+        const { name, email } = req.body;
 
         const account = await Account.findById(accountId).populate('user');
         if (!account) {
@@ -272,10 +273,9 @@ export const updateProfile = async (req, res) => {
             }
 
             // Cập nhật username trong Account
-            await Account.findOneAndUpdate(
-                { username: email },
-                { new: true }
-            );
+            // 
+            account.username = email;
+            await account.save();
         }
 
         // const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;
@@ -284,7 +284,6 @@ export const updateProfile = async (req, res) => {
         // Cập nhật các trường được gửi trong req.body
         const updatedFields = {};
         if (name) updatedFields.name = name;
-        if (avatarPath) updatedFields.avatar = avatarPath;
         if (email) updatedFields.email = email;
 
 

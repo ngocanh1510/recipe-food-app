@@ -10,23 +10,53 @@ const FoodDetail = ({ route, navigation }) => {
   // State to track the save status
   const [isSaved, setIsSaved] = useState(false);
 
-  useEffect(() => {
-    const loadSaveStatus = async () => {
-      try {
-        const savedRecipes = await AsyncStorage.getItem('savedRecipes');
-        if (savedRecipes) {
-          const savedRecipesArray = JSON.parse(savedRecipes);
-          setIsSaved(savedRecipesArray.includes(recipes._id));
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const loadSaveStatus = async () => {
+  //       try {
+  //         const savedRecipes = await AsyncStorage.getItem('savedRecipes');
+  //         if (savedRecipes) {
+  //           const savedRecipesArray = JSON.parse(savedRecipes);
+  //           // setIsSaved(savedRecipesArray.includes(recipes._id));
+  //           setIsSaved(true);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error loading save status:', error);
+  //       }
+  //     };
+  
+  //     loadSaveStatus();
+  
+  //     // Cleanup function (nếu cần)
+  //     return () => {
+  //       setIsSaved(false); // Ví dụ: Reset trạng thái khi màn hình mất focus
+  //     };
+  //   }, [recipes._id])
+  // );
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadSaveStatus = async () => {
+        try {
+          const response = await get('/recipe/savedRecipes'); // Gọi API lấy danh sách món ăn đã lưu
+          if (response && response.savedRecipes) {
+            const savedRecipesArray = response.savedRecipes.map(recipe => recipe._id);
+            setIsSaved(savedRecipesArray.includes(recipes._id)); // Kiểm tra món ăn hiện tại
+          }
+        } catch (error) {
+          console.error('Error loading saved recipes from API:', error);
         }
-      } catch (error) {
-        console.error('Error loading save status:', error);
-      }
-    };
+      };
+  
+      loadSaveStatus();
+  
+      // Cleanup function (nếu cần)
+      return () => {
+        setIsSaved(false); // Reset trạng thái khi màn hình mất focus
+      };
+    }, [recipes._id])
+  );
 
-    loadSaveStatus();
-  }, [recipes._id]);
-
-  // Handle saving the recipe
   const handleSave = async () => {
     try {
       // Gửi yêu cầu đến API để lưu công thức
