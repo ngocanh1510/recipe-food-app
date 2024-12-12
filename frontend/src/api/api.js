@@ -203,6 +203,7 @@ export const addRecipe = async (recipe) => {
 export const deleteRecipe =async(recipeId) =>{
     try{
       await axios.delete(`${BASE_URL}/recipe/${recipeId}`);
+      console.log('Công thức đã được xóa thành công');
       alert('Công thức đã được xóa thành công.');
     }
     catch (error) {

@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (newToken) => {
     await AsyncStorage.setItem('token', newToken);
     setToken(newToken);
+    console.log("Token: ", newToken);
     setIsAuthenticated(true);
   };
 
