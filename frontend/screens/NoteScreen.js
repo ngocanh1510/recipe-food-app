@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getSavedRecipes, getMyRecipes, deleteRecipe } from '../src/api/api';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native';
+import { getSavedRecipes, getMyRecipes, deleteRecipe, getRecipesInHomepage } from '../src/api/api';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { Alert } from 'react-native';
+
 export default function NoteScreen({ navigation }) {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [myRecipes, setMyRecipes] = useState([]);
   const [activeTab, setActiveTab] = useState('saved'); // 'saved' or 'my'
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -18,19 +20,26 @@ export default function NoteScreen({ navigation }) {
   const fetchRecipes = async () => {
     setIsLoading(true);
     try {
-      if (activeTab === 'saved') {
         const savedData = await getSavedRecipes();
-        if (savedData) setSavedRecipes(savedData);
-      } else {
+        if (savedData) setSavedRecipes(savedData)
+        console.log('Tab: Cong thuc da luu', savedData);
+
         const myData = await getMyRecipes();
         if (myData) setMyRecipes(myData);
+        console.log('Tab: Cong thuc cua toi', myData);
       }
-    } catch (error) {
+    catch (error) {
       console.error("Error fetching recipes:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchRecipes();
+    setRefreshing(false);
+  }, []);
 
   const handleDelete = async (recipeId) => {
     Alert.alert(
@@ -61,7 +70,7 @@ export default function NoteScreen({ navigation }) {
   const renderRecipe = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
-      onPress={() => navigation.navigate('FoodDetail', { recipe: item })}
+      onPress={() => navigation.navigate('FoodDetail', { recipes: item })}  // Changed from recipes to recipe
     >
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.details}>
@@ -76,7 +85,7 @@ export default function NoteScreen({ navigation }) {
               style={styles.actionButton}
               onPress={(e) => {
                 e.stopPropagation();
-                navigation.navigate('RecipeDetail', { recipe: item });
+                navigation.navigate('EditRecipeScreen', { recipes: item });
               }}
             >
               <MaterialIcons name="edit" size={18} color="#FF6B6B" />
@@ -116,8 +125,16 @@ export default function NoteScreen({ navigation }) {
       <FlatList
         data={activeTab === 'saved' ? savedRecipes : myRecipes}
         renderItem={renderRecipe}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item._id.toString()}
         contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF6B6B"]}
+            tintColor="#FF6B6B"
+          />
+        }
       />
     </View>
   );

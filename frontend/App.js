@@ -127,11 +127,6 @@ const CreateRecipeNavigator = () => (
       options={{ title: 'Tạo công thức' }}
     />
     <CreateRecipeStack.Screen
-      name="RecipeForm"
-      component={RecipeForm}
-      options={{title: 'Bước thực hiện' }}
-    />
-    <CreateRecipeStack.Screen
       name="RecipeDetail"
       component={RecipeDetail}
       options={{ title: 'Nguyên liệu' }}
@@ -140,7 +135,7 @@ const CreateRecipeNavigator = () => (
 );
 const NoteStack = createStackNavigator();
 const NoteNavigator = () => (
-  <NoteStack.Navigator>
+  <NoteStack.Navigator options = {{headerShown:false}}>
     <NoteStack.Screen 
       name="Note" 
       component={NoteScreen}
@@ -150,32 +145,24 @@ const NoteNavigator = () => (
       name="RecipeDetail" 
       component={RecipeDetail}
       options={{
-        title: 'Chỉnh sửa công thức',
-        headerStyle: {
-          backgroundColor: '#FF6B6B',
-        },
-        headerTintColor: '#fff',
         headerShown: false,
-      }} 
-    />
-    <NoteStack.Screen
-      name="CookingSteps"
-      component={CookingStepsScreen}
-      options={{
-        headerBackTitle: '',
-        title: 'Các bước nấu ăn',
       }}
     />
     <NoteStack.Screen
       name="FoodDetail"
       component={FoodDetail}
       options={{
-        title: 'Xem công thức',
-        headerStyle: {
-          backgroundColor: '#FF6B6B',
-        },
-        headerTintColor: '#fff',
+        headerShown: false,
       }}
+    />
+    <NoteStack.Screen
+      name="CookingSteps"
+      component={CookingStepsScreen}
+    />
+    <NoteStack.Screen
+      name="EditRecipeScreen"
+      component={EditRecipeScreen}
+      options={{headerShown: false}}
     />
   </NoteStack.Navigator>
 );
