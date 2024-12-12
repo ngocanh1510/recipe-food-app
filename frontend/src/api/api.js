@@ -132,14 +132,15 @@ export const get = async (endpoint) => {
   }
 };
 
-export const put = async (endpoint, data, headers = {}) => {
+export const put = async (endpoint, data = {}) => {
   try {
+    const token = await AsyncStorage.getItem('token'); 
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
     const response = await axios.put(`http://${API_URL}:3001${endpoint}`, data, {
-      headers: {
-        // 'Content-Type': 'application/json',
-        ...headers,
-      },
-    });
+      headers,
+      withCredentials: true,
+    },);
     return response.data;
   } catch (error) {
     console.error('PUT request error:', error.response?.data || error.message);
