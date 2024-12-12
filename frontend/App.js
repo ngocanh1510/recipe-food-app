@@ -64,8 +64,7 @@ const HomeStack = () => (
       name="CookingSteps"
       component={CookingStepsScreen}
       options={{
-        headerBackTitle: '',
-        title: 'Các bước nấu ăn',
+        headerShown:false,
       }}
     />
     <Stack.Screen
@@ -96,8 +95,7 @@ const SearchNavigator = () => (
       name="CookingSteps"
       component={CookingStepsScreen}
       options={{
-        headerBackTitle: '',
-        title: 'Các bước nấu ăn',
+        headerShown: false, // Hide header
       }}
     />
   </SearchStack.Navigator>
@@ -158,6 +156,7 @@ const NoteNavigator = () => (
     <NoteStack.Screen
       name="CookingSteps"
       component={CookingStepsScreen}
+      options={{headerShown: false}}
     />
     <NoteStack.Screen
       name="EditRecipeScreen"

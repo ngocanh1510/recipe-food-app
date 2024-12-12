@@ -1,9 +1,8 @@
-import React, { useState , useEffect} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
 import { post } from '../src/api/api';
-import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;
@@ -66,6 +65,7 @@ const FoodDetail = ({ route, navigation }) => {
 
   // Handle navigation to CookingStepsScreen
   const handleCookingSteps = () => {
+    // Pass the steps array directly without transformation
     navigation.navigate('CookingSteps', { steps: recipes.steps });
   };
 
