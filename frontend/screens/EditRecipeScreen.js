@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { addRecipe, editRecipe } from '../src/api/api';
 
@@ -31,7 +31,7 @@ const EditRecipeScreen = ({ route, navigation }) => {
     const [calories, setCalories] = useState(recipes.calories?.toString() || '0');
     const [fat, setFat] = useState(recipes.fat?.toString() || '0');
     const [time, setTime] = useState(recipes.time?.toString() || '');
-    const [category, setCategory] = useState(recipes.category || '');
+    const [category, setCategory] = useState('');
     const [image, setImage] = useState(recipes.image || null);
     const [servings, setServings] = useState(recipes.servings || 1);
     const [steps, setSteps] = useState(
@@ -45,7 +45,41 @@ const EditRecipeScreen = ({ route, navigation }) => {
     console.log("Recipes: ",recipes);
     
     const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-    
+    useEffect(() => {
+        // Gọi hàm cập nhật category khi màn hình được mở
+        if (recipes.categoriesId) {
+            updateCategory(recipes.categoriesId);
+        }
+    }, [recipes.category]);
+    const updateCategory = (categoryId) => {
+        switch (categoryId) {
+            case '674b67eede8c5c4e5bc8238a':
+                setCategory('Cơm');
+                break;
+            case '674b67eede8c5c4e5bc8238b':
+                setCategory('Cháo/Súp');
+                break;
+            case '674b67eede8c5c4e5bc8238c':
+                setCategory('Phở/Bún/Bánh canh');
+                break;
+            case '675094bb8ee3facdc5212f25':
+                setCategory('Món xào');
+                break;
+            case '675094fa8ee3facdc5212f27':
+                setCategory('Bánh mì');
+                break;
+            case '6750950a8ee3facdc5212f28':
+                setCategory('Ăn vặt');
+                break;
+            case '675095c68ee3facdc5212f2a':
+                setCategory('Món cuốn');
+                break;
+            default:
+                setCategory('Không rõ'); // Giá trị mặc định
+                break;
+        }
+    };
+    console.log(category)
     const categories = [
         'Cơm',
         'Cháo/Súp',
@@ -55,6 +89,7 @@ const EditRecipeScreen = ({ route, navigation }) => {
         'Ăn vặt',
         'Món cuốn'
     ];
+
     const handleAddSpice = () => {
         const spiceName = selectedSpice === 'Khác' ? customSpice : selectedSpice;
         if (spiceName && quantity) {
