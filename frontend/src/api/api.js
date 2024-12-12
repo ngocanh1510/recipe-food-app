@@ -199,16 +199,31 @@ export const addRecipe = async (recipe) => {
   }
 };
 
-export const editRecipe =async(recipeId)=>{
-  try{
-    await axios.put(`${BASE_URL}/recipe/${recipeId}`);
-    alert('Công thức đã được thay đổi thành công.');
+export const editRecipe = async (id, recipe) => {
+  if (!id) {
+    console.error('Recipe ID không được cung cấp');
+    throw new Error('Recipe ID không được cung cấp');
   }
-  catch (error) {
-    console.error('Lỗi :', error);
-    alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+
+  if (!recipe || Object.keys(recipe).length === 0) {
+    console.error('Dữ liệu recipe không hợp lệ');
+    throw new Error('Dữ liệu recipe không hợp lệ');
   }
-}
+
+  try {
+    const response = await axios.put(`${BASE_URL}/recipe/${id}`, recipe, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi gọi API editRecipe:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const deleteRecipe =async(recipeId) =>{
     try{
       await axios.delete(`${BASE_URL}/recipe/${recipeId}`);

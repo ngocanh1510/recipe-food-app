@@ -179,7 +179,6 @@ export const editRecipe = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, time, carbs, protein, calories, fat, description, category, ingredients, steps, image } = req.body;
-    const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
 
     const categoryDoc = await CategoryModel.findOne({ name: category });
       if (!categoryDoc) {
@@ -218,7 +217,7 @@ export const editRecipe = async (req, res) => {
     if (calories) updateFields.calories = calories;
     if (fat) updateFields.fat = fat;
     if (description) updateFields.description = description;
-    if (categoriesId) updateFields.categoriesId = categoryDoc._id;
+    if (categoryDoc._id) updateFields.categoriesId = categoryDoc._id;
     if (ingredients) updateFields.ingredients = ingredients;
     if (steps) updateFields.steps = steps;
     if (image) updateFields.image = image;

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { addRecipe } from '../src/api/api';
+import { addRecipe, editRecipe } from '../src/api/api';
 
 const EditRecipeScreen = ({ route, navigation }) => {
     const { recipes } = route.params;
@@ -18,6 +18,7 @@ const EditRecipeScreen = ({ route, navigation }) => {
             });
         };
     }, []);
+    const [id,setId]=useState(recipes._id)
     const [title, setTitle] = useState(recipes.title || '');
     const [description, setDescription] = useState(recipes.description || '');
     const [showSpiceModal, setShowSpiceModal] = useState(false);
@@ -109,14 +110,14 @@ const EditRecipeScreen = ({ route, navigation }) => {
             category,
             ingredients,
             steps
-        };
-
+        }
         try {
             // Gửi công thức lên backend
-            const savedRecipe = await addRecipe(recipe);
-
-            // Hiển thị thông báo thành công
-            Alert.alert('Thành công', 'Công thức đã được lưu', [
+            console.log(id)
+            console.log(recipe)
+            const savedRecipe = await editRecipe(id, recipe);
+            console.log(savedRecipe)
+            Alert.alert('Thành công', 'Công thức đã được thay đổi', [
                 { text: 'OK', onPress: () => navigation.goBack() },
             ]);
         } catch (error) {

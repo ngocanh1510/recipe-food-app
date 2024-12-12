@@ -21,12 +21,9 @@ export default function NoteScreen({ navigation }) {
     setIsLoading(true);
     try {
         const savedData = await getSavedRecipes();
-        if (savedData) setSavedRecipes(savedData)
-        console.log('Tab: Cong thuc da luu', savedData);
-
+        if (savedData) setSavedRecipes(savedData);
         const myData = await getMyRecipes();
         if (myData) setMyRecipes(myData);
-        console.log('Tab: Cong thuc cua toi', myData);
       }
     catch (error) {
       console.error("Error fetching recipes:", error);
