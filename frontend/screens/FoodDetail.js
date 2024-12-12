@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState , useEffect, useCallback} from 'react';
+import { useFocusEffect } from '@react-navigation/native';import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon
-import { post } from '../src/api/api';
+import {get, post } from '../src/api/api';
 
 const FoodDetail = ({ route, navigation }) => {
   const { recipes } = route.params;

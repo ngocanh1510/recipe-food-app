@@ -22,7 +22,6 @@ import NotificationsScreen from './screens/NotificationScreen.js';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import ProfileScreen from './screens/ProfileScreen.js';
 import RecipeDetail from './screens/RecipeDetail.js';
-import RecipeForm from './screens/RecipeForm.js';
 import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import SettingsScreen from './screens/SettingsScreen';

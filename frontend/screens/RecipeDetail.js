@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { addRecipe } from '../src/api/api';
 
 const RecipeDetail = ({ navigation }) => {
@@ -124,190 +124,200 @@ const RecipeDetail = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <ScrollView>
-                {image ? (
-                    <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-                        <Image source={{ uri: image }} style={styles.headerImage} />
-                        <View style={styles.editImageOverlay}>
-                            <Ionicons name="camera" size={24} color="white" />
-                            <Text style={styles.editImageText}>Đổi ảnh</Text>
-                        </View>
-                    </TouchableOpacity>
-                ) : (
-                    <TouchableOpacity onPress={pickImage} style={[styles.headerImage, styles.placeholderContainer]}>
-                        <Ionicons name="image-outline" size={50} color="#ccc" />
-                        <Text style={styles.placeholderText}>Chọn ảnh món ăn</Text>
-                    </TouchableOpacity>
-                )}
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView 
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollContainer}
+                >
+                    {image ? (
+                        <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
+                            <Image source={{ uri: image }} style={styles.headerImage} />
+                            <View style={styles.editImageOverlay}>
+                                <Ionicons name="camera" size={24} color="white" />
+                                <Text style={styles.editImageText}>Đổi ảnh</Text>
+                            </View>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity onPress={pickImage} style={[styles.headerImage, styles.placeholderContainer]}>
+                            <Ionicons name="image-outline" size={50} color="#ccc" />
+                            <Text style={styles.placeholderText}>Chọn ảnh món ăn</Text>
+                        </TouchableOpacity>
+                    )}
 
-                
-                <View style={styles.timeContainer}>
-                    <Ionicons name="time-outline" size={20} color="#666" />
-                    <TextInput
-                        style={styles.timeText}
-                        value={time}
-                        onChangeText={setTime}
-                        placeholder="60 "
-                    />
-                    <Text> phút</Text>
-                </View>
-
-                <View style={styles.contentContainer}>
-                    <TextInput
-                        style={styles.titleInput}
-                        value={title}
-                        onChangeText={setTitle}
-                        placeholder="Tên món ăn"
-                    />
                     
-                    <TouchableOpacity 
-                        style={styles.categoryDropdown}
-                        onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                    >
-                        <Text style={styles.categoryText}>
-                            {category || 'Chọn thể loại món ăn'}
-                        </Text>
-                        <Ionicons 
-                            name={showCategoryDropdown ? 'chevron-up' : 'chevron-down'} 
-                            size={24} 
-                            color="#666" 
+                    <View style={styles.timeContainer}>
+                        <Ionicons name="time-outline" size={20} color="#666" />
+                        <TextInput
+                            style={styles.timeText}
+                            value={time}
+                            onChangeText={setTime}
+                            placeholder="60 "
                         />
-                    </TouchableOpacity>
+                        <Text> phút</Text>
+                    </View>
 
-                    {showCategoryDropdown && (
-                        <View style={styles.dropdownList}>
-                            {categories.map((item, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setCategory(item);
-                                        setShowCategoryDropdown(false);
-                                    }}
-                                >
-                                    <Text style={styles.dropdownItemText}>{item}</Text>
-                                </TouchableOpacity>
+                    <View style={styles.contentContainer}>
+                        <TextInput
+                            style={styles.titleInput}
+                            value={title}
+                            onChangeText={setTitle}
+                            placeholder="Tên món ăn"
+                        />
+                        
+                        <TouchableOpacity 
+                            style={styles.categoryDropdown}
+                            onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                        >
+                            <Text style={styles.categoryText}>
+                                {category || 'Chọn thể loại món ăn'}
+                            </Text>
+                            <Ionicons 
+                                name={showCategoryDropdown ? 'chevron-up' : 'chevron-down'} 
+                                size={24} 
+                                color="#666" 
+                            />
+                        </TouchableOpacity>
+
+                        {showCategoryDropdown && (
+                            <View style={styles.dropdownList}>
+                                {categories.map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setCategory(item);
+                                            setShowCategoryDropdown(false);
+                                        }}
+                                    >
+                                        <Text style={styles.dropdownItemText}>{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+                        
+                        <TextInput
+                            style={styles.descriptionInput}
+                            value={description}
+                            onChangeText={setDescription}
+                            placeholder="Mô tả món ăn"
+                            multiline
+                        />
+
+                        <View style={styles.nutritionGrid}>
+                            {[
+                                { icon: 'nutrition', name: 'Tinh bột', value: carbs, setValue: setCarbs },
+                                { icon: 'fish', name: 'Chất đạm', value: protein,setValue: setProtein},
+                                { icon: 'flame', name: 'Năng lượng', value: calories, setValue: setCalories },
+                                { icon: 'water', name: 'Chất béo', value: fat, setValue: setFat }
+                            ].map((item, index) => (
+                                <View key={index} style={styles.nutritionItem}>
+                                    <Ionicons name={`${item.icon}-outline`} size={24} color="#666" />
+                                        <TextInput
+                                        style={styles.nutritionInput}
+                                        value={item.value}
+                                        onChangeText={(text) => item.setValue(text)}
+                                        placeholder="0g"
+                                    /> 
+                                    <Text style={styles.nutritionName}>{item.name}</Text>
+                                </View>
                             ))}
                         </View>
-                    )}
-                    
-                    <TextInput
-                        style={styles.descriptionInput}
-                        value={description}
-                        onChangeText={setDescription}
-                        placeholder="Mô tả món ăn"
-                        multiline
-                    />
 
-                    <View style={styles.nutritionGrid}>
-                        {[
-                            { icon: 'nutrition', name: 'Tinh bột', value: carbs, setValue: setCarbs },
-                            { icon: 'fish', name: 'Chất đạm', value: protein,setValue: setProtein},
-                            { icon: 'flame', name: 'Năng lượng', value: calories, setValue: setCalories },
-                            { icon: 'water', name: 'Chất béo', value: fat, setValue: setFat }
-                        ].map((item, index) => (
-                            <View key={index} style={styles.nutritionItem}>
-                                <Ionicons name={`${item.icon}-outline`} size={24} color="#666" />
-                                    <TextInput
-                                    style={styles.nutritionInput}
-                                    value={item.value}
-                                    onChangeText={(text) => item.setValue(text)}
-                                    placeholder="0g"
-                                /> 
-                                <Text style={styles.nutritionName}>{item.name}</Text>
-                            </View>
-                        ))}
-                    </View>
-
-                    <Text style={styles.sectionTitle}>Các nguyên liệu</Text>
-                    
-                    <View style={styles.servingsContainer}>
-                        <Text style={styles.servingsLabel}>Khẩu phần</Text>
-                        <View style={styles.servingsControls}>
-                            <TouchableOpacity onPress={decreaseServings} style={styles.servingButton}>
-                                <Text style={styles.servingButtonText}>-</Text>
-                            </TouchableOpacity>
-                            <TextInput
-                                style={styles.servingsInput}
-                                value={String(servings)}
-                                keyboardType="number-pad"
-                                onChangeText={(text) => setServings(parseInt(text) || 1)}
-                            />
-                            <TouchableOpacity onPress={increaseServings} style={styles.servingButton}>
-                                <Text style={styles.servingButtonText}>+</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    {ingredients.map((ingredient, index) => (
-                        <View key={index} style={styles.ingredientRow}>
-                            <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                            <View style={styles.ingredientActions}>
-                                <Text style={styles.ingredientAmount}>{ingredient.quantity}</Text>
-                                <TouchableOpacity 
-                                    onPress={() => handleDeleteIngredient(index)}
-                                    style={styles.deleteButton}
-                                >
-                                    <Ionicons name="close-circle-outline" size={24} color="#B22222" />
+                        <Text style={styles.sectionTitle}>Các nguyên liệu</Text>
+                        
+                        <View style={styles.servingsContainer}>
+                            <Text style={styles.servingsLabel}>Khẩu phần</Text>
+                            <View style={styles.servingsControls}>
+                                <TouchableOpacity onPress={decreaseServings} style={styles.servingButton}>
+                                    <Text style={styles.servingButtonText}>-</Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={styles.servingsInput}
+                                    value={String(servings)}
+                                    keyboardType="number-pad"
+                                    onChangeText={(text) => setServings(parseInt(text) || 1)}
+                                />
+                                <TouchableOpacity onPress={increaseServings} style={styles.servingButton}>
+                                    <Text style={styles.servingButtonText}>+</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    ))}
 
-                    <TouchableOpacity 
-                        style={styles.spiceButton}
-                        onPress={() => setShowSpiceModal(true)}
-                    >
-                        <Text style={styles.spiceButtonText}>Thêm gia vị</Text>
-                    </TouchableOpacity>
-                    
-                    <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
-                    {steps.map((step, index) => (
-                        <View key={index} style={styles.stepCard}>
-                            <View style={styles.stepContent}>
-                                <TextInput
-                                    style={styles.stepTitle}
-                                    placeholder={`Bước ${index + 1}: `}
-                                    value={step.title}
-                                    onFocus={() => handleStepTitleFocus(index)}
-                                    onChangeText={(text) => {
-                                        const newSteps = [...steps];
-                                        const prefix = `Bước ${index + 1}: `;
-                                        if (!text.startsWith(prefix)) {
-                                            text = prefix + text.replace(prefix, '');
-                                        }
-                                        newSteps[index].title = text;
-                                        setSteps(newSteps);
-                                    }}
-                                />
-                                <TextInput
-                                    style={styles.stepDescription}
-                                    placeholder="Chi tiết bước thực hiện"
-                                    multiline
-                                    value={step.description}
-                                    onChangeText={(text) => {
-                                        const newSteps = [...steps];
-                                        newSteps[index].description = text;
-                                        setSteps(newSteps);
-                                    }}
-                                />
+                        {ingredients.map((ingredient, index) => (
+                            <View key={index} style={styles.ingredientRow}>
+                                <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                                <View style={styles.ingredientActions}>
+                                    <Text style={styles.ingredientAmount}>{ingredient.quantity}</Text>
+                                    <TouchableOpacity 
+                                        onPress={() => handleDeleteIngredient(index)}
+                                        style={styles.deleteButton}
+                                    >
+                                        <Ionicons name="close-circle-outline" size={24} color="#B22222" />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                    ))}
+                        ))}
 
-                    <TouchableOpacity style={styles.spiceButton} onPress={addStep}>
-                        <Text style={styles.spiceButtonText}>Thêm bước</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.spiceButton}
+                            onPress={() => setShowSpiceModal(true)}
+                        >
+                            <Text style={styles.spiceButtonText}>Thêm gia vị</Text>
+                        </TouchableOpacity>
+                        
+                        <Text style={styles.sectionTitle}>Các bước thực hiện</Text>
+                        {steps.map((step, index) => (
+                            <View key={index} style={styles.stepCard}>
+                                <View style={styles.stepContent}>
+                                    <TextInput
+                                        style={styles.stepTitle}
+                                        placeholder={`Bước ${index + 1}: `}
+                                        value={step.title}
+                                        onFocus={() => handleStepTitleFocus(index)}
+                                        onChangeText={(text) => {
+                                            const newSteps = [...steps];
+                                            const prefix = `Bước ${index + 1}: `;
+                                            if (!text.startsWith(prefix)) {
+                                                text = prefix + text.replace(prefix, '');
+                                            }
+                                            newSteps[index].title = text;
+                                            setSteps(newSteps);
+                                        }}
+                                    />
+                                    <TextInput
+                                        style={styles.stepDescription}
+                                        placeholder="Chi tiết bước thực hiện"
+                                        multiline
+                                        value={step.description}
+                                        onChangeText={(text) => {
+                                            const newSteps = [...steps];
+                                            newSteps[index].description = text;
+                                            setSteps(newSteps);
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        ))}
 
-                    <TouchableOpacity 
-                        style={styles.nextButton} 
-                        onPress={handleSave}  // Add this onPress handler
-                    >
-                        <Text style={styles.nextButtonText}>Lưu công thức</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                        <TouchableOpacity style={styles.spiceButton} onPress={addStep}>
+                            <Text style={styles.spiceButtonText}>Thêm bước</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                            style={styles.nextButton} 
+                            onPress={handleSave}  // Add this onPress handler
+                        >
+                            <Text style={styles.nextButtonText}>Lưu công thức</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </TouchableWithoutFeedback>
             
             <Modal
                 visible={showSpiceModal}
@@ -386,7 +396,7 @@ const RecipeDetail = ({ navigation }) => {
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
             </Modal>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -394,6 +404,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        paddingBottom: 50,
     },
     headerImage: {
         width: '100%',
@@ -417,7 +428,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         padding: 16,
-        paddingBottom: 80, // Add extra padding at bottom to ensure content is visible above tab bar
+        paddingBottom: 100, // Increased bottom padding
     },
     titleInput: {
         fontSize: 24,
@@ -742,6 +753,10 @@ const styles = StyleSheet.create({
     dropdownItemText: {
         fontSize: 16,
         color: '#333',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        paddingBottom: 120, // Add extra padding for keyboard
     }
 });
 
