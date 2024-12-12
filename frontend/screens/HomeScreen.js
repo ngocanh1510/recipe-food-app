@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef} from 'react';
 import { getAllCategories, getRecipesInHomepage, getRecipesByCategory } from '../src/api/api';
 import { useState, useEffect,useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
@@ -117,19 +117,36 @@ const HomeScreen = ({ navigation }) => {
   const [categoryRecipes, setCategoryRecipes] = useState([]);
   const flatListRef = useRef(null);
   const [ userData, setUserData ] = useState({});
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        // console.log('Fetching profile...')
-        const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
-        setUserData(profileData); // Cập nhật thông tin người dùng vào state
-        // console.log('Profile data:', profileData);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-    fetchProfile();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       // console.log('Fetching profile...')
+  //       const profileData = await get('/auth/profile'); 
+  //       setUserData(profileData); 
+  //       // console.log('Profile data:', profileData);
+  //     } catch (error) {
+  //       console.error('Error fetching profile:', error);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, []);
+  useFocusEffect(
+          useCallback(() => {
+              const fetchProfile = async () => {
+                  try {
+                      const profileData = await get('/auth/profile');
+                      setUserData(profileData);
+                  } catch (error) {
+                      console.error('Error fetching profile:', error);
+                  }
+              };
+  
+              fetchProfile(); 
+              return () => {
+                  console.log('ProfileScreen is unfocused');
+              };
+          }, []) 
+      );
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);

@@ -1,39 +1,73 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 const CookingStepsScreen = ({ route }) => {
   const navigation = useNavigation();
   const { steps } = route.params;
 
+  // Convert object format to string if needed
+  const processStep = (step) => {
+    if (step.title && step.description) {
+      // Format 1: {title, description}
+      return { title: step.title, content: step.description };
+    } else if (typeof step === 'object' && !Array.isArray(step)) {
+      // Format 2: {0: 'B', 1: 'ư', 2: 'ớ', ...}
+      const text = Object.entries(step)
+        .filter(([key]) => !isNaN(key)) // Filter out non-numeric keys like _id
+        .sort(([a], [b]) => Number(a) - Number(b)) // Sort by index
+        .map(([, char]) => char)
+        .join('');
+      
+      // Try to split into title and content if contains ":"
+      const parts = text.split(':');
+      return parts.length > 1 
+        ? { title: parts[0] + ':', content: parts[1] }
+        : { title: '', content: text };
+    }
+    return { title: '', content: String(step) };
+  };
+
+  const formattedSteps = React.useMemo(() => {
+    if (!Array.isArray(steps)) return [];
+    return steps.map(processStep);
+  }, [steps]);
+
   return (
     <View style={styles.mainContainer}>
-      <ScrollView style={styles.container}>
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent} // Add this
+      >
         <Text style={styles.header}>Các bước nấu ăn</Text>
-        {Array.isArray(steps) && steps.length > 0 ? (
-          steps.map((step, index) => (
+        {formattedSteps.length > 0 ? (
+          formattedSteps.map((step, index) => (
             <View key={index} style={styles.stepContainer}>
               <View style={styles.stepNumber}>
                 <Text style={styles.stepNumberText}>{index + 1}</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepText}>{step}</Text>
+                {step.title && <Text style={styles.stepTitle}>{step.title}</Text>}
+                <Text style={styles.stepText}>{step.content}</Text>
               </View>
             </View>
           ))
         ) : (
           <Text style={styles.noStepsText}>Không có dữ liệu về các bước nấu ăn!</Text>
         )}
-        <View>
-          <TouchableOpacity
-            style={styles.completeButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.completeButtonText}>Hoàn thành</Text>
-          </TouchableOpacity>
-        </View>
+        
+        {/* Add bottom padding to ensure content clears the button */}
+        <View style={styles.bottomPadding} />
       </ScrollView>
 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.completeButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.completeButtonText}>Hoàn thành</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -43,13 +77,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingBottom: 80,
-    paddingTop: 50,
+    paddingTop: 30,
   },
   container: {
     flex: 1,
-    padding: 16,
-    paddingBottom: 80,
     backgroundColor: '#FFFFFF',
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 150, // Ensure content doesn't hide behind button
+  },
+  bottomPadding: {
+    height: 100, // Extra padding at bottom
   },
   header: {
     fontSize: 24,
@@ -88,6 +127,12 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingLeft: 0,
   },
+  stepTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    marginBottom: 8,
+  },
   stepText: {
     fontSize: 16,
     color: '#2C3E50',
@@ -100,11 +145,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-  completeButton: {
+  buttonContainer: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: 85,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: 'white', // Add background to avoid transparency
+  },
+  completeButton: {
     backgroundColor: '#4CAF50',
     padding: 15,
     borderRadius: 10,

@@ -2,7 +2,8 @@ import {
     MaterialCommunityIcons,
     MaterialIcons
 } from '@expo/vector-icons';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Image,
     ScrollView,
@@ -34,21 +35,39 @@ const ProfileScreen = ({navigation}) => {
     const { logout } = useContext(AuthContext);
      // Hàm xử lý logout
 
-     useEffect(() => {
-        const fetchProfile = async () => {
-          try {
-            // console.log('Fetching profile...')
-            const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
-            setUserData(profileData); // Cập nhật thông tin người dùng vào state
-            // console.log('Profile data:', profileData);
+    //  useEffect(() => {
+    //     const fetchProfile = async () => {
+    //       try {
+    //         // console.log('Fetching profile...')
+    //         const profileData = await get('/auth/profile'); // Lấy thông tin người dùng
+    //         setUserData(profileData); // Cập nhật thông tin người dùng vào state
+    //         // console.log('Profile data:', profileData);
             
-          } catch (error) {
-            console.error('Error fetching profile:', error);
-          }
-        };
+    //       } catch (error) {
+    //         console.error('Error fetching profile:', error);
+    //       }
+    //     };
     
-        fetchProfile();
-      }, []);
+    //     fetchProfile();
+    //   }, []);
+
+      useFocusEffect(
+        useCallback(() => {
+            const fetchProfile = async () => {
+                try {
+                    const profileData = await get('/auth/profile');
+                    setUserData(profileData);
+                } catch (error) {
+                    console.error('Error fetching profile:', error);
+                }
+            };
+
+            fetchProfile(); 
+            return () => {
+                console.log('ProfileScreen is unfocused');
+            };
+        }, []) 
+    );
 
     const handleLogout = async () => {
         try {
