@@ -102,7 +102,6 @@ export const addRecipe = async (req, res) => {
     }
 
     const userId = account.user._id;
-    console.log(userId)
   const categoryDoc = await CategoryModel.findOne({ name: category });
         if (!categoryDoc) {
             return res.status(400).json({ error: "Category not found" });
@@ -151,6 +150,7 @@ export const addRecipe = async (req, res) => {
   return res.status(201).json({ message: "Recipe added successfully", recipe })
 };
 
+// Lấy danh dách công thức của tôi
 export const getCreateRecipes = async (req, res) => {
   const accountId = req.user.id; // Lấy accountId từ middleware xác thực (JWT)
 
@@ -166,7 +166,6 @@ export const getCreateRecipes = async (req, res) => {
     }
 
     const userId = account.user._id; // Lấy userId thực
-    console.log(userId)
     const userRecipes = await RecipeModel.find({ userOwner: userId }); // Tìm các công thức của người dùng
     res.status(200).json({ success: true, recipes: userRecipes }); // Đồng bộ tên trả về
   } catch (error) {
