@@ -60,7 +60,6 @@ export const getSavedRecipes = async () => {
       Authorization: `Bearer ${token}`
     },
   })
-  console.log(res.data)
   return res.data.savedRecipes;
   } catch (err) {
     console.error("Lỗi khi gửi yêu cầu API:", err);
@@ -200,6 +199,16 @@ export const addRecipe = async (recipe) => {
   }
 };
 
+export const editRecipe =async(recipeId)=>{
+  try{
+    await axios.put(`${BASE_URL}/recipe/${recipeId}`);
+    alert('Công thức đã được thay đổi thành công.');
+  }
+  catch (error) {
+    console.error('Lỗi :', error);
+    alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+  }
+}
 export const deleteRecipe =async(recipeId) =>{
     try{
       await axios.delete(`${BASE_URL}/recipe/${recipeId}`);
