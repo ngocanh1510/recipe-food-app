@@ -27,6 +27,7 @@ import RegisterScreen from './screens/RegisterScreen.js';
 import SearchScreen from './screens/SearchScreen.js';
 import SettingsScreen from './screens/SettingsScreen';
 import WelcomeScreen from './screens/WelcomeScreen.js';
+import EditRecipeScreen from './screens/EditRecipeScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -157,6 +158,11 @@ const NoteNavigator = () => (
     <NoteStack.Screen
       name="CookingSteps"
       component={CookingStepsScreen}
+    />
+    <NoteStack.Screen
+      name="EditRecipeScreen"
+      component={EditRecipeScreen}
+      options={{headerShown: false}}
     />
   </NoteStack.Navigator>
 );

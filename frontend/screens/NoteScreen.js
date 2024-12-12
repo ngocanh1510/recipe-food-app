@@ -85,7 +85,7 @@ export default function NoteScreen({ navigation }) {
               style={styles.actionButton}
               onPress={(e) => {
                 e.stopPropagation();
-                navigation.navigate('RecipeDetail', { recipe: item });
+                navigation.navigate('EditRecipeScreen', { recipes: item });
               }}
             >
               <MaterialIcons name="edit" size={18} color="#FF6B6B" />
