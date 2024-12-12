@@ -1,10 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useContext, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { AuthContext } from './AuthContext.js';
-import { Alert } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { post } from '../src/api/api.js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from './AuthContext.js';
 
 
 
@@ -47,7 +45,9 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.containerheader}>
-        <Image source={require('../assets/snapedit_1729764442315.png')} style={styles.imageStyle} />
+        <Image source={require('../assets/Login_Logo.png')} style={styles.imageStyle} />
+      </View>
+      <View style={styles.welcome}>
         <Text style={styles.header}>Welcome</Text>
       </View>
       <View style={styles.inputContainer}>
@@ -57,6 +57,8 @@ export default function LoginScreen({ navigation }) {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          style={styles.input}
+          placeholderTextColor="#666"
         />
       </View>
       <View style={styles.inputContainer}>
@@ -66,6 +68,8 @@ export default function LoginScreen({ navigation }) {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          style={styles.input}
+          placeholderTextColor="#666"
         />
       </View>
       <Text
@@ -104,12 +108,15 @@ const styles = StyleSheet.create({
   },
   containerheader: {
     alignItems: 'center',
+    paddingRight: 15,
+  },
+  welcome: {
+    alignItems: 'center',
   },
   imageStyle: {
     marginTop: 50,
-    width: 300,
-    height: 170,
-    borderRadius: 10,
+    width: 200,
+    height: 155,
   },
   header: {
     fontSize: 30,
@@ -169,15 +176,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    padding: 13,
+    padding: 15,
     backgroundColor: '#fff',
     marginTop: 15,
     marginHorizontal: 20,
+    height: 60, // Increased height
   },
   icon: {
     fontSize: 26,
     opacity: 0.5,
+    paddingHorizontal: 8, // Increased padding
+  },
+  input: {
+    flex: 1,
+    fontSize: 16, // Larger font size
+    paddingVertical: 8,
     paddingHorizontal: 5,
+    color: '#000',
   },
   question: {
     fontSize: 16,

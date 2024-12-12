@@ -93,7 +93,69 @@ const RecipeDetail = ({ navigation }) => {
         }
     };
 
+    const validateForm = () => {
+        if (!image) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng chọn ảnh món ăn');
+            return false;
+        }
+        if (!title) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập tên món ăn');
+            return false;
+        }
+        if (!category) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng chọn thể loại món ăn');
+            return false;
+        }
+        if (!time || time <= 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập thời gian nấu hợp lệ');
+            return false;
+        }
+        if (!carbs || carbs <= 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập lượng tinh bột hợp lệ');
+            return false;
+        }
+        if (!protein || protein <= 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập lượng chất đạm hợp lệ');
+            return false;
+        }
+        if (!calories || calories <= 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập lượng năng lượng hợp lệ');
+            return false;
+        }
+        if (!fat || fat <= 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập lượng chất béo hợp lệ');
+            return false;
+        }
+        
+        if (!description) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng nhập mô tả món ăn');
+            return false;
+        }
+        if (ingredients.length === 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng thêm ít nhất một nguyên liệu');
+            return false;
+        }
+
+        // Kiểm tra từng bước thực hiện
+        const emptyStepIndex = steps.findIndex(step => !step.description.trim());
+        if (emptyStepIndex !== -1) {
+            Alert.alert('Thiếu thông tin', `Vui lòng nhập nội dung cho bước ${emptyStepIndex + 1}`);
+            return false;
+        }
+        
+        if (steps.length === 0) {
+            Alert.alert('Thiếu thông tin', 'Vui lòng thêm các bước thực hiện');
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSave = async () => {
+        if (!validateForm()) {
+            return;
+        }
+
         const recipe = {
             title,
             description,
@@ -122,6 +184,16 @@ const RecipeDetail = ({ navigation }) => {
             console.log(error)
         }
     };
+
+    // Add refs for input fields
+    const titleRef = React.useRef();
+    const descriptionRef = React.useRef();
+    const timeRef = React.useRef();
+    const carbsRef = React.useRef();
+    const proteinRef = React.useRef();
+    const caloriesRef = React.useRef();
+    const fatRef = React.useRef();
+    const servingsRef = React.useRef();
 
     return (
         <KeyboardAvoidingView 
@@ -154,20 +226,28 @@ const RecipeDetail = ({ navigation }) => {
                     <View style={styles.timeContainer}>
                         <Ionicons name="time-outline" size={20} color="#666" />
                         <TextInput
+                            ref={timeRef}
                             style={styles.timeText}
                             value={time}
                             onChangeText={setTime}
                             placeholder="60 "
+                            returnKeyType="next"
+                            onSubmitEditing={() => titleRef.current?.focus()}
+                            blurOnSubmit={false}
                         />
                         <Text> phút</Text>
                     </View>
 
                     <View style={styles.contentContainer}>
                         <TextInput
+                            ref={titleRef}
                             style={styles.titleInput}
                             value={title}
                             onChangeText={setTitle}
                             placeholder="Tên món ăn"
+                            returnKeyType="next"
+                            onSubmitEditing={() => descriptionRef.current?.focus()}
+                            blurOnSubmit={false}
                         />
                         
                         <TouchableOpacity 
@@ -202,27 +282,36 @@ const RecipeDetail = ({ navigation }) => {
                         )}
                         
                         <TextInput
+                            ref={descriptionRef}
                             style={styles.descriptionInput}
                             value={description}
                             onChangeText={setDescription}
                             placeholder="Mô tả món ăn"
                             multiline
+                            returnKeyType="next"
+                            onSubmitEditing={() => carbsRef.current?.focus()}
+                            blurOnSubmit={false}
                         />
 
                         <View style={styles.nutritionGrid}>
                             {[
-                                { icon: 'nutrition', name: 'Tinh bột', value: carbs, setValue: setCarbs },
-                                { icon: 'fish', name: 'Chất đạm', value: protein,setValue: setProtein},
-                                { icon: 'flame', name: 'Năng lượng', value: calories, setValue: setCalories },
-                                { icon: 'water', name: 'Chất béo', value: fat, setValue: setFat }
+                                { icon: 'nutrition', name: 'Tinh bột', value: carbs, setValue: setCarbs, ref: carbsRef, nextRef: proteinRef },
+                                { icon: 'fish', name: 'Chất đạm', value: protein,setValue: setProtein, ref: proteinRef, nextRef: caloriesRef },
+                                { icon: 'flame', name: 'Năng lượng', value: calories, setValue: setCalories, ref: caloriesRef, nextRef: fatRef },
+                                { icon: 'water', name: 'Chất béo', value: fat, setValue: setFat, ref: fatRef, nextRef: servingsRef }
                             ].map((item, index) => (
                                 <View key={index} style={styles.nutritionItem}>
                                     <Ionicons name={`${item.icon}-outline`} size={24} color="#666" />
                                         <TextInput
+                                        ref={item.ref}
                                         style={styles.nutritionInput}
                                         value={item.value}
                                         onChangeText={(text) => item.setValue(text)}
                                         placeholder="0g"
+                                        keyboardType="number-pad"
+                                        returnKeyType="next"
+                                        onSubmitEditing={() => item.nextRef?.current?.focus()}
+                                        blurOnSubmit={false}
                                     /> 
                                     <Text style={styles.nutritionName}>{item.name}</Text>
                                 </View>
